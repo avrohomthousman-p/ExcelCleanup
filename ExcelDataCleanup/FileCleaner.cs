@@ -42,6 +42,10 @@ namespace ExcelDataCleanup
         private static Dictionary<int, double> desiredColumnSizes = new Dictionary<int, double>();
 
 
+        //Tracks which rows (might) need to be resized
+        private static bool[] rowNeedsResize;
+
+
 
 
         /// <summary>
@@ -143,6 +147,8 @@ namespace ExcelDataCleanup
                 UnMergeMergedSections(worksheet);
 
                 ResizeColumns(worksheet);
+
+                ResizeRows(worksheet);
 
 
                 foreach (int i in columnsToDelete)
@@ -317,6 +323,10 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
         private static void UnMergeMergedSections(ExcelWorksheet worksheet)
         {
+
+            rowNeedsResize = new bool[worksheet.Dimension.Rows];
+
+
             ExcelWorksheet.MergeCellsCollection mergedCells = worksheet.MergedCells;
 
 
@@ -508,14 +518,8 @@ namespace ExcelDataCleanup
 
             if (requiredWidth > actualWidth) //if we cant fit it all in 1 line
             {
-                //resize row
-                int rowNumber = mergedCells.Start.Row;
-
-                //if the row is not already taller than the default
-                if (worksheet.Row(rowNumber).Height <= worksheet.DefaultRowHeight)
-                {
-                    worksheet.Row(rowNumber).Height = worksheet.DefaultRowHeight * 2; //double row hieght
-                }
+                //mark row for resize
+                rowNeedsResize[mergedCells.Start.Row - 1] = true;
 
             }
 
@@ -837,6 +841,81 @@ namespace ExcelDataCleanup
             {
                 worksheet.Column(data.Key).Width = data.Value;
             }
+        }
+
+
+
+        /// <summary>
+        /// Resizes the rows that have non-data cells with insuffiecent space for thier text
+        /// </summary>
+        /// <param name="worksheet"></param>
+        private static void ResizeRows(ExcelWorksheet worksheet) 
+        {
+            for(int row = 1; row <= worksheet.Dimension.Rows; row++)
+            {
+
+                //Check if the row still needs a resize. We might have previously made a 
+                //column wider and now no longer need a resize.
+                if (RowStillNeedsResize(worksheet, row))
+                {
+                    worksheet.Row(row).Height = worksheet.DefaultRowHeight * 2; //double row hieght
+                }
+
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if a row that has been marked for resize still needs a resize, despite the column enlargments already done.
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently bieng cleaned</param>
+        /// <param name="rowNumber">the row of the worksheet we are checking</param>
+        /// <returns>true if the row has at least one cell that needs more space</returns>
+        private static bool RowStillNeedsResize(ExcelWorksheet worksheet, int rowNumber)
+        {
+
+            if (!rowNeedsResize[rowNumber - 1])
+            {
+                return false;
+            }
+
+            if (worksheet.Row(rowNumber).Height > worksheet.DefaultRowHeight)
+            {
+                return false; //if its already larger than the default, we don't want to change it
+            }
+
+
+
+
+            for (int col = 1; col <= worksheet.Dimension.Columns; col++)
+            {
+
+                ExcelRange cell = worksheet.Cells[rowNumber, col];
+                string cellText = cell.Text;
+
+
+                //Empty cells dont need resize, and data cells have already been resized
+                if (isEmptyCell(cell) || isDataCell(cell))
+                {
+                    continue;
+                }
+
+
+
+                //double requiredWidth = GetCellWidthFromLargestWord(cellText, cell.Style.Font.Size);
+                double requiredWidth = GetWidthOfCellText(cellText, cell.Style.Font.Size);
+                double actualWidth = worksheet.Column(cell.Start.Column).Width;
+
+                if (requiredWidth > actualWidth) //if we cant fit it all in 1 line
+                {
+                    return true;
+                }
+            }
+
+
+            return false;
         }
 
 
