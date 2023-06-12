@@ -72,6 +72,10 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\PayablesAccountReport_1Prop.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\ReportPayablesRegister.xlsx
 
+                // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementDrillthrough.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\AgedReceivables.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\LedgerExport.xlsx
+
 
                 Console.WriteLine("Please enter the filepath of the Excel report you want to clean:");
                 filepath = Console.ReadLine();
@@ -324,7 +328,7 @@ namespace ExcelDataCleanup
         private static void UnMergeMergedSections(ExcelWorksheet worksheet)
         {
 
-            rowNeedsResize = new bool[worksheet.Dimension.Rows];
+            rowNeedsResize = new bool[worksheet.Dimension.End.Row];
 
 
             ExcelWorksheet.MergeCellsCollection mergedCells = worksheet.MergedCells;
@@ -333,6 +337,11 @@ namespace ExcelDataCleanup
             for (int i = mergedCells.Count - 1; i >= 0; i--)
             {
                 var merged = mergedCells[i];
+
+                if(merged == null)
+                {
+                    continue;
+                }
 
                 Console.WriteLine("merge at " + merged.ToString());
 
@@ -352,8 +361,6 @@ namespace ExcelDataCleanup
         private static bool UnMergeCells(ExcelWorksheet worksheet, string cellAddress)
         {
             ExcelRange currentCells = worksheet.Cells[cellAddress];
-
-            bool maintainRowHeight = true;
 
             //Sometimes unmerging a cell changes the row height. We need to reset it to its starting value
             double initialHeigth = worksheet.Row(currentCells.Start.Row).Height;
@@ -378,7 +385,6 @@ namespace ExcelDataCleanup
 
                 case MergeType.MINOR_HEADER:
                     SetMinorHeaderCellSize(worksheet, currentCells);
-                    maintainRowHeight = false;
                     break;
 
                 default: //If its a data cell
@@ -392,10 +398,7 @@ namespace ExcelDataCleanup
             currentCells.Merge = false; //unmerge range
 
 
-            if (maintainRowHeight)
-            {
-                worksheet.Row(currentCells.Start.Row).Height = initialHeigth;
-            }
+            worksheet.Row(currentCells.Start.Row).Height = initialHeigth;
 
 
 
@@ -518,6 +521,7 @@ namespace ExcelDataCleanup
 
             if (requiredWidth > actualWidth) //if we cant fit it all in 1 line
             {
+
                 //mark row for resize
                 rowNeedsResize[mergedCells.Start.Row - 1] = true;
 
@@ -702,15 +706,17 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="columnText">the text in (one of the cells of) the column being resized</param>
         /// <param name="fontSizeUsed">the font size of the text displayed in the column</param>
+        /// <param name="givePadding">if true (or default) adds space for 2 extra characters in the cell with</param>
         /// <returns>the appropriate column width</returns>
-        private static double GetWidthOfCellText(string columnText, double fontSizeUsed)
+        private static double GetWidthOfCellText(string columnText, double fontSizeUsed, bool givePadding = true)
         {
+            int padding = (givePadding ?  2  :  0);
 
             double characterWidth = fontSizeUsed / DEFAULT_FONT_SIZE;
 
-            double lengthOfText = (columnText.Length + 2) * characterWidth;
+            double lengthOfText = (columnText.Length + padding) * characterWidth;
 
-            //double lengthOfText = columnText.Length + 2; //if you want to ignore font size use this
+            //double lengthOfText = columnText.Length + padding; //if you want to ignore font size use this
 
             return lengthOfText;
         }
@@ -851,7 +857,7 @@ namespace ExcelDataCleanup
         /// <param name="worksheet"></param>
         private static void ResizeRows(ExcelWorksheet worksheet) 
         {
-            for(int row = 1; row <= worksheet.Dimension.Rows; row++)
+            for(int row = 1; row <= worksheet.Dimension.End.Row; row++)
             {
 
                 //Check if the row still needs a resize. We might have previously made a 
@@ -889,7 +895,7 @@ namespace ExcelDataCleanup
 
 
 
-            for (int col = 1; col <= worksheet.Dimension.Columns; col++)
+            for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
             {
 
                 ExcelRange cell = worksheet.Cells[rowNumber, col];
@@ -905,7 +911,7 @@ namespace ExcelDataCleanup
 
 
                 //double requiredWidth = GetCellWidthFromLargestWord(cellText, cell.Style.Font.Size);
-                double requiredWidth = GetWidthOfCellText(cellText, cell.Style.Font.Size);
+                double requiredWidth = GetWidthOfCellText(cellText, cell.Style.Font.Size, false);
                 double actualWidth = worksheet.Column(cell.Start.Column).Width;
 
                 if (requiredWidth > actualWidth) //if we cant fit it all in 1 line
