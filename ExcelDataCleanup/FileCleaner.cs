@@ -13,19 +13,14 @@ namespace ExcelDataCleanup
     {
 
 
-        enum MergeType { NOT_A_MERGE, EMPTY, MAIN_HEADER, MINOR_HEADER, DATA }
+        enum MergeType { NOT_A_MERGE,   //no merge in the address
+            EMPTY,                      //merge cell with no text
+            MAIN_HEADER,                //merge cell outside the table with a header (ussually) describing the table contents
+            MINOR_HEADER,               //merge cell inside the table with a header (usually) describing row contents
+            DATA }                      //merge cell containing data
 
 
         private static int topTableRow;
-
-
-        //it is always allowed to increase a column's width by this amount or less, as it is considered 
-        //minor and is unlikly to mess up any formatting
-        private static readonly int MINOR_WIDTH_INCREASE = 3;
-
-
-        //It is always allowed to set the width of a column to have space for this many characters.
-        private static readonly int SMALL_TEXT_LENGTH = 6;
 
 
         //Some data that is needed for font size conversions:
@@ -338,6 +333,9 @@ namespace ExcelDataCleanup
             {
                 var merged = mergedCells[i];
 
+
+                //sometimes a change to one part of the worksheet causes a merge cell to stop
+                //existing. The corrisponding entry in the merge collection to becomes null.
                 if(merged == null)
                 {
                     continue;
@@ -527,49 +525,6 @@ namespace ExcelDataCleanup
 
             }
 
-
-            //old implementation
-            /* 
-            
-            if(cellText.Length <= SMALL_TEXT_LENGTH)
-            {
-                //Resize width
-                UpdateColumnDesiredWidth(mergedCells.Start.Column, 
-                    GetWidthOfCellText(cellText, mergedCells.Style.Font.Size));
-
-
-                Console.WriteLine("cell address " + mergedCells.Address + " is getting widened to 5 characters");
-                return;
-            }
-
-
-            double cellCapacity = GetNumCharactersThatFitInCell(mergedCells, true);
-            
-            //If just increasing the cell width by a small amount is sufficent
-            if(cellCapacity + MINOR_WIDTH_INCREASE >= cellText.Length)
-            {
-                UpdateColumnDesiredWidth(mergedCells.Start.Column,
-                    GetWidthOfCellText(cellText, mergedCells.Style.Font.Size));
-
-
-                Console.WriteLine("cell address " + mergedCells.Address + " is getting wider by a little bit");
-            }
-            else
-            {
-                int rowNumber = mergedCells.Start.Row;
-
-                if(worksheet.Row(rowNumber).Height <= worksheet.DefaultRowHeight) //if the row is not already taller than the default
-                {
-                    worksheet.Row(rowNumber).Height = worksheet.DefaultRowHeight * 2; //double row hieght
-                    Console.WriteLine("cell address " + mergedCells.Address + " is getting taller");
-                }
-                else
-                {
-                    Console.WriteLine("cell address " + mergedCells.Address + " has already gotten wider");
-                }
-                
-            }
-            */
 
         }
 
