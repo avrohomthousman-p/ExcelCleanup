@@ -146,7 +146,7 @@ namespace ExcelDataCleanup
                 RemoveAllHyperLinks(worksheet);
 
 
-                CleanMerges(worksheet);
+                RemoveAllMerges(worksheet);
 
 
                 FixExcelTypeWarnings(worksheet);
@@ -241,16 +241,16 @@ namespace ExcelDataCleanup
         /// Removes all merge cells from the specified worksheet
         /// </summary>
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
-        private static void CleanMerges(ExcelWorksheet worksheet)
+        private static void RemoveAllMerges(ExcelWorksheet worksheet)
         {
 
             FindTableBounds(worksheet);
 
             UnMergeMergedSections(worksheet);
 
-            ResizeColumns(worksheet);
+            //ResizeColumns(worksheet);
 
-            ResizeRows(worksheet);
+            //ResizeRows(worksheet);
 
 
             foreach (int i in columnsToDelete)
@@ -259,7 +259,7 @@ namespace ExcelDataCleanup
             }
 
 
-            DeleteColumns(worksheet);
+            //DeleteColumns(worksheet);
         }
 
 
@@ -411,6 +411,7 @@ namespace ExcelDataCleanup
         {
             ExcelRange currentCells = worksheet.Cells[cellAddress];
 
+
             //Sometimes unmerging a cell changes the row height. We need to reset it to its starting value
             double initialHeigth = worksheet.Row(currentCells.Start.Row).Height;
 
@@ -427,18 +428,21 @@ namespace ExcelDataCleanup
                     return false;
 
                 case MergeType.MAIN_HEADER:
-                    return false;
+                    originalStyle.WrapText = false;
+                    originalStyle.HorizontalAlignment = ExcelHorizontalAlignment.General;
+                    Console.WriteLine("major header at " + currentCells.Address);
+                    break;
 
                 case MergeType.EMPTY:
                     break;
 
                 case MergeType.MINOR_HEADER:
-                    SetMinorHeaderCellSize(worksheet, currentCells);
+                    //SetMinorHeaderCellSize(worksheet, currentCells);
                     break;
 
                 default: //If its a data cell
-                    ChooseDataCellWidth(currentCells, originalStyle);
-                    MarkColumnsForDeletion(worksheet, currentCells);
+                    //ChooseDataCellWidth(currentCells, originalStyle);
+                    //MarkColumnsForDeletion(worksheet, currentCells);
                     break;
             }
 
