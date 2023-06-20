@@ -85,7 +85,44 @@ namespace ExcelDataCleanup
                 */
             }
 
-            OpenXLSX(filepath);
+            
+
+            OpenXLSX( ConvertFileToBytes(filepath), filepath );
+        }
+
+
+
+
+        /// <summary>
+        /// Opens the specified file and writes its contents to a byte array. This function is only needed for testing. In production
+        /// the file itself will be passed in as a byte array, not as a filepath.
+        /// </summary>
+        /// <param name="filepath">the location of the file</param>
+        /// <returns>a byte array with the contents of the file in it</returns>
+        private static byte[] ConvertFileToBytes(String filepath)
+        {
+            FileInfo existingFile = new FileInfo(filepath);
+            byte[] fileData = new byte[existingFile.Length];
+
+
+            var fileStream = existingFile.Open(FileMode.Open);
+            int bytesRead = 0;
+            int bytesToRead = (int) existingFile.Length;
+            while (bytesToRead > 0)
+            {
+                int justRead = fileStream.Read(fileData, bytesRead, bytesToRead);
+
+                if(justRead == 0)
+                {
+                    break;
+                }
+
+                bytesRead += justRead;
+                bytesToRead -= justRead;
+            }
+
+
+            return fileData;
         }
 
 
@@ -94,12 +131,14 @@ namespace ExcelDataCleanup
         /// <summary>
         /// Opens an existing excel file and reads some values and properties
         /// </summary>
-        public static void OpenXLSX(string Filepath)
+        /// <param name="file">the excel file in byte form</param>
+        /// <param name="originalFileName">the file name of the original excel file</param>
+        public static void OpenXLSX(byte[] file, string originalFileName)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            FileInfo existingFile = new FileInfo(Filepath);
-            using (ExcelPackage package = new ExcelPackage(existingFile))
+
+            using (ExcelPackage package = new ExcelPackage(new MemoryStream(file)))
             {
                 //Get the first worksheet in the workbook
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
@@ -164,7 +203,7 @@ namespace ExcelDataCleanup
 
 
 
-                package.SaveAs(Filepath.Replace(".xlsx", "_fixed.xlsx"));
+                package.SaveAs(originalFileName.Replace(".xlsx", "_fixed.xlsx"));
 
             }
 
