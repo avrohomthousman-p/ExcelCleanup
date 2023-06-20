@@ -12,14 +12,6 @@ namespace ExcelDataCleanup
     public class FileCleaner
     {
 
-
-        enum MergeType { NOT_A_MERGE,   //no merge in the address
-            EMPTY,                      //merge cell with no text
-            MAIN_HEADER,                //merge cell outside the table with a header (ussually) describing the table contents
-            MINOR_HEADER,               //merge cell inside the table with a header (usually) describing row contents
-            DATA }                      //merge cell containing data
-
-
         private static int topTableRow;
 
 
@@ -71,6 +63,9 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\AgedReceivables.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\LedgerExport.xlsx
 
+                // C:\Users\avroh\Downloads\ExcelProject\TrialBalance.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementByPeriod.xlsx
+
 
                 Console.WriteLine("Please enter the filepath of the Excel report you want to clean:");
                 filepath = Console.ReadLine();
@@ -99,7 +94,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="filepath">the location of the file</param>
         /// <returns>a byte array with the contents of the file in it</returns>
-        private static byte[] ConvertFileToBytes(String filepath)
+        private static byte[] ConvertFileToBytes(string filepath)
         {
             FileInfo existingFile = new FileInfo(filepath);
             byte[] fileData = new byte[existingFile.Length];
@@ -145,57 +140,14 @@ namespace ExcelDataCleanup
 
 
 
-                var start = worksheet.Dimension.Start;
-                var end = worksheet.Dimension.End;
-
-                for (int row = end.Row; row >= start.Row; row--)
-                {
-                    if (worksheet.Row(row).Hidden == true)
-                    {
-                        worksheet.DeleteRow(row);
-                        Console.WriteLine("Deleted Hidden Row : " + row);
-                        continue;
-                    }
+                DeleteHiddenRows(worksheet);
 
 
-
-                    UnmergeEntireRow(worksheet.Row(row));
-
+                RemoveAllHyperLinks(worksheet);
 
 
+                CleanMerges(worksheet);
 
-
-                    for (int col = start.Column; col <= end.Column; ++col)
-                    {
-                        var cell = worksheet.Cells[row, col];
-
-                        if (cell.Value != null)
-                            Console.WriteLine("Row=" + row.ToString() + " Col=" + col.ToString() + " Value=" + cell.Value);
-
-
-
-                        RemoveHyperLink(cell, row, col);
-                    }
-                }
-
-
-
-                FindTableBounds(worksheet);
-
-                UnMergeMergedSections(worksheet);
-
-                ResizeColumns(worksheet);
-
-                ResizeRows(worksheet);
-
-
-                foreach (int i in columnsToDelete)
-                {
-                    Console.WriteLine("column " + i + " was marked for deletion");
-                }
-
-
-                DeleteColumns(worksheet);
 
                 FixExcelTypeWarnings(worksheet);
 
@@ -213,17 +165,49 @@ namespace ExcelDataCleanup
 
 
 
+
         /// <summary>
-        /// Unmerges the entire specified row if it is already merged, otherwise does nothing
+        /// Deletes all hidden rows in the specified worksheet
         /// </summary>
-        /// <param name="row">the row to be unmerged</param>
-        private static void UnmergeEntireRow(ExcelRow row)
+        /// <param name="worksheet">the worksheet we are currently cleaning</param>
+        private static void DeleteHiddenRows(ExcelWorksheet worksheet)
         {
-            if (row.Merged)
+            var start = worksheet.Dimension.Start;
+            var end = worksheet.Dimension.End;
+
+            for (int row = end.Row; row >= start.Row; row--)
             {
-                row.Merged = false;
+                if (worksheet.Row(row).Hidden == true)
+                {
+                    worksheet.DeleteRow(row);
+                    Console.WriteLine("Deleted Hidden Row : " + row);
+                }
             }
         }
+
+
+
+        /// <summary>
+        /// Removes all hyperlinks that are in any of the cells in the specified worksheet
+        /// </summary>
+        /// <param name="worksheet">the worksheet we are currently cleaning</param>
+        private static void RemoveAllHyperLinks(ExcelWorksheet worksheet)
+        {
+            var start = worksheet.Dimension.Start;
+            var end = worksheet.Dimension.End;
+
+            for (int row = end.Row; row >= start.Row; row--)
+            {
+                for (int col = start.Column; col <= end.Column; ++col)
+                {
+
+                    var cell = worksheet.Cells[row, col];
+                    StripCellOfHyperLink(cell, row, col);
+
+                }
+            }
+        }
+
 
 
 
@@ -233,7 +217,7 @@ namespace ExcelDataCleanup
         /// <param name="cell">the cell whose hyperlinks should be removed</param>
         /// <param name="row">the row the cell is in</param>
         /// <param name="col">the column the cell is in</param>
-        private static void RemoveHyperLink(ExcelRange cell, int row, int col)
+        private static void StripCellOfHyperLink(ExcelRange cell, int row, int col)
         {
             if (cell.Hyperlink != null)
             {
@@ -248,6 +232,34 @@ namespace ExcelDataCleanup
                 ////cell.Hyperlink = new Uri(cell.ToString(), UriKind.Absolute);
                 cell.Value = val;
             }
+        }
+
+
+
+
+        /// <summary>
+        /// Removes all merge cells from the specified worksheet
+        /// </summary>
+        /// <param name="worksheet">the worksheet we are currently cleaning</param>
+        private static void CleanMerges(ExcelWorksheet worksheet)
+        {
+
+            FindTableBounds(worksheet);
+
+            UnMergeMergedSections(worksheet);
+
+            ResizeColumns(worksheet);
+
+            ResizeRows(worksheet);
+
+
+            foreach (int i in columnsToDelete)
+            {
+                Console.WriteLine("column " + i + " was marked for deletion");
+            }
+
+
+            DeleteColumns(worksheet);
         }
 
 
