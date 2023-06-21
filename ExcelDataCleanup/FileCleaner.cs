@@ -242,104 +242,61 @@ namespace ExcelDataCleanup
 
 
 
+
         /// <summary>
-        /// Finds the first row of the table in the specified worksheet and saves the 
+        /// Finds the first row that is considered part of the table in the specified worksheet and saves the 
         /// row number to this classes local variable (topTableRow) for later use
         /// </summary>
         /// <param name="worksheet">the worksheet we are working on</param>
         private static void FindTableBounds(ExcelWorksheet worksheet)
         {
-            for (int i = 1; i <= worksheet.Dimension.Rows; i++)
+
+            for (int row = 1; row <= worksheet.Dimension.Rows; row++)
             {
-                for (int j = 1; j <= worksheet.Dimension.Columns; j++)
+                if(IsDataRow(worksheet, row))
                 {
-                    if (IsDataCell(worksheet.Cells[i, j]))
+                    topTableRow = row;
+                    Console.WriteLine("First data row is row " + row);
+                    return;
+                }
+            }
+
+
+            //DEFAULT: if no data row is found there is something wrong
+            throw new Exception("Could not find data table in excel report.");
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if the specified row is a data row.
+        /// 
+        /// Current Implementation: a row is a data row if it contains at least 3 cells with text
+        /// </summary>
+        /// <param name="worksheet">the worksheet where the row in question can be found</param>
+        /// <param name="row">the row to be checked</param>
+        /// <returns>true if the specified row is a data row and false otherwise</returns>
+        private static bool IsDataRow(ExcelWorksheet worksheet, int row)
+        {
+
+            const int NUM_FULL_COLUMNS_REQUIRED = 3;
+            int fullColumnsFound = 0;
+
+
+            for(int col = 1; col <= worksheet.Dimension.Columns; col++)
+            {
+                if (!IsEmptyCell(worksheet.Cells[row, col]))
+                {
+                    fullColumnsFound++;
+                    if(fullColumnsFound == NUM_FULL_COLUMNS_REQUIRED)
                     {
-                        j = FindRightSideOfTable(worksheet, i, j);
-                        i = FindTopEdgeOfTable(worksheet, i, j);
-                        topTableRow = i;
-                        Console.WriteLine("Starting cell is: [" + i + ", " + j + "]");
-                        return;
+                        return true;
                     }
                 }
             }
 
-
-            topTableRow = 1; //Default is the first row
-        }
-
-
-
-        /// <summary>
-        /// Given the coordinates of the first data cell in the table, finds the right edge of the table by looking for its border
-        /// </summary>
-        /// <param name="worksheet"the worksheet we are currently working on</param>
-        /// <param name="row">the row of the first data cell</param>
-        /// <param name="col">the column of the first data cell</param>
-        /// <returns>the column of the right edge of the table, or the specified column if the table edge isnt found</returns>
-        private static int FindRightSideOfTable(ExcelWorksheet worksheet, int row, int col)
-        {
-            for (int j = col; j <= worksheet.Dimension.Columns; j++)
-            {
-                if (IsEndOfTable(worksheet.Cells[row, j]))
-                {
-                    return j;
-                }
-            }
-
-            return col; //Default: return the original cell
-        }
-
-
-
-        /// <summary>
-        /// Checks if the specified cell is on the right edge of an excel table. This is determaned 
-        /// by its borders.
-        /// </summary>
-        /// <param name="cell">the cell being checked</param>
-        /// <returns>true if the cell is the right edge of the table, and false otherwise</returns>
-        private static bool IsEndOfTable(ExcelRange cell)
-        {
-            var border = cell.Style.Border;
-
-            return !border.Right.Style.Equals(ExcelBorderStyle.None);
-        }
-
-
-
-        /// <summary>
-        /// Given the coordinates of the first data cell in the table, finds the top row of the table by looking for its border
-        /// </summary>
-        /// <param name="worksheet"the worksheet we are currently working on</param>
-        /// <param name="row">the row of the first data cell</param>
-        /// <param name="col">the column of the first data cell</param>
-        /// <returns>the top row of the table, or the specified row if the table top isnt found</returns>
-        private static int FindTopEdgeOfTable(ExcelWorksheet worksheet, int row, int col)
-        {
-            for (int i = row; i >= 1; i--)
-            {
-                if (IsTopOfTable(worksheet.Cells[i, col]))
-                {
-                    return i;
-                }
-            }
-
-            return row; //Default: return the original cell
-        }
-
-
-
-        /// <summary>
-        /// Checks if the specified cell is on the top row of an excel table. This is determaned 
-        /// by its borders.
-        /// </summary>
-        /// <param name="cell">the cell being checked</param>
-        /// <returns>true if the cell is the top row of the table, and false otherwise</returns>
-        private static bool IsTopOfTable(ExcelRange cell)
-        {
-            var border = cell.Style.Border;
-
-            return !border.Bottom.Style.Equals(ExcelBorderStyle.None) && !border.Top.Style.Equals(ExcelBorderStyle.None);
+            return false;
         }
 
 
