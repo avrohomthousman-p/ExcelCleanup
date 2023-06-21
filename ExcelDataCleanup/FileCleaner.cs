@@ -376,7 +376,13 @@ namespace ExcelDataCleanup
 
 
             //restore the original style
-            SetCellStyles(currentCells, originalStyle); 
+            SetCellStyles(currentCells, originalStyle);
+
+
+            if (IsMinorHeader(worksheet, currentCells))
+            {
+                currentCells.Style.WrapText = false;
+            }
 
 
             return true;
@@ -393,6 +399,29 @@ namespace ExcelDataCleanup
         private static bool IsMajorHeader(ExcelRange cell)
         {
             return cell.Start.Row < topTableRow;
+        }
+
+
+
+        /// <summary>
+        /// Checks if the specified cell is considered a minor header.
+        /// 
+        /// A minor header is defined as a merge cell that contains non-data text and is inside the table.
+        /// </summary>
+        /// <param name="worksheet">the worksheet we are currently cleaning</param>
+        /// <param name="cells">the cells that we are checking</param>
+        /// <returns>true if the specified cells are a minor header and false otherwise</returns>
+        private static bool IsMinorHeader(ExcelWorksheet worksheet, ExcelRange cells)
+        {
+            if (IsEmptyCell(cells) || !IsInsideTable(cells))
+            {
+                return false;
+            }
+
+
+            ExcelRange topOfColumn = worksheet.Cells[topTableRow, cells.Start.Column];
+
+            return IsEmptyCell(topOfColumn);
         }
 
 
@@ -604,21 +633,18 @@ namespace ExcelDataCleanup
         /// <returns>the best width to use for the specified column</returns>
         private static double ChooseBestColumnWidth(ExcelWorksheet worksheet, int col)
         {
-            for(int row = topTableRow; row <= worksheet.Dimension.Rows; row++)
+            ExcelRange currentCell = worksheet.Cells[topTableRow, col];
+
+            if (IsEmptyCell(currentCell))
             {
-
-                ExcelRange currentCell = worksheet.Cells[row, col];
-
-                if (!IsEmptyCell(currentCell))
-                {
-                    return GetWidthOfCellText(currentCell, true);
-                }
+                //default: original size
+                return worksheet.Column(col).Width;
+            }
+            else
+            {
+                return GetWidthOfCellText(currentCell, true);
             }
 
-
-
-            //default: original size
-            return worksheet.Column(col).Width;
         }
 
 
