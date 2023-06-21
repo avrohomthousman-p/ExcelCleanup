@@ -553,6 +553,8 @@ namespace ExcelDataCleanup
                 {
                     PrepareColumnForDeletion(worksheet, col);
                     worksheet.DeleteColumn(col);
+
+                    Console.WriteLine("Column " + col + " is being deleted");
                 }
             }
         }
