@@ -16,7 +16,10 @@ namespace ExcelDataCleanup
         private static readonly int DEFAULT_FONT_SIZE = 10;
 
 
-        private static int topTableRow;
+        private static int firstRowOfTable;
+
+
+        private static bool[] isDataColumn;
 
 
 
@@ -124,7 +127,6 @@ namespace ExcelDataCleanup
             {
                 //Get the first worksheet in the workbook
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-
 
 
                 DeleteHiddenRows(worksheet);
@@ -255,8 +257,12 @@ namespace ExcelDataCleanup
             {
                 if(IsDataRow(worksheet, row))
                 {
-                    topTableRow = row;
+                    firstRowOfTable = row;
+
                     Console.WriteLine("First data row is row " + row);
+
+                    TrackDataColumns(worksheet);
+
                     return;
                 }
             }
@@ -297,6 +303,26 @@ namespace ExcelDataCleanup
             }
 
             return false;
+        }
+
+
+
+
+        /// <summary>
+        /// Populates the local variable isDataColumn with true's for each column that is a data column
+        /// </summary>
+        /// <param name="worksheet">the worksheet we are currently cleaning</param>
+        private static void TrackDataColumns(ExcelWorksheet worksheet)
+        {
+            isDataColumn = new bool[worksheet.Dimension.End.Column];
+
+            for(int col = 1; col <= worksheet.Dimension.Columns; col++)
+            {
+
+                //a column is a data column if it has description text in the first row of the table.
+                isDataColumn[col - 1] = !IsEmptyCell(worksheet.Cells[firstRowOfTable, col]);
+
+            }
         }
 
 
@@ -379,7 +405,7 @@ namespace ExcelDataCleanup
             SetCellStyles(currentCells, originalStyle);
 
 
-            if (IsMinorHeader(worksheet, currentCells))
+            if (IsMinorHeader(currentCells))
             {
                 currentCells.Style.WrapText = false;
             }
@@ -398,7 +424,7 @@ namespace ExcelDataCleanup
         /// <returns>true if the specified cell contains a major header, and false otherwise</returns>
         private static bool IsMajorHeader(ExcelRange cell)
         {
-            return cell.Start.Row < topTableRow;
+            return cell.Start.Row < firstRowOfTable;
         }
 
 
@@ -408,10 +434,9 @@ namespace ExcelDataCleanup
         /// 
         /// A minor header is defined as a merge cell that contains non-data text and is inside the table.
         /// </summary>
-        /// <param name="worksheet">the worksheet we are currently cleaning</param>
         /// <param name="cells">the cells that we are checking</param>
         /// <returns>true if the specified cells are a minor header and false otherwise</returns>
-        private static bool IsMinorHeader(ExcelWorksheet worksheet, ExcelRange cells)
+        private static bool IsMinorHeader(ExcelRange cells)
         {
             if (IsEmptyCell(cells) || !IsInsideTable(cells))
             {
@@ -419,9 +444,8 @@ namespace ExcelDataCleanup
             }
 
 
-            ExcelRange topOfColumn = worksheet.Cells[topTableRow, cells.Start.Column];
 
-            return IsEmptyCell(topOfColumn);
+            return !isDataColumn[cells.Start.Column - 1];
         }
 
 
@@ -462,7 +486,7 @@ namespace ExcelDataCleanup
         private static bool IsInsideTable(ExcelRange cell)
         {
 
-            return cell.Start.Row >= topTableRow;
+            return cell.Start.Row >= firstRowOfTable;
 
         }
 
@@ -560,7 +584,7 @@ namespace ExcelDataCleanup
         /// <returns></returns>
         private static bool SafeToDeleteColumn(ExcelWorksheet worksheet, int col)
         {
-            for (int row = topTableRow; row <= worksheet.Dimension.Rows; row++)
+            for (int row = firstRowOfTable; row <= worksheet.Dimension.Rows; row++)
             {
                 if (!IsEmptyCell(worksheet.Cells[row, col]))
                 {
@@ -582,7 +606,7 @@ namespace ExcelDataCleanup
         /// <param name="col">the column number we are preparing to delete</param>
         private static void PrepareColumnForDeletion(ExcelWorksheet worksheet, int col)
         {
-            for(int row = 1; row < topTableRow; row++)
+            for(int row = 1; row < firstRowOfTable; row++)
             {
                 if (!IsEmptyCell(worksheet.Cells[row, col]))
                 {
@@ -633,7 +657,7 @@ namespace ExcelDataCleanup
         /// <returns>the best width to use for the specified column</returns>
         private static double ChooseBestColumnWidth(ExcelWorksheet worksheet, int col)
         {
-            ExcelRange currentCell = worksheet.Cells[topTableRow, col];
+            ExcelRange currentCell = worksheet.Cells[firstRowOfTable, col];
 
             if (IsEmptyCell(currentCell))
             {
