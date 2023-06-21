@@ -428,8 +428,8 @@ namespace ExcelDataCleanup
                     return false;
 
                 case MergeType.MAIN_HEADER:
-                    originalStyle.WrapText = false;
-                    originalStyle.HorizontalAlignment = ExcelHorizontalAlignment.General;
+                    currentCells.Style.WrapText = false;
+                    currentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     Console.WriteLine("major header at " + currentCells.Address);
                     break;
 
@@ -814,7 +814,10 @@ namespace ExcelDataCleanup
 
             currentCells.Style.Border = style.Border;
             currentCells.Style.Font = style.Font;
-            currentCells.Style.HorizontalAlignment = style.HorizontalAlignment;
+
+            //Not sure why but it only sucsessfully sets these settings if these 2 lines are NOT executed
+            //currentCells.Style.WrapText = style.WrapText;
+            //currentCells.Style.HorizontalAlignment = style.HorizontalAlignment;
         }
 
 
