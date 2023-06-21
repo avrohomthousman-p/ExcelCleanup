@@ -252,7 +252,7 @@ namespace ExcelDataCleanup
             {
                 for (int j = 1; j <= worksheet.Dimension.Columns; j++)
                 {
-                    if (isDataCell(worksheet.Cells[i, j]))
+                    if (IsDataCell(worksheet.Cells[i, j]))
                     {
                         j = FindRightSideOfTable(worksheet, i, j);
                         i = FindTopEdgeOfTable(worksheet, i, j);
@@ -280,7 +280,7 @@ namespace ExcelDataCleanup
         {
             for (int j = col; j <= worksheet.Dimension.Columns; j++)
             {
-                if (isEndOfTable(worksheet.Cells[row, j]))
+                if (IsEndOfTable(worksheet.Cells[row, j]))
                 {
                     return j;
                 }
@@ -297,7 +297,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is the right edge of the table, and false otherwise</returns>
-        private static bool isEndOfTable(ExcelRange cell)
+        private static bool IsEndOfTable(ExcelRange cell)
         {
             var border = cell.Style.Border;
 
@@ -317,7 +317,7 @@ namespace ExcelDataCleanup
         {
             for (int i = row; i >= 1; i--)
             {
-                if (isTopOfTable(worksheet.Cells[i, col]))
+                if (IsTopOfTable(worksheet.Cells[i, col]))
                 {
                     return i;
                 }
@@ -334,7 +334,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is the top row of the table, and false otherwise</returns>
-        private static bool isTopOfTable(ExcelRange cell)
+        private static bool IsTopOfTable(ExcelRange cell)
         {
             var border = cell.Style.Border;
 
@@ -444,7 +444,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="currentCells">the cell that is being checked for text</param>
         /// <returns>true if there is no text in the cell, and false otherwise</returns>
-        private static bool isEmptyCell(ExcelRange currentCells)
+        private static bool IsEmptyCell(ExcelRange currentCells)
         {
             return currentCells.Text == null || currentCells.Text.Length == 0;
         }
@@ -457,7 +457,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is a data cell and false otherwise</returns>
-        private static bool isDataCell(ExcelRange cell)
+        private static bool IsDataCell(ExcelRange cell)
         {
 
             return cell.Text.StartsWith("$");
@@ -472,7 +472,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell whose location is being checked</param>
         /// <returns>true if the specified cell is inside a table and false otherwise</returns>
-        private static bool isInsideTable(ExcelRange cell)
+        private static bool IsInsideTable(ExcelRange cell)
         {
 
             return cell.Start.Row >= topTableRow;
@@ -568,7 +568,7 @@ namespace ExcelDataCleanup
         {
             for (int row = topTableRow; row <= worksheet.Dimension.Rows; row++)
             {
-                if (!isEmptyCell(worksheet.Cells[row, col]))
+                if (!IsEmptyCell(worksheet.Cells[row, col]))
                 {
                     return false;
                 }
@@ -590,7 +590,7 @@ namespace ExcelDataCleanup
         {
             for(int row = 1; row < topTableRow; row++)
             {
-                if (!isEmptyCell(worksheet.Cells[row, col]))
+                if (!IsEmptyCell(worksheet.Cells[row, col]))
                 {
                     
                     int destinationColumn;
