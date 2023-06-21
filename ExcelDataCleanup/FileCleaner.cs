@@ -235,7 +235,7 @@ namespace ExcelDataCleanup
 
             UnMergeMergedSections(worksheet);
 
-            DeleteColumns(worksheet);
+            //DeleteColumns(worksheet);
 
             ResizeAllColumns(worksheet);
         }
@@ -506,7 +506,12 @@ namespace ExcelDataCleanup
 
 
             currentCells.Style.Border = style.Border;
-            currentCells.Style.Font = style.Font;
+            currentCells.Style.Font.Bold = style.Font.Bold;
+            currentCells.Style.Font.Size = style.Font.Size;
+            currentCells.Style.Font.Name = style.Font.Name;
+            currentCells.Style.Font.Scheme = style.Font.Scheme;
+            currentCells.Style.Font.Charset = style.Font.Charset;
+
 
             //Not sure why but it only sucsessfully sets these settings if these 2 lines are NOT executed
             //currentCells.Style.WrapText = style.WrapText;
