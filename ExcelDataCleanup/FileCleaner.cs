@@ -383,50 +383,42 @@ namespace ExcelDataCleanup
         /// <returns>true if the specified cell was unmerged, and false otherwise</returns>
         private static bool UnMergeCells(ExcelWorksheet worksheet, string cellAddress)
         {
+
             ExcelRange currentCells = worksheet.Cells[cellAddress];
+
+
+            if(!currentCells.Merge)
+            {
+                return false;
+            }
+
+
+            if (IsMajorHeader(currentCells))
+            {
+                currentCells.Style.WrapText = false;
+                currentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                Console.WriteLine("major header at " + currentCells.Address);
+            }
 
 
             //Sometimes unmerging a cell changes the row height. We need to reset it to its starting value
             double initialHeigth = worksheet.Row(currentCells.Start.Row).Height;
 
+
             //record the style we had before any changes were made
             ExcelStyle originalStyle = currentCells.Style;
 
 
-
-            MergeType mergeType = GetCellMergeType(currentCells);
-
-            switch (mergeType)
-            {
-                case MergeType.NOT_A_MERGE:
-                    return false;
-
-                case MergeType.MAIN_HEADER:
-                    currentCells.Style.WrapText = false;
-                    currentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    Console.WriteLine("major header at " + currentCells.Address);
-                    break;
-
-                case MergeType.EMPTY:
-                    break;
-
-                case MergeType.MINOR_HEADER:
-                    break;
-
-                default: //If its a data cell
-                    break;
-            }
+            //unmerge range
+            currentCells.Merge = false; 
 
 
-
-            currentCells.Merge = false; //unmerge range
-
-
+            //restore original height
             worksheet.Row(currentCells.Start.Row).Height = initialHeigth;
 
 
-
-            SetCellStyles(currentCells, originalStyle); //reset the style to the way it was
+            //restore the original style
+            SetCellStyles(currentCells, originalStyle); 
 
 
             return true;
@@ -436,35 +428,13 @@ namespace ExcelDataCleanup
 
 
         /// <summary>
-        /// Gets the type of merge that is found in the specified cell
+        /// Checks if the specified cell is a major header
         /// </summary>
-        /// <param name="cell">the cell whose merge type is being checked</param>
-        /// <returns>the MergeType object that corrisponds to the type of merge cell we are given</returns>
-        private static MergeType GetCellMergeType(ExcelRange cell)
+        /// <param name="cell">the cell being checked</param>
+        /// <returns>true if the specified cell contains a major header, and false otherwise</returns>
+        private static bool IsMajorHeader(ExcelRange cell)
         {
-            if (cell.Merge == false)
-            {
-                return MergeType.NOT_A_MERGE;
-            }
-
-            if (isEmptyCell(cell))
-            {
-                return MergeType.EMPTY;
-            }
-
-            if (isDataCell(cell))
-            {
-                return MergeType.DATA;
-            }
-
-            if (isInsideTable(cell))
-            {
-                return MergeType.MINOR_HEADER;
-            }
-
-
-            //Otherwise is just a regular header
-            return MergeType.MAIN_HEADER;
+            return cell.Start.Row < topTableRow;
         }
 
 
