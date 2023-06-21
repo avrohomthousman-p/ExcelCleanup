@@ -12,7 +12,8 @@ namespace ExcelDataCleanup
     public class FileCleaner
     {
 
-        private static readonly int DEFAULT_COLUMN_WIDTH = 8;
+        //Needed for determaning a cell width based on its text.
+        private static readonly int DEFAULT_FONT_SIZE = 10;
 
 
         private static int topTableRow;
@@ -236,7 +237,7 @@ namespace ExcelDataCleanup
 
             DeleteColumns(worksheet);
 
-            //ResizeColumns(worksheet);
+            ResizeAllColumns(worksheet);
         }
 
 
@@ -609,6 +610,88 @@ namespace ExcelDataCleanup
                     originCell.Value = null;
                 }
             }
+        }
+
+
+
+
+        /// <summary>
+        /// Resizes all the columns in the worksheet to a size that better fits the contents
+        /// </summary>
+        /// <param name="worksheet">the worksheet we are currently cleaning</param>
+        private static void ResizeAllColumns(ExcelWorksheet worksheet)
+        {
+            for(int col = 1; col <= worksheet.Dimension.Columns; col++)
+            {
+                worksheet.Column(col).Width = ChooseBestColumnWidth(worksheet, col);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Chooses the optimal width of the specified column.
+        /// 
+        /// Current implemenatation: choosewidth based on the length of the text in the first cell in that column 
+        /// (that isnt a major header).
+        /// </summary>
+        /// <param name="worksheet">the worksheet we are currently cleaning</param>
+        /// <param name="col">the column in need of resizing</param>
+        /// <returns>the best width to use for the specified column</returns>
+        private static double ChooseBestColumnWidth(ExcelWorksheet worksheet, int col)
+        {
+            for(int row = topTableRow; row <= worksheet.Dimension.Rows; row++)
+            {
+
+                ExcelRange currentCell = worksheet.Cells[row, col];
+
+                if (!IsEmptyCell(currentCell))
+                {
+                    return GetWidthOfCellText(currentCell, true);
+                }
+            }
+
+
+
+            //default: original size
+            return worksheet.Column(col).Width;
+        }
+
+
+
+
+        /// <summary>
+        /// Calculates a cell width that would be sufficent to store the specified text in a single line
+        /// </summary>
+        /// <param name="cell">the cell whose text must be mesured</param>
+        /// <param name="givePadding">if true (or default) adds space for 2 extra characters in the cell with</param>
+        /// <returns>the appropriate column width</returns>
+        private static double GetWidthOfCellText(ExcelRange cell, bool givePadding = true)
+        {
+            return GetWidthOfCellText(cell.Text, cell.Style.Font.Size, givePadding);
+        }
+
+
+
+
+        /// <summary>
+        /// Calculates a cell width that would be sufficent to store the specified text in a single line
+        /// </summary>
+        /// <param name="columnText">the text in (one of the cells of) the column being resized</param>
+        /// <param name="fontSizeUsed">the font size of the text displayed in the column</param>
+        /// <param name="givePadding">if true (or default) adds space for 2 extra characters in the cell with</param>
+        /// <returns>the appropriate column width</returns>
+        private static double GetWidthOfCellText(string columnText, double fontSizeUsed, bool givePadding = true)
+        {
+            int padding = (givePadding ? 2 : 0);
+
+            double characterWidth = fontSizeUsed / DEFAULT_FONT_SIZE;
+
+            double lengthOfText = (columnText.Length + padding) * characterWidth;
+
+            //double lengthOfText = columnText.Length + padding; //if you want to ignore font size use this
+
+            return lengthOfText;
         }
 
 
