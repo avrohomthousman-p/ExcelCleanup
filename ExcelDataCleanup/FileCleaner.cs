@@ -339,7 +339,7 @@ namespace ExcelDataCleanup
         {
             Dictionary<int, double> columnWidths = new Dictionary<int, double>();
 
-
+            
             //FIXME: this system might be the problem
 
             for(int col = 1; col <= isDataColumn.Length; col++)
@@ -347,15 +347,20 @@ namespace ExcelDataCleanup
 
                 ExcelRange currentCell = worksheet.Cells[firstRowOfTable, col];
 
+
                 if (!currentCell.Merge || IsEmptyCell(currentCell))
                 {
                     continue;
                 }
 
-                int startOfMerge = col;
-                double totalWidth = GetWidthOfMergeCell(worksheet, firstRowOfTable, ref col);
 
-                columnWidths.Add(startOfMerge, totalWidth);
+                currentCell = GetMergeCellByPosition(worksheet, firstRowOfTable, col);
+
+                double width = GetWidthOfMergeCell(worksheet, currentCell);
+
+                columnWidths.Add(col, width);
+
+                col += (CountMergeCellLength(currentCell) - 1);
             }
 
 
@@ -364,36 +369,54 @@ namespace ExcelDataCleanup
 
 
 
+        /// <summary>
+        /// Finds the full ExcelRange object that contains the entire merge at the specified address. 
+        /// In other words, the specified row and column point to a cell that is merged to be part of a 
+        /// larger cell. This method returns the ExcelRange for the ENTIRE merge cell.
+        /// </summary>
+        /// <param name="worksheet">the worksheet we are currently cleaning</param>
+        /// <param name="row">the row of a cell that is part of the larger merge</param>
+        /// <param name="col">the column of a cell that is part of the larger merge</param>
+        /// <returns>the Excel range object containing the entire merge</returns>
+        private static ExcelRange GetMergeCellByPosition(ExcelWorksheet worksheet, int row, int col)
+        {
+            int index = worksheet.GetMergeCellId(row, col);
+            string cellAddress = worksheet.MergedCells[index - 1];
+            return worksheet.Cells[cellAddress];
+        }
+
+
 
         /// <summary>
         /// Calculates the width of a merge cell.
-        /// 
-        /// Note: this function is designed to work for horizontal merges, not vertical merges.
         /// </summary>
         /// <param name="worksheet">the worksheet currently being cleaned</param>
-        /// <param name="row">the row of the merged cell</param>
-        /// <param name="col">the first column of the merged cell</param>
+        /// <param name="currentCells">the merge cell being mesured</param>
         /// <returns>the width of the specified merged cell</returns>
-        private static double GetWidthOfMergeCell(ExcelWorksheet worksheet, int row, ref int col)
+        private static double GetWidthOfMergeCell(ExcelWorksheet worksheet, ExcelRange currentCells)
         {
             double width = 0;
 
-            while (col <= worksheet.Dimension.Columns)
+            for (int col = currentCells.Start.Column; col <= currentCells.End.Column; col++)
             {
-                ExcelRange currentCell = worksheet.Cells[row, col];
-
-                if (!currentCell.Merge)
-                {
-                    break;
-                }
-
-
                 width += worksheet.Column(col).Width; //alt:  currentCell.EntireColumn.Width;  
-                col++;
             }
 
 
             return width;
+        }
+
+
+
+        /// <summary>
+        /// Counts the number of cells in a merge cell. This method only counts the number of cells
+        /// in the first row of the merge.
+        /// </summary>
+        /// <param name="mergeCell">the address of the full merge cell</param>
+        /// <returns>the number of cells in the merge</returns>
+        private static int CountMergeCellLength(ExcelRange mergeCell)
+        {
+            return mergeCell.End.Column - mergeCell.Start.Column + 1;
         }
 
 
