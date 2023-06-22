@@ -440,26 +440,42 @@ namespace ExcelDataCleanup
             ExcelRange currentCells = worksheet.Cells[cellAddress];
 
 
-            if(!currentCells.Merge)
-            {
-                return false;
-            }
-
-
-            if (IsMajorHeader(currentCells))
-            {
-                currentCells.Style.WrapText = false;
-                currentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                Console.WriteLine("major header at " + currentCells.Address);
-            }
 
 
             //Sometimes unmerging a cell changes the row height. We need to reset it to its starting value
             double initialHeigth = worksheet.Row(currentCells.Start.Row).Height;
 
-
             //record the style we had before any changes were made
             ExcelStyle originalStyle = currentCells.Style;
+
+
+
+
+            MergeType mergeType = GetCellMergeType(currentCells);
+
+
+            switch (mergeType)
+            {
+                case MergeType.NOT_A_MERGE:
+                    return false;
+
+                case MergeType.EMPTY:
+                    break;
+
+                case MergeType.MAIN_HEADER:
+                    initialHeigth = GetHeightOfMergeCell(currentCells); //main headers sometimes span multiple rows
+                    currentCells.Style.WrapText = false;
+                    currentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    Console.WriteLine("major header at " + currentCells.Address);
+                    break;
+
+                case MergeType.MINOR_HEADER:
+                    currentCells.Style.WrapText = false;
+                    break;
+
+                case MergeType.DATA:
+                    break;
+            }     
 
 
             //unmerge range
@@ -474,15 +490,58 @@ namespace ExcelDataCleanup
             SetCellStyles(currentCells, originalStyle);
 
 
+            /* //might need to keep this in the end. test
             if (IsMinorHeader(currentCells))
             {
                 currentCells.Style.WrapText = false;
             }
+            */
 
 
             return true;
 
         }
+
+
+
+
+        /// <summary>
+        /// Gets the type of merge that is found in the specified cell
+        /// </summary>
+        /// <param name="cell">the cell whose merge type is being checked</param>
+        /// <returns>the MergeType object that corrisponds to the type of merge cell we are given</returns>
+        private static MergeType GetCellMergeType(ExcelRange cell)
+        {
+            if (cell.Merge == false)
+            {
+                return MergeType.NOT_A_MERGE;
+            }
+
+            if (IsEmptyCell(cell))
+            {
+                return MergeType.EMPTY;
+            }
+
+            if (IsMajorHeader(cell))
+            {
+                return MergeType.MAIN_HEADER;
+            }
+
+            if (IsMinorHeader(cell))
+            {
+                return MergeType.MINOR_HEADER;
+            }
+
+            if (IsDataCell(cell))
+            {
+                return MergeType.DATA;
+            }
+
+
+            throw new ArgumentException("Cannot determan merge type of specified cell");
+        }
+
+
 
 
 
@@ -493,7 +552,7 @@ namespace ExcelDataCleanup
         /// <returns>true if the specified cell contains a major header, and false otherwise</returns>
         private static bool IsMajorHeader(ExcelRange cell)
         {
-            return cell.Start.Row < firstRowOfTable;
+            return !IsEmptyCell(cell) && cell.Start.Row < firstRowOfTable;
         }
 
 
@@ -540,7 +599,7 @@ namespace ExcelDataCleanup
         private static bool IsDataCell(ExcelRange cell)
         {
 
-            return cell.Text.StartsWith("$");
+            return isDataColumn[cell.Start.Column - 1];
 
         }
 
@@ -557,6 +616,29 @@ namespace ExcelDataCleanup
 
             return cell.Start.Row >= firstRowOfTable;
 
+        }
+
+
+
+
+        /// <summary>
+        /// Counts up the total height of all rows in the specifed merge cell
+        /// </summary>
+        /// <param name="currentCell">the merge cell whose height is being mesured</param>
+        /// <returns>the height of the specified merge cell</returns>
+        private static double GetHeightOfMergeCell(ExcelRange currentCell)
+        {
+
+            ExcelWorksheet worksheet = currentCell.Worksheet;
+
+            double height = 0;
+            for(int row = currentCell.Start.Row; row <= currentCell.End.Row; row++)
+            {
+                height += worksheet.Row(row).Height;
+            }
+
+
+            return height;
         }
 
 
