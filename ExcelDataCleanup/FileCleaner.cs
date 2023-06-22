@@ -339,8 +339,6 @@ namespace ExcelDataCleanup
         {
             Dictionary<int, double> columnWidths = new Dictionary<int, double>();
 
-            
-            //FIXME: this system might be the problem
 
             for(int col = 1; col <= isDataColumn.Length; col++)
             {
@@ -749,7 +747,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="worksheet">the worksheet where the column can be found</param>
         /// <param name="col">the column being checked</param>
-        /// <returns></returns>
+        /// <returns>true if it is safe to delete the column and false if deleting it would result in data loss</returns>
         private static bool SafeToDeleteColumn(ExcelWorksheet worksheet, int col)
         {
             for (int row = firstRowOfTable; row <= worksheet.Dimension.Rows; row++)
@@ -812,87 +810,6 @@ namespace ExcelDataCleanup
                 worksheet.Column(entry.Key).Width = entry.Value;
             }
         }
-
-
-
-
-        /*
-        /// <summary>
-        /// Resizes all the columns in the worksheet to a size that better fits the contents
-        /// </summary>
-        /// <param name="worksheet">the worksheet we are currently cleaning</param>
-        private static void ResizeAllColumns(ExcelWorksheet worksheet)
-        {
-            for(int col = 1; col <= worksheet.Dimension.Columns; col++)
-            {
-                worksheet.Column(col).Width = ChooseBestColumnWidth(worksheet, col);
-            }
-        }
-
-
-
-        /// <summary>
-        /// Chooses the optimal width of the specified column.
-        /// 
-        /// Current implemenatation: choosewidth based on the length of the text in the first cell in that column 
-        /// (that isnt a major header).
-        /// </summary>
-        /// <param name="worksheet">the worksheet we are currently cleaning</param>
-        /// <param name="col">the column in need of resizing</param>
-        /// <returns>the best width to use for the specified column</returns>
-        private static double ChooseBestColumnWidth(ExcelWorksheet worksheet, int col)
-        {
-            ExcelRange currentCell = worksheet.Cells[firstRowOfTable, col];
-
-            if (IsEmptyCell(currentCell))
-            {
-                //default: original size
-                return worksheet.Column(col).Width;
-            }
-            else
-            {
-                return GetWidthOfCellText(currentCell, true);
-            }
-
-        }
-
-
-
-
-        /// <summary>
-        /// Calculates a cell width that would be sufficent to store the specified text in a single line
-        /// </summary>
-        /// <param name="cell">the cell whose text must be mesured</param>
-        /// <param name="givePadding">if true (or default) adds space for 2 extra characters in the cell with</param>
-        /// <returns>the appropriate column width</returns>
-        private static double GetWidthOfCellText(ExcelRange cell, bool givePadding = true)
-        {
-            return GetWidthOfCellText(cell.Text, cell.Style.Font.Size, givePadding);
-        }
-
-
-
-
-        /// <summary>
-        /// Calculates a cell width that would be sufficent to store the specified text in a single line
-        /// </summary>
-        /// <param name="columnText">the text in (one of the cells of) the column being resized</param>
-        /// <param name="fontSizeUsed">the font size of the text displayed in the column</param>
-        /// <param name="givePadding">if true (or default) adds space for 2 extra characters in the cell with</param>
-        /// <returns>the appropriate column width</returns>
-        private static double GetWidthOfCellText(string columnText, double fontSizeUsed, bool givePadding = true)
-        {
-            int padding = (givePadding ? 2 : 0);
-
-            double characterWidth = fontSizeUsed / DEFAULT_FONT_SIZE;
-
-            double lengthOfText = (columnText.Length + padding) * characterWidth;
-
-            //double lengthOfText = columnText.Length + padding; //if you want to ignore font size use this
-
-            return lengthOfText;
-        }
-        */
 
 
 
