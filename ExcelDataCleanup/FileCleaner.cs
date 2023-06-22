@@ -235,11 +235,13 @@ namespace ExcelDataCleanup
 
             FindTableBounds(worksheet);
 
+            Dictionary<int, double> originalColumnWidths = RecordOriginalColumnWidths(worksheet);
+
             UnMergeMergedSections(worksheet);
 
             //DeleteColumns(worksheet);
 
-            ResizeAllColumns(worksheet);
+            ResizeColumns(worksheet, originalColumnWidths);
         }
 
 
@@ -323,6 +325,73 @@ namespace ExcelDataCleanup
                 isDataColumn[col - 1] = !IsEmptyCell(worksheet.Cells[firstRowOfTable, col]);
 
             }
+        }
+
+
+
+        /// <summary>
+        /// Records the starting widths of all data columns that are merged in a dictionary for later use in resizing those columns
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        /// <returns>a dictionary containing all the column numbers (of data columns only) and their original widths 
+        /// (before any unmerging was done)</returns>
+        private static Dictionary<int, double> RecordOriginalColumnWidths(ExcelWorksheet worksheet)
+        {
+            Dictionary<int, double> columnWidths = new Dictionary<int, double>();
+
+
+            for(int col = 1; col <= isDataColumn.Length; col++)
+            {
+
+                ExcelRange currentCell = worksheet.Cells[firstRowOfTable, col];
+
+                if (!currentCell.Merge || IsEmptyCell(currentCell))
+                {
+                    continue;
+                }
+
+
+                double totalWidth = GetWidthOfMergeCell(worksheet, firstRowOfTable, ref col);
+
+                columnWidths.Add(col, totalWidth);
+            }
+
+
+            return columnWidths;
+        }
+
+
+
+
+        /// <summary>
+        /// Calculates the width of a merge cell.
+        /// 
+        /// Note: this function is designed to work for horizontal merges, not vertical merges.
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        /// <param name="row">the row of the merged cell</param>
+        /// <param name="col">the first column of the merged cell</param>
+        /// <returns></returns>
+        private static double GetWidthOfMergeCell(ExcelWorksheet worksheet, int row, ref int col)
+        {
+            double width = 0;
+
+            while (col <= worksheet.Dimension.Columns)
+            {
+                ExcelRange currentCell = worksheet.Cells[row, col];
+
+                if (!currentCell.Merge)
+                {
+                    break;
+                }
+
+
+                width += currentCell.EntireColumn.Width; //alt: worksheet.Column(col).Width
+                col++;
+            }
+
+
+            return width;
         }
 
 
@@ -633,6 +702,23 @@ namespace ExcelDataCleanup
 
 
         /// <summary>
+        /// Resizes the columns specified in the dictionary to the size stored in the dictionary
+        /// </summary>
+        /// <param name="worksheet">the worksheet curently being cleaned</param>
+        /// <param name="widthsToUse">a dictionary mapping column numbers to desired widths</param>
+        private static void ResizeColumns(ExcelWorksheet worksheet, Dictionary<int, double> widthsToUse)
+        {
+            foreach (KeyValuePair<int, double> entry in widthsToUse)
+            {
+                worksheet.Column(entry.Key).Width = entry.Value;
+            }
+        }
+
+
+
+
+        /*
+        /// <summary>
         /// Resizes all the columns in the worksheet to a size that better fits the contents
         /// </summary>
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
@@ -707,6 +793,7 @@ namespace ExcelDataCleanup
 
             return lengthOfText;
         }
+        */
 
 
 
