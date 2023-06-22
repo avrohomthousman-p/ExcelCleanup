@@ -239,9 +239,9 @@ namespace ExcelDataCleanup
 
             UnMergeMergedSections(worksheet);
 
-            //DeleteColumns(worksheet);
-
             ResizeColumns(worksheet, originalColumnWidths);
+
+            //DeleteColumns(worksheet);
         }
 
 
@@ -340,6 +340,8 @@ namespace ExcelDataCleanup
             Dictionary<int, double> columnWidths = new Dictionary<int, double>();
 
 
+            //FIXME: this system might be the problem
+
             for(int col = 1; col <= isDataColumn.Length; col++)
             {
 
@@ -350,10 +352,10 @@ namespace ExcelDataCleanup
                     continue;
                 }
 
-
+                int startOfMerge = col;
                 double totalWidth = GetWidthOfMergeCell(worksheet, firstRowOfTable, ref col);
 
-                columnWidths.Add(col, totalWidth);
+                columnWidths.Add(startOfMerge, totalWidth);
             }
 
 
@@ -371,7 +373,7 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet currently being cleaned</param>
         /// <param name="row">the row of the merged cell</param>
         /// <param name="col">the first column of the merged cell</param>
-        /// <returns></returns>
+        /// <returns>the width of the specified merged cell</returns>
         private static double GetWidthOfMergeCell(ExcelWorksheet worksheet, int row, ref int col)
         {
             double width = 0;
@@ -386,7 +388,7 @@ namespace ExcelDataCleanup
                 }
 
 
-                width += currentCell.EntireColumn.Width; //alt: worksheet.Column(col).Width
+                width += worksheet.Column(col).Width; //alt:  currentCell.EntireColumn.Width;  
                 col++;
             }
 
@@ -488,14 +490,6 @@ namespace ExcelDataCleanup
 
             //restore the original style
             SetCellStyles(currentCells, originalStyle);
-
-
-            /* //might need to keep this in the end. test
-            if (IsMinorHeader(currentCells))
-            {
-                currentCells.Style.WrapText = false;
-            }
-            */
 
 
             return true;
