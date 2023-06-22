@@ -241,7 +241,7 @@ namespace ExcelDataCleanup
 
             ResizeColumns(worksheet, originalColumnWidths);
 
-            //DeleteColumns(worksheet);
+            DeleteColumns(worksheet);
         }
 
 
@@ -789,7 +789,14 @@ namespace ExcelDataCleanup
 
                     ExcelRange originCell = worksheet.Cells[row, col];
                     ExcelRange destinationCell = worksheet.Cells[row, destinationColumn];
+
+
+                    //Move the text and its formatting
                     destinationCell.Value = originCell.Value;
+                    destinationCell.Style.Font.Name = originCell.Style.Font.Name;
+                    destinationCell.Style.Font.Bold = originCell.Style.Font.Bold;
+                    destinationCell.Style.Font.Size = originCell.Style.Font.Size;
+
                     originCell.Value = null;
                 }
             }
