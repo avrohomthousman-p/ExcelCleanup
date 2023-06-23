@@ -728,7 +728,13 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
         private static void DeleteColumns(ExcelWorksheet worksheet)
         {
-            for(int col = worksheet.Dimension.Columns; col >= 1;  col--)
+
+            //We don't want to delete any columns before the first data column becuase that might 
+            //mess up the whitespace around minor headers
+            int firstDataColumn = FindFirstDataColumn(worksheet);
+
+
+            for(int col = worksheet.Dimension.Columns; col > firstDataColumn;  col--)
             {
                 if(SafeToDeleteColumn(worksheet, col))
                 {
@@ -738,6 +744,27 @@ namespace ExcelDataCleanup
                     Console.WriteLine("Column " + col + " is being deleted");
                 }
             }
+        }
+
+
+
+        /// <summary>
+        /// Finds the column number of the first column that is considered a data column
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        /// <returns>the column number of the first data column</returns>
+        private static int FindFirstDataColumn(ExcelWorksheet worksheet)
+        {
+            for(int i = 0; i < isDataColumn.Length; i++)
+            {
+                if (isDataColumn[i])
+                {
+                    return i + 1;
+                }
+            }
+
+
+            return 1; //Default: first column
         }
 
 
