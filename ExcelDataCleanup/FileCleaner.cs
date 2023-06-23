@@ -233,7 +233,19 @@ namespace ExcelDataCleanup
         private static void RemoveAllMerges(ExcelWorksheet worksheet)
         {
 
-            FindTableBounds(worksheet);
+            //If we fail to find the top row of the table, we just return (no unmerging) so that all other cleanup can be saved
+            try
+            {
+                FindTableBounds(worksheet);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Something went wrong when attempting to remove merge cells. This part of cleanup will be skipped");
+                Console.WriteLine("Error message: " + e.StackTrace);
+                return;
+            }
+
+            
 
             Dictionary<int, double> originalColumnWidths = RecordOriginalColumnWidths(worksheet);
 
@@ -252,6 +264,7 @@ namespace ExcelDataCleanup
         /// row number to this classes local variable (topTableRow) for later use
         /// </summary>
         /// <param name="worksheet">the worksheet we are working on</param>
+        /// <exception cref="Exception">if the first row of the table couldnt be found</exception>
         private static void FindTableBounds(ExcelWorksheet worksheet)
         {
 
