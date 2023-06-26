@@ -72,7 +72,7 @@ namespace ExcelDataCleanup
             {
                 for (int j = 1; j <= worksheet.Dimension.Columns; j++)
                 {
-                    if (isDataCell(worksheet.Cells[i, j]))
+                    if (IsDataCell(worksheet.Cells[i, j]))
                     {
                         j = FindRightSideOfTable(worksheet, i, j);
                         i = FindTopEdgeOfTable(worksheet, i, j);
@@ -100,7 +100,7 @@ namespace ExcelDataCleanup
         {
             for (int j = col; j <= worksheet.Dimension.Columns; j++)
             {
-                if (isEndOfTable(worksheet.Cells[row, j]))
+                if (IsEndOfTable(worksheet.Cells[row, j]))
                 {
                     return j;
                 }
@@ -117,7 +117,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is the right edge of the table, and false otherwise</returns>
-        private bool isEndOfTable(ExcelRange cell)
+        private bool IsEndOfTable(ExcelRange cell)
         {
             var border = cell.Style.Border;
 
@@ -137,7 +137,7 @@ namespace ExcelDataCleanup
         {
             for (int i = row; i >= 1; i--)
             {
-                if (isTopOfTable(worksheet.Cells[i, col]))
+                if (IsTopOfTable(worksheet.Cells[i, col]))
                 {
                     return i;
                 }
@@ -154,7 +154,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is the top row of the table, and false otherwise</returns>
-        private bool isTopOfTable(ExcelRange cell)
+        private bool IsTopOfTable(ExcelRange cell)
         {
             var border = cell.Style.Border;
 
@@ -280,17 +280,17 @@ namespace ExcelDataCleanup
                 return MergeType.NOT_A_MERGE;
             }
 
-            if (isEmptyCell(cell))
+            if (IsEmptyCell(cell))
             {
                 return MergeType.EMPTY;
             }
 
-            if (isDataCell(cell))
+            if (IsDataCell(cell))
             {
                 return MergeType.DATA;
             }
 
-            if (isInsideTable(cell))
+            if (IsInsideTable(cell))
             {
                 return MergeType.MINOR_HEADER;
             }
@@ -307,7 +307,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="currentCells">the cell that is being checked for text</param>
         /// <returns>true if there is no text in the cell, and false otherwise</returns>
-        private bool isEmptyCell(ExcelRange currentCells)
+        private bool IsEmptyCell(ExcelRange currentCells)
         {
             return currentCells.Text == null || currentCells.Text.Length == 0;
         }
@@ -320,7 +320,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is a data cell and false otherwise</returns>
-        private bool isDataCell(ExcelRange cell)
+        private bool IsDataCell(ExcelRange cell)
         {
 
             return cell.Text.StartsWith("$");
@@ -335,7 +335,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell whose location is being checked</param>
         /// <returns>true if the specified cell is inside a table and false otherwise</returns>
-        private bool isInsideTable(ExcelRange cell)
+        private bool IsInsideTable(ExcelRange cell)
         {
 
             return cell.Start.Row >= topTableRow;
@@ -705,7 +705,7 @@ namespace ExcelDataCleanup
 
 
                 //Empty cells dont need resize, and data cells have already been resized
-                if (isEmptyCell(cell) || isDataCell(cell))
+                if (IsEmptyCell(cell) || IsDataCell(cell))
                 {
                     continue;
                 }
