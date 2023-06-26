@@ -54,7 +54,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="worksheet">the worksheet we are working on</param>
         /// <exception cref="Exception">if the first row of the table couldnt be found</exception>
-        private static void FindTableBounds(ExcelWorksheet worksheet)
+        private void FindTableBounds(ExcelWorksheet worksheet)
         {
 
             for (int row = 1; row <= worksheet.Dimension.Rows; row++)
@@ -81,13 +81,11 @@ namespace ExcelDataCleanup
 
         /// <summary>
         /// Checks if the specified row is a data row.
-        /// 
-        /// Current Implementation: a row is a data row if it contains at least 3 cells with text
         /// </summary>
         /// <param name="worksheet">the worksheet where the row in question can be found</param>
         /// <param name="row">the row to be checked</param>
         /// <returns>true if the specified row is a data row and false otherwise</returns>
-        private static bool IsDataRow(ExcelWorksheet worksheet, int row)
+        private bool IsDataRow(ExcelWorksheet worksheet, int row)
         {
 
             const int NUM_FULL_COLUMNS_REQUIRED = 3;
@@ -116,7 +114,7 @@ namespace ExcelDataCleanup
         /// Populates the local variable isDataColumn with true's for each column that is a data column
         /// </summary>
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
-        private static void TrackDataColumns(ExcelWorksheet worksheet)
+        private void TrackDataColumns(ExcelWorksheet worksheet)
         {
             isDataColumn = new bool[worksheet.Dimension.End.Column];
 
@@ -137,7 +135,7 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet currently being cleaned</param>
         /// <returns>a dictionary containing all the column numbers (of data columns only) and their original widths 
         /// (before any unmerging was done)</returns>
-        private static Dictionary<int, double> RecordOriginalColumnWidths(ExcelWorksheet worksheet)
+        private Dictionary<int, double> RecordOriginalColumnWidths(ExcelWorksheet worksheet)
         {
             Dictionary<int, double> columnWidths = new Dictionary<int, double>();
 
@@ -178,7 +176,7 @@ namespace ExcelDataCleanup
         /// <param name="row">the row of a cell that is part of the larger merge</param>
         /// <param name="col">the column of a cell that is part of the larger merge</param>
         /// <returns>the Excel range object containing the entire merge</returns>
-        private static ExcelRange GetMergeCellByPosition(ExcelWorksheet worksheet, int row, int col)
+        private ExcelRange GetMergeCellByPosition(ExcelWorksheet worksheet, int row, int col)
         {
             int index = worksheet.GetMergeCellId(row, col);
             string cellAddress = worksheet.MergedCells[index - 1];
@@ -193,7 +191,7 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet currently being cleaned</param>
         /// <param name="currentCells">the merge cell being mesured</param>
         /// <returns>the width of the specified merged cell</returns>
-        private static double GetWidthOfMergeCell(ExcelWorksheet worksheet, ExcelRange currentCells)
+        private double GetWidthOfMergeCell(ExcelWorksheet worksheet, ExcelRange currentCells)
         {
             double width = 0;
 
@@ -214,7 +212,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="mergeCell">the address of the full merge cell</param>
         /// <returns>the number of cells in the merge</returns>
-        private static int CountMergeCellLength(ExcelRange mergeCell)
+        private int CountMergeCellLength(ExcelRange mergeCell)
         {
             return mergeCell.End.Column - mergeCell.Start.Column + 1;
         }
@@ -226,7 +224,7 @@ namespace ExcelDataCleanup
         /// Unmerges all the merged sections in the worksheet.
         /// </summary>
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
-        private static void UnMergeMergedSections(ExcelWorksheet worksheet)
+        private void UnMergeMergedSections(ExcelWorksheet worksheet)
         {
 
             ExcelWorksheet.MergeCellsCollection mergedCells = worksheet.MergedCells;
@@ -259,7 +257,7 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
         /// <param name="cellAddress">the address of the ENTIRE merged section (eg A18:F24)</param>
         /// <returns>true if the specified cell was unmerged, and false otherwise</returns>
-        private static bool UnMergeCells(ExcelWorksheet worksheet, string cellAddress)
+        private bool UnMergeCells(ExcelWorksheet worksheet, string cellAddress)
         {
 
             ExcelRange currentCells = worksheet.Cells[cellAddress];
@@ -327,7 +325,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell whose merge type is being checked</param>
         /// <returns>the MergeType object that corrisponds to the type of merge cell we are given</returns>
-        private static MergeType GetCellMergeType(ExcelRange cell)
+        private MergeType GetCellMergeType(ExcelRange cell)
         {
             if (cell.Merge == false)
             {
@@ -367,7 +365,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the specified cell contains a major header, and false otherwise</returns>
-        private static bool IsMajorHeader(ExcelRange cell)
+        private bool IsMajorHeader(ExcelRange cell)
         {
             return !IsEmptyCell(cell) && cell.Start.Row < firstRowOfTable;
         }
@@ -381,7 +379,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cells">the cells that we are checking</param>
         /// <returns>true if the specified cells are a minor header and false otherwise</returns>
-        private static bool IsMinorHeader(ExcelRange cells)
+        private bool IsMinorHeader(ExcelRange cells)
         {
             if (IsEmptyCell(cells) || !IsInsideTable(cells))
             {
@@ -400,7 +398,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="currentCells">the cell that is being checked for text</param>
         /// <returns>true if there is no text in the cell, and false otherwise</returns>
-        private static bool IsEmptyCell(ExcelRange currentCells)
+        private bool IsEmptyCell(ExcelRange currentCells)
         {
             return currentCells.Text == null || currentCells.Text.Length == 0;
         }
@@ -413,7 +411,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is a data cell and false otherwise</returns>
-        private static bool IsDataCell(ExcelRange cell)
+        private bool IsDataCell(ExcelRange cell)
         {
 
             return isDataColumn[cell.Start.Column - 1];
@@ -428,7 +426,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="cell">the cell whose location is being checked</param>
         /// <returns>true if the specified cell is inside a table and false otherwise</returns>
-        private static bool IsInsideTable(ExcelRange cell)
+        private bool IsInsideTable(ExcelRange cell)
         {
 
             return cell.Start.Row >= firstRowOfTable;
@@ -443,7 +441,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="currentCell">the merge cell whose height is being mesured</param>
         /// <returns>the height of the specified merge cell</returns>
-        private static double GetHeightOfMergeCell(ExcelRange currentCell)
+        private double GetHeightOfMergeCell(ExcelRange currentCell)
         {
 
             ExcelWorksheet worksheet = currentCell.Worksheet;
@@ -467,7 +465,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="currentCells">the cells whose style must be set</param>
         /// <param name="style">all the styles we should use</param>
-        private static void SetCellStyles(ExcelRange currentCells, ExcelStyle style)
+        private void SetCellStyles(ExcelRange currentCells, ExcelStyle style)
         {
 
 
@@ -503,7 +501,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="argb">the argb code of the color needed</param>
         /// <returns>an instance of System.Drawing.Color that matches the specified argb code</returns>
-        private static System.Drawing.Color GetColorFromARgb(String argb)
+        private System.Drawing.Color GetColorFromARgb(String argb)
         {
             if (argb.StartsWith("#"))
             {
@@ -528,7 +526,7 @@ namespace ExcelDataCleanup
         /// Deletes all empty columns in the worksheet created by unmerges
         /// </summary>
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
-        private static void DeleteColumns(ExcelWorksheet worksheet)
+        private void DeleteColumns(ExcelWorksheet worksheet)
         {
 
             //We don't want to delete any columns before the first data column becuase that might 
@@ -555,7 +553,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="worksheet">the worksheet currently being cleaned</param>
         /// <returns>the column number of the first data column</returns>
-        private static int FindFirstDataColumn(ExcelWorksheet worksheet)
+        private int FindFirstDataColumn(ExcelWorksheet worksheet)
         {
             for (int i = 0; i < isDataColumn.Length; i++)
             {
@@ -577,7 +575,7 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet where the column can be found</param>
         /// <param name="col">the column being checked</param>
         /// <returns>true if it is safe to delete the column and false if deleting it would result in data loss</returns>
-        private static bool SafeToDeleteColumn(ExcelWorksheet worksheet, int col)
+        private bool SafeToDeleteColumn(ExcelWorksheet worksheet, int col)
         {
             for (int row = firstRowOfTable; row <= worksheet.Dimension.Rows; row++)
             {
@@ -599,7 +597,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="worksheet">the worksheet the column could be found in</param>
         /// <param name="col">the column number we are preparing to delete</param>
-        private static void PrepareColumnForDeletion(ExcelWorksheet worksheet, int col)
+        private void PrepareColumnForDeletion(ExcelWorksheet worksheet, int col)
         {
             for (int row = 1; row < firstRowOfTable; row++)
             {
@@ -639,7 +637,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="worksheet">the worksheet curently being cleaned</param>
         /// <param name="widthsToUse">a dictionary mapping column numbers to desired widths</param>
-        private static void ResizeColumns(ExcelWorksheet worksheet, Dictionary<int, double> widthsToUse)
+        private void ResizeColumns(ExcelWorksheet worksheet, Dictionary<int, double> widthsToUse)
         {
             foreach (KeyValuePair<int, double> entry in widthsToUse)
             {

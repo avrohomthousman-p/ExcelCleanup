@@ -135,20 +135,7 @@ namespace ExcelDataCleanup
                 RemoveAllHyperLinks(worksheet);
 
 
-                IMergeCleaner mergeCleaner = new PrimaryMergeCleaner();
-                
-                try
-                {
-                    mergeCleaner.Unmerge(worksheet);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Error message: " + e.StackTrace);
-                    Console.WriteLine("Something went wrong when attempting to remove merge cells. Trying again with the older cleanup system...");
-                    mergeCleaner = new BackupMergeCleaner();
-                    mergeCleaner.Unmerge(worksheet);
-                }
-                
+                RemoveAllMerges(worksheet);
 
 
                 FixExcelTypeWarnings(worksheet);
@@ -212,7 +199,6 @@ namespace ExcelDataCleanup
 
 
 
-
         /// <summary>
         /// Removes hyperlinks in the specified Excel Cell if any are present.
         /// </summary>
@@ -233,6 +219,30 @@ namespace ExcelDataCleanup
                 cell.Hyperlink = null;
                 ////cell.Hyperlink = new Uri(cell.ToString(), UriKind.Absolute);
                 cell.Value = val;
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Manages the unmerging
+        /// </summary>
+        /// <param name="worksheet">the worksheet whose cells must be unmerged</param>
+        private static void RemoveAllMerges(ExcelWorksheet worksheet)
+        {
+            IMergeCleaner mergeCleaner = new PrimaryMergeCleaner();
+
+            try
+            {
+                mergeCleaner.Unmerge(worksheet);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error message: " + e.StackTrace);
+                Console.WriteLine("Something went wrong when attempting to remove merge cells. Trying again with the older cleanup system...");
+                mergeCleaner = new BackupMergeCleaner();
+                mergeCleaner.Unmerge(worksheet);
             }
         }
 
