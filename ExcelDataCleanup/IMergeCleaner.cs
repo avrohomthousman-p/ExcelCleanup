@@ -14,7 +14,7 @@ namespace ExcelDataCleanup
         /// Unmerges all merges in the specified worksheet and ensures little to no formatting is lost in the process
         /// </summary>
         /// <param name="worksheet">the worksheet that needs its merged cells unmerged</param>
-        /// <returns>true if the unmerg was sucsessfull and false otherwise</returns>
-        public bool Unmerge(ExcelWorksheet worksheet);
+        /// <exception cref="">If something goes wrong when trying to unmerge the merged cells</exception>
+        public void Unmerge(ExcelWorksheet worksheet);
     }
 }
