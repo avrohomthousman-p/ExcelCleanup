@@ -135,8 +135,20 @@ namespace ExcelDataCleanup
                 RemoveAllHyperLinks(worksheet);
 
 
-                var mergeCleaner = new BackupMergeCleaner();
-                mergeCleaner.Unmerge(worksheet);
+                IMergeCleaner mergeCleaner = new PrimaryMergeCleaner();
+                
+                try
+                {
+                    mergeCleaner.Unmerge(worksheet);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Error message: " + e.StackTrace);
+                    Console.WriteLine("Something went wrong when attempting to remove merge cells. Trying again with the older cleanup system...");
+                    mergeCleaner = new BackupMergeCleaner();
+                    mergeCleaner.Unmerge(worksheet);
+                }
+                
 
 
                 FixExcelTypeWarnings(worksheet);
