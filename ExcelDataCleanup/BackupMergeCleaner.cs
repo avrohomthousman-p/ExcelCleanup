@@ -15,7 +15,7 @@ namespace ExcelDataCleanup
     /// columns and rows based on the length of the text in the cells. This implementation is not the best existing version
     /// and should only be used when the better implementations fail.
     /// </summary>
-    internal class BackupMergeCleaner : IMergeCleaner
+    internal class BackupMergeCleaner : AbstractMergeCleaner
     {
 
         private int topTableRow;
@@ -39,34 +39,9 @@ namespace ExcelDataCleanup
         private bool[] rowNeedsResize;
 
 
-        public void Unmerge(ExcelWorksheet worksheet)
-        {
-            FindTableBounds(worksheet);
 
-            UnMergeMergedSections(worksheet);
-
-            ResizeColumns(worksheet);
-
-            ResizeRows(worksheet);
-
-
-            foreach (int i in columnsToDelete)
-            {
-                Console.WriteLine("column " + i + " was marked for deletion");
-            }
-
-
-            DeleteColumns(worksheet);
-        }
-
-
-
-        /// <summary>
-        /// Finds the first row of the table in the specified worksheet and saves the 
-        /// row number to this classes local variable (topTableRow) for later use
-        /// </summary>
-        /// <param name="worksheet">the worksheet we are working on</param>
-        private void FindTableBounds(ExcelWorksheet worksheet)
+        /// <inheritdoc/>
+        protected override void FindTableBounds(ExcelWorksheet worksheet)
         {
             for (int i = 1; i <= worksheet.Dimension.Rows; i++)
             {
@@ -163,11 +138,8 @@ namespace ExcelDataCleanup
 
 
 
-        /// <summary>
-        /// Unmerges all the merged sections in the worksheet.
-        /// </summary>
-        /// <param name="worksheet">the worksheet we are currently cleaning</param>
-        private void UnMergeMergedSections(ExcelWorksheet worksheet)
+        /// <inheritdoc/>
+        protected override void UnMergeMergedSections(ExcelWorksheet worksheet)
         {
 
             rowNeedsResize = new bool[worksheet.Dimension.End.Row];
@@ -257,18 +229,6 @@ namespace ExcelDataCleanup
 
 
         /// <summary>
-        /// Counts the number of cells in a merged section
-        /// </summary>
-        /// <param name="mergedCells">the section to be counted</param>
-        /// <returns>the number of cells in the specified section</returns>
-        private int CountNumCellsInMerge(ExcelRange mergedCells)
-        {
-            return mergedCells.End.Column - mergedCells.Start.Column + 1;
-        }
-
-
-
-        /// <summary>
         /// Gets the type of merge that is found in the specified cell
         /// </summary>
         /// <param name="cell">the cell whose merge type is being checked</param>
@@ -299,49 +259,6 @@ namespace ExcelDataCleanup
             //Otherwise is just a regular header
             return MergeType.MAIN_HEADER;
         }
-
-
-
-        /// <summary>
-        /// Checks if a cell has no text
-        /// </summary>
-        /// <param name="currentCells">the cell that is being checked for text</param>
-        /// <returns>true if there is no text in the cell, and false otherwise</returns>
-        private bool IsEmptyCell(ExcelRange currentCells)
-        {
-            return currentCells.Text == null || currentCells.Text.Length == 0;
-        }
-
-
-
-        /// <summary>
-        /// Checks if the cell at the specified coordinates is a data cell. This is used by the
-        /// current implementation: a cell is a data row if it has a $ in it.
-        /// </summary>
-        /// <param name="cell">the cell being checked</param>
-        /// <returns>true if the cell is a data cell and false otherwise</returns>
-        private bool IsDataCell(ExcelRange cell)
-        {
-
-            return cell.Text.StartsWith("$");
-
-        }
-
-
-
-        /// <summary>
-        /// Checks if the specified cell is inside the table in the worksheet, and not a header 
-        /// above the table
-        /// </summary>
-        /// <param name="cell">the cell whose location is being checked</param>
-        /// <returns>true if the specified cell is inside a table and false otherwise</returns>
-        private bool IsInsideTable(ExcelRange cell)
-        {
-
-            return cell.Start.Row >= topTableRow;
-
-        }
-
 
 
 
@@ -582,57 +499,12 @@ namespace ExcelDataCleanup
 
 
 
-        /// <summary>
-        /// Sets the PatternType, Color, Border, Font, and Horizontal Alingment of all the cells
-        /// in the specifed range.
-        /// </summary>
-        /// <param name="currentCells">the cells whose style must be set</param>
-        /// <param name="style">all the styles we should use</param>
-        private void SetCellStyles(ExcelRange currentCells, ExcelStyle style)
+        /// <inheritdoc/>
+        protected override void ResizeCells(ExcelWorksheet worksheet)
         {
+            ResizeColumns(worksheet);
 
-
-            //Ensure the color of the cells dont get changed
-            currentCells.Style.Fill.PatternType = style.Fill.PatternType;
-            if (currentCells.Style.Fill.PatternType != ExcelFillStyle.None)
-            {
-                currentCells.Style.Fill.PatternColor.SetColor(
-                    GetColorFromARgb(style.Fill.PatternColor.LookupColor()));
-
-                currentCells.Style.Fill.BackgroundColor.SetColor(
-                    GetColorFromARgb(style.Fill.BackgroundColor.LookupColor()));
-            }
-
-
-            currentCells.Style.Border = style.Border;
-            currentCells.Style.Font = style.Font;
-            currentCells.Style.HorizontalAlignment = style.HorizontalAlignment;
-        }
-
-
-
-        /// <summary>
-        /// Generates A Color Object from an ARGB string.
-        /// </summary>
-        /// <param name="argb">the argb code of the color needed</param>
-        /// <returns>an instance of System.Drawing.Color that matches the specified argb code</returns>
-        private System.Drawing.Color GetColorFromARgb(String argb)
-        {
-            if (argb.StartsWith("#"))
-            {
-                argb = argb.Substring(1);
-            }
-            else if (argb.StartsWith("0x"))
-            {
-                argb = argb.Substring(2);
-            }
-
-
-            System.Drawing.Color color = System.Drawing.Color.FromArgb(
-                int.Parse(argb, System.Globalization.NumberStyles.HexNumber));
-
-
-            return color;
+            ResizeRows(worksheet);
         }
 
 
@@ -728,12 +600,16 @@ namespace ExcelDataCleanup
 
 
 
-        /// <summary>
-        /// Deletes all columns marked for deletion if it is safe to do so
-        /// </summary>
-        /// <param name="worksheet">the worksheet currently being cleaned</param>
-        private void DeleteColumns(ExcelWorksheet worksheet)
+        /// <inheritdoc/>
+        protected override void DeleteColumns(ExcelWorksheet worksheet)
         {
+
+            foreach (int i in columnsToDelete)
+            {
+                Console.WriteLine("column " + i + " was marked for deletion");
+            }
+
+
 
             //To avoid issues with column numbers changing, the columns must be deleted in revese order
             int[] columns = columnsToDelete.ToArray<int>();
@@ -781,6 +657,43 @@ namespace ExcelDataCleanup
             }
 
             return true;
+        }
+
+
+
+
+        /// <inheritdoc/>
+        protected override bool IsDataCell(ExcelRange cell)
+        {
+
+            return cell.Text.StartsWith("$");
+
+        }
+
+
+
+        /// <inheritdoc/>
+        protected override bool IsInsideTable(ExcelRange cell)
+        {
+
+            return cell.Start.Row >= topTableRow;
+
+        }
+
+
+
+        /// <inheritdoc/>
+        protected override bool IsMajorHeader(ExcelRange cells)
+        {
+            return !IsEmptyCell(cells) && cells.Merge && cells.Start.Row < topTableRow;
+        }
+
+
+
+        /// <inheritdoc/>
+        protected override bool IsMinorHeader(ExcelRange cells)
+        {
+            return !IsEmptyCell(cells) && cells.Merge && cells.Start.Row >= topTableRow && !IsDataCell(cells);
         }
     }
 }
