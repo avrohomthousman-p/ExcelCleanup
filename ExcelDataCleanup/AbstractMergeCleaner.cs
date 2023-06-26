@@ -14,7 +14,7 @@ namespace ExcelDataCleanup
     /// </summary>
     internal abstract class AbstractMergeCleaner : IMergeCleaner
     {
-        public void Unmerge(ExcelWorksheet worksheet)
+        public virtual void Unmerge(ExcelWorksheet worksheet)
         {
             FindTableBounds(worksheet);
 
@@ -133,7 +133,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="currentCells">the cells whose style must be set</param>
         /// <param name="style">all the styles we should use</param>
-        protected void SetCellStyles(ExcelRange currentCells, ExcelStyle style)
+        protected virtual void SetCellStyles(ExcelRange currentCells, ExcelStyle style)
         {
 
 
@@ -169,7 +169,7 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="argb">the argb code of the color needed</param>
         /// <returns>an instance of System.Drawing.Color that matches the specified argb code</returns>
-        protected System.Drawing.Color GetColorFromARgb(String argb)
+        protected virtual System.Drawing.Color GetColorFromARgb(String argb)
         {
             if (argb.StartsWith("#"))
             {
