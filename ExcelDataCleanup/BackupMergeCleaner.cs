@@ -195,13 +195,16 @@ namespace ExcelDataCleanup
                     return false;
 
                 case MergeType.MAIN_HEADER:
-                    return false;
+                    initialHeigth = GetHeightOfMergeCell(currentCells); //main headers sometimes span multiple rows
+                    currentCells.Style.WrapText = false;
+                    currentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    break;
 
                 case MergeType.EMPTY:
                     break;
 
                 case MergeType.MINOR_HEADER:
-                    SetMinorHeaderCellSize(worksheet, currentCells);
+                    currentCells.Style.WrapText = false;
                     break;
 
                 default: //If its a data cell
@@ -263,33 +266,23 @@ namespace ExcelDataCleanup
 
 
         /// <summary>
-        /// Increases the size of the specified cell (height and/or width depending on the circumstances) to have
-        /// the text better fit into it
+        /// Counts up the total height of all rows in the specifed merge cell
         /// </summary>
-        /// <param name="worksheet">the worksheet currently being cleaned</param>
-        /// <param name="mergedCells">the cells that need resizing</param>
-        private void SetMinorHeaderCellSize(ExcelWorksheet worksheet, ExcelRange mergedCells)
+        /// <param name="currentCell">the merge cell whose height is being mesured</param>
+        /// <returns>the height of the specified merge cell</returns>
+        private double GetHeightOfMergeCell(ExcelRange currentCell)
         {
 
-            string cellText = mergedCells.Text;
+            ExcelWorksheet worksheet = currentCell.Worksheet;
 
-            double requiredWidth = GetCellWidthFromLargestWord(cellText, mergedCells.Style.Font.Size); //GetWidthOfCellText(cellText, mergedCells.Style.Font.Size);
-
-            UpdateColumnDesiredWidth(mergedCells.Start.Column, requiredWidth);
-
-
-            //Now resize the row if needed
-            double actualWidth = worksheet.Column(mergedCells.Start.Column).Width;
-
-            if (requiredWidth > actualWidth) //if we cant fit it all in 1 line
+            double height = 0;
+            for (int row = currentCell.Start.Row; row <= currentCell.End.Row; row++)
             {
-
-                //mark row for resize
-                rowNeedsResize[mergedCells.Start.Row - 1] = true;
-
+                height += worksheet.Row(row).Height;
             }
 
 
+            return height;
         }
 
 
@@ -502,100 +495,12 @@ namespace ExcelDataCleanup
         /// <inheritdoc/>
         protected override void ResizeCells(ExcelWorksheet worksheet)
         {
-            ResizeColumns(worksheet);
 
-            ResizeRows(worksheet);
-        }
-
-
-
-
-        /// <summary>
-        /// Resizes all columns in the specified worksheet to match ba the desired size as specified
-        /// in the desiredColumnSizes Dictionary.
-        /// </summary>
-        /// <param name="worksheet">the worksheet that needs its columns resized</param>
-        private void ResizeColumns(ExcelWorksheet worksheet)
-        {
+            //Resize all the columns
             foreach (KeyValuePair<int, double> data in desiredColumnSizes)
             {
                 worksheet.Column(data.Key).Width = data.Value;
             }
-        }
-
-
-
-        /// <summary>
-        /// Resizes the rows that have non-data cells with insuffiecent space for thier text
-        /// </summary>
-        /// <param name="worksheet"></param>
-        private void ResizeRows(ExcelWorksheet worksheet)
-        {
-            for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
-            {
-
-                //Check if the row still needs a resize. We might have previously made a 
-                //column wider and now no longer need a resize.
-                if (RowStillNeedsResize(worksheet, row))
-                {
-                    worksheet.Row(row).Height = worksheet.DefaultRowHeight * 2; //double row hieght
-                }
-
-            }
-        }
-
-
-
-
-        /// <summary>
-        /// Checks if a row that has been marked for resize still needs a resize, despite the column enlargments already done.
-        /// </summary>
-        /// <param name="worksheet">the worksheet currently bieng cleaned</param>
-        /// <param name="rowNumber">the row of the worksheet we are checking</param>
-        /// <returns>true if the row has at least one cell that needs more space</returns>
-        private bool RowStillNeedsResize(ExcelWorksheet worksheet, int rowNumber)
-        {
-
-            if (!rowNeedsResize[rowNumber - 1])
-            {
-                return false;
-            }
-
-            if (worksheet.Row(rowNumber).Height > worksheet.DefaultRowHeight)
-            {
-                return false; //if its already larger than the default, we don't want to change it
-            }
-
-
-
-
-            for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
-            {
-
-                ExcelRange cell = worksheet.Cells[rowNumber, col];
-                string cellText = cell.Text;
-
-
-                //Empty cells dont need resize, and data cells have already been resized
-                if (IsEmptyCell(cell) || IsDataCell(cell))
-                {
-                    continue;
-                }
-
-
-
-                //double requiredWidth = GetCellWidthFromLargestWord(cellText, cell.Style.Font.Size);
-                double requiredWidth = GetWidthOfCellText(cellText, cell.Style.Font.Size, false);
-                double actualWidth = worksheet.Column(cell.Start.Column).Width;
-
-                if (requiredWidth > actualWidth) //if we cant fit it all in 1 line
-                {
-                    return true;
-                }
-            }
-
-
-            return false;
         }
 
 

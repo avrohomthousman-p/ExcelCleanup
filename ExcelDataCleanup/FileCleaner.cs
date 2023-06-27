@@ -12,15 +12,6 @@ namespace ExcelDataCleanup
     public class FileCleaner
     {
 
-        //Needed for determaning a cell width based on its text.
-        private static readonly int DEFAULT_FONT_SIZE = 10;
-
-
-        private static int firstRowOfTable;
-
-
-        private static bool[] isDataColumn;
-
 
 
 
