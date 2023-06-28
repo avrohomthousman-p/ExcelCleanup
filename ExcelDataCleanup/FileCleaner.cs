@@ -130,6 +130,11 @@ namespace ExcelDataCleanup
                 RemoveAllHyperLinks(worksheet);
 
 
+                //save the changes so that if the unmerge fails, the hidden row deletion and hyperlink 
+                //removal will still have been done.
+                package.SaveAs(originalFileName.Replace(".xlsx", "_fixed.xlsx"));
+
+
                 RemoveAllMerges(worksheet, reportName);
 
 
