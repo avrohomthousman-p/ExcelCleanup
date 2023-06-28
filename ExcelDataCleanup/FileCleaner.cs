@@ -223,6 +223,7 @@ namespace ExcelDataCleanup
         private static void RemoveAllMerges(ExcelWorksheet worksheet)
         {
             IMergeCleaner mergeCleaner = new PrimaryMergeCleaner();
+            //IMergeCleaner mergeCleaner = new BackupMergeCleaner();
 
             try
             {

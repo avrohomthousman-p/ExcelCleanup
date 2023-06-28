@@ -240,7 +240,7 @@ namespace ExcelDataCleanup
             ExcelRange currentCells = worksheet.Cells[cellAddress];
 
 
-
+            bool useAutoHeight = false;
 
             //Sometimes unmerging a cell changes the row height. We need to reset it to its starting value
             double initialHeigth = worksheet.Row(currentCells.Start.Row).Height;
@@ -263,7 +263,7 @@ namespace ExcelDataCleanup
                     break;
 
                 case MergeType.MAIN_HEADER:
-                    initialHeigth = GetHeightOfMergeCell(currentCells); //main headers sometimes span multiple rows
+                    useAutoHeight = true;
                     currentCells.Style.WrapText = false;
                     currentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     Console.WriteLine("major header at " + currentCells.Address);
@@ -282,8 +282,18 @@ namespace ExcelDataCleanup
             currentCells.Merge = false;
 
 
-            //restore original height
-            worksheet.Row(currentCells.Start.Row).Height = initialHeigth;
+            if (useAutoHeight)
+            {
+                worksheet.Row(currentCells.Start.Row).CustomHeight = false;
+            }
+            else
+            {
+
+                //restore original height
+                worksheet.Row(currentCells.Start.Row).Height = initialHeigth;
+
+            }
+            
 
 
             //restore the original style
@@ -333,28 +343,6 @@ namespace ExcelDataCleanup
             throw new ArgumentException("Cannot determan merge type of specified cell");
         }
 
-
-
-
-        /// <summary>
-        /// Counts up the total height of all rows in the specifed merge cell
-        /// </summary>
-        /// <param name="currentCell">the merge cell whose height is being mesured</param>
-        /// <returns>the height of the specified merge cell</returns>
-        private double GetHeightOfMergeCell(ExcelRange currentCell)
-        {
-
-            ExcelWorksheet worksheet = currentCell.Worksheet;
-
-            double height = 0;
-            for (int row = currentCell.Start.Row; row <= currentCell.End.Row; row++)
-            {
-                height += worksheet.Row(row).Height;
-            }
-
-
-            return height;
-        }
 
 
 
