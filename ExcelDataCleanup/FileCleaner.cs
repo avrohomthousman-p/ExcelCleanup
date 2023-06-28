@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
@@ -111,6 +112,9 @@ namespace ExcelDataCleanup
         /// <param name="originalFileName">the file name of the original excel file</param>
         public static void OpenXLSX(byte[] file, string originalFileName)
         {
+            string reportName = GetReportName(originalFileName);
+
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 
@@ -126,7 +130,7 @@ namespace ExcelDataCleanup
                 RemoveAllHyperLinks(worksheet);
 
 
-                RemoveAllMerges(worksheet);
+                RemoveAllMerges(worksheet, reportName);
 
 
                 FixExcelTypeWarnings(worksheet);
@@ -141,6 +145,22 @@ namespace ExcelDataCleanup
 
             Console.WriteLine("Workbook Cleanup complete");
             Console.Read();
+        }
+
+
+
+        /// <summary>
+        /// Determans what kind of report we are cleaning based on the name of the report
+        /// </summary>
+        /// <param name="filename">the name of the report's file</param>
+        /// <returns>the name of the report type, or an empty string if it could not be determaned</returns>
+        private static string GetReportName(string filename)
+        {
+            int start = filename.LastIndexOf('\\') + 1;
+
+            int length = filename.Length - start - 5; //we dont want the .xlsx at the end
+
+            return filename.Substring(start, length);
         }
 
 
@@ -220,21 +240,34 @@ namespace ExcelDataCleanup
         /// Manages the unmerging
         /// </summary>
         /// <param name="worksheet">the worksheet whose cells must be unmerged</param>
-        private static void RemoveAllMerges(ExcelWorksheet worksheet)
+        /// <param name="reportName">the name of the type of report being cleaned</param>
+        private static void RemoveAllMerges(ExcelWorksheet worksheet, string reportName)
         {
-            IMergeCleaner mergeCleaner = new PrimaryMergeCleaner();
+
+            IMergeCleaner mergeCleaner = ChoosesCleanupSystem(reportName);
+            //IMergeCleaner mergeCleaner = new PrimaryMergeCleaner();
             //IMergeCleaner mergeCleaner = new BackupMergeCleaner();
 
-            try
+            mergeCleaner.Unmerge(worksheet);
+        }
+
+
+
+        /// <summary>
+        /// Chosses the version of merge cleanup code that would work best for the specified report
+        /// </summary>
+        /// <param name="reportType">the type of report that needs unmerging</param>
+        /// <returns>an instance of IMergeCleaner that should be used to clean the report</returns>
+        private static IMergeCleaner ChoosesCleanupSystem(string reportType)
+        {
+            switch (reportType)
             {
-                mergeCleaner.Unmerge(worksheet);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error message: " + e.StackTrace);
-                Console.WriteLine("Something went wrong when attempting to remove merge cells. Trying again with the older cleanup system...");
-                mergeCleaner = new BackupMergeCleaner();
-                mergeCleaner.Unmerge(worksheet);
+                case "TrialBalance":
+                case "ProfitAndLossStatementDrillthrough":
+                    return new BackupMergeCleaner();
+
+                default:
+                    return new PrimaryMergeCleaner();
             }
         }
 
