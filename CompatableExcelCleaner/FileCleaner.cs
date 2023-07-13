@@ -277,10 +277,17 @@ namespace ExcelDataCleanup
         {
 
             IMergeCleaner mergeCleaner = ChoosesCleanupSystem(reportName);
-            //IMergeCleaner mergeCleaner = new PrimaryMergeCleaner();
-            //IMergeCleaner mergeCleaner = new BackupMergeCleaner();
 
-            mergeCleaner.Unmerge(worksheet);
+            try
+            {
+                mergeCleaner.Unmerge(worksheet);
+            }
+            catch(System.IO.InvalidDataException e)
+            {
+                mergeCleaner = new BackupMergeCleaner();
+                mergeCleaner.Unmerge(worksheet);
+            }
+            
         }
 
 
