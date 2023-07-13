@@ -178,11 +178,7 @@ namespace ExcelDataCleanup
         {
             ExcelRange currentCells = worksheet.Cells[cellAddress];
 
-            //Sometimes unmerging a cell changes the row height. We need to reset it to its starting value
-            double initialHeigth = worksheet.Row(currentCells.Start.Row).Height;
 
-
-            bool useAutoHeight = false;
 
             //record the style we had before any changes were made
             ExcelStyle originalStyle = currentCells.Style;
@@ -197,7 +193,6 @@ namespace ExcelDataCleanup
                     return false;
 
                 case MergeType.MAIN_HEADER:
-                    useAutoHeight = true;
                     currentCells.Style.WrapText = false;
                     currentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     break;
@@ -216,18 +211,11 @@ namespace ExcelDataCleanup
             }
 
 
+            //turning off custom hieght before unmerge will allow row to resize itself to fit everything
+            worksheet.Row(currentCells.Start.Row).CustomHeight = false;
+
 
             currentCells.Merge = false; //unmerge range
-
-
-            if (useAutoHeight)
-            {
-                worksheet.Row(currentCells.Start.Row).CustomHeight = false;
-            }
-            else
-            {
-                worksheet.Row(currentCells.Start.Row).Height = initialHeigth;
-            }
 
 
 

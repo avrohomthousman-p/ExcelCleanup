@@ -54,6 +54,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports\AgedReceivables_7102023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports\BalanceSheetComp_7102023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports\AdjustmentReportMult_7102023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-2\AdjustmentReport_7102023.xlsx
 
 
 
@@ -296,6 +297,7 @@ namespace ExcelDataCleanup
                 case "TrialBalance":
                 case "ProfitAndLossStatementDrillthrough":
                 case "BalanceSheetDrillthrough":
+                case "AdjustmentReport":
                     return new BackupMergeCleaner();
 
                 default:
