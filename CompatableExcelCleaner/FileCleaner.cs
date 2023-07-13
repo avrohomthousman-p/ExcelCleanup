@@ -298,6 +298,7 @@ namespace ExcelDataCleanup
                 case "ProfitAndLossStatementDrillthrough":
                 case "BalanceSheetDrillthrough":
                 case "AdjustmentReport":
+                case "CashFlow":
                     return new BackupMergeCleaner();
 
                 default:
