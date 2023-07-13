@@ -74,6 +74,7 @@ namespace ExcelDataCleanup
             string reportName = GetReportName(filepath);
             byte[] output = OpenXLSX(ConvertFileToBytes(filepath), reportName);
             SaveByteArrayAsFile(output, filepath.Replace(".xlsx", "_fixed.xlsx"));
+            Console.Read();
 
         }
 

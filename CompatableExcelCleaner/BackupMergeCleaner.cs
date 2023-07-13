@@ -520,6 +520,7 @@ namespace ExcelDataCleanup
                 }
 
 
+                PrepareColumnForDeletion(worksheet, columnNumber);
 
                 Console.WriteLine("Column " + columnNumber + " is being deleted");
 
@@ -539,7 +540,7 @@ namespace ExcelDataCleanup
         private bool ColumnIsSafeToDelete(ExcelWorksheet worksheet, int column)
         {
 
-            for (int row = 1; row < worksheet.Dimension.Rows; row++)
+            for (int row = topTableRow; row < worksheet.Dimension.Rows; row++)
             {
                 string cellText = worksheet.Cells[row, column].Text;
 
@@ -550,6 +551,48 @@ namespace ExcelDataCleanup
             }
 
             return true;
+        }
+
+
+
+
+        /// <summary>
+        /// Moves all major headers in the specified column to the column adjacent on the left, or right if we are on the  
+        /// first column.
+        /// </summary>
+        /// <param name="worksheet">the worksheet the column could be found in</param>
+        /// <param name="col">the column number we are preparing to delete</param>
+        private void PrepareColumnForDeletion(ExcelWorksheet worksheet, int col)
+        {
+            for (int row = 1; row < topTableRow; row++)
+            {
+                if (!IsEmptyCell(worksheet.Cells[row, col]))
+                {
+
+                    int destinationColumn;
+                    if (col == 1) //we are on the first column
+                    {
+                        destinationColumn = 2; //move header right
+                    }
+                    else
+                    {
+                        destinationColumn = col - 1; //move header left
+                    }
+
+                    ExcelRange originCell = worksheet.Cells[row, col];
+                    ExcelRange destinationCell = worksheet.Cells[row, destinationColumn];
+
+
+                    //copy all styles and formatting
+                    originCell.CopyStyles(destinationCell);
+
+                    //Move the text to the destination cell (store it as a string to avoid excel display issues with dates)
+                    destinationCell.Value = originCell.Text;
+
+
+                    originCell.Value = null;
+                }
+            }
         }
 
 
