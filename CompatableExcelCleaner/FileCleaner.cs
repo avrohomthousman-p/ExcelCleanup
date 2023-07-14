@@ -178,13 +178,12 @@ namespace ExcelDataCleanup
                 RemoveAllMerges(worksheet, reportName);
 
 
+                UnGroupAllRows(worksheet);
+
+
                 FixExcelTypeWarnings(worksheet);
 
 
-
-
-
-                //package.SaveAs(destinationFilepath.Replace(".xlsx", "_fixed.xlsx"));
 
 
                 Console.WriteLine("Workbook Cleanup complete");
@@ -204,10 +203,9 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
         private static void DeleteHiddenRows(ExcelWorksheet worksheet)
         {
-            var start = worksheet.Dimension.Start;
             var end = worksheet.Dimension.End;
 
-            for (int row = end.Row; row >= start.Row; row--)
+            for (int row = end.Row; row >= 1; row--)
             {
                 if (worksheet.Row(row).Hidden == true)
                 {
@@ -310,6 +308,112 @@ namespace ExcelDataCleanup
 
                 default:
                     return new PrimaryMergeCleaner();
+            }
+        }
+
+
+
+        /// <summary>
+        /// Ungroups all grouped columns and deletes all the columns in the group other than the first
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        private static void UnGroupAllRows(ExcelWorksheet worksheet)
+        {
+
+            //first find each row group and remove it
+            for(int row = 1; row <= worksheet.Dimension.Rows; row++)
+            {
+                row = FindStartOfNextGroup(worksheet, row);
+
+
+                //if we hit the end of the file
+                if(row == -1)
+                {
+                    break;
+                }
+
+
+                ClearGroup(worksheet, row);
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Finds the next bunch of rows that have been grouped together
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being removed</param>
+        /// <param name="rowNumber">the row we should start at</param>
+        /// <returns>the row number of the first row of the next bunch of grouped rows, or -1 if there are no 
+        /// more grouped rows</returns>
+        private static int FindStartOfNextGroup(ExcelWorksheet worksheet, int rowNumber)
+        {
+            for (int i = rowNumber; i <= worksheet.Dimension.Rows; i++)
+            {
+                if(worksheet.Row(i).OutlineLevel > 0)
+                {
+                    return i;
+                }
+            }
+
+
+            return -1;
+        }
+
+
+
+
+        //CURRENTLY UNUSED
+        /// <summary>
+        /// Given the first row that is part of a Group of rows, finds the row number of the last 
+        /// row that is still part of the group.
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        /// <param name="startingRow">the first row in the group</param>
+        /// <returns>the index of the last row of the group</returns>
+        private static int FindEndOfGroup(ExcelWorksheet worksheet, int startingRow)
+        {
+
+            int outlineLevel = worksheet.Row(startingRow).OutlineLevel;
+
+            for(int i = startingRow + 1; i <= worksheet.Dimension.Rows; i++)
+            {
+                var row = worksheet.Row(i);
+
+                if(row.OutlineLevel != outlineLevel)
+                {
+                    return i - 1;
+                }
+            }
+
+            return worksheet.Dimension.Columns;
+        }
+
+
+
+
+        /// <summary>
+        /// Deletes all the rows that are after the specified row, but still part of its row group
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        /// <param name="startingRow">the first row of the group, which will not be deleted</param>
+        private static void ClearGroup(ExcelWorksheet worksheet, int startingRow)
+        {
+
+            var row = worksheet.Row(startingRow);
+            int outlineLevel = row.OutlineLevel;
+
+            while (row.OutlineLevel == outlineLevel)
+            {
+                worksheet.DeleteRow(startingRow);
+
+                if(startingRow > worksheet.Dimension.Rows)
+                {
+                    break;
+                }
+
+                row = worksheet.Row(startingRow);
             }
         }
 
