@@ -178,7 +178,7 @@ namespace ExcelDataCleanup
                 RemoveAllMerges(worksheet, reportName);
 
 
-                UnGroupAllRows(worksheet);
+                //UnGroupAllRows(worksheet);
 
 
                 FixExcelTypeWarnings(worksheet);
@@ -211,6 +211,11 @@ namespace ExcelDataCleanup
                 {
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Hidden Row : " + row);
+                }
+                else if(worksheet.Row(row).Height <= 3)
+                {
+                    worksheet.DeleteRow(row);
+                    Console.WriteLine("Deleted Collapsed Row : " + row);
                 }
             }
         }
