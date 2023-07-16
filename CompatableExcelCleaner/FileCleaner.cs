@@ -178,7 +178,7 @@ namespace ExcelDataCleanup
                 RemoveAllMerges(worksheet, reportName);
 
 
-                //UnGroupAllRows(worksheet);
+                UnGroupAllRows(worksheet);
 
 
                 FixExcelTypeWarnings(worksheet);
@@ -325,8 +325,21 @@ namespace ExcelDataCleanup
         private static void UnGroupAllRows(ExcelWorksheet worksheet)
         {
 
+
+            for (int row = 1; row <= worksheet.Dimension.Rows; row++)
+            {
+                var currentRow = worksheet.Row(row);
+
+                if (currentRow.OutlineLevel > 0)
+                {
+                    currentRow.OutlineLevel = 0;
+                }
+            }
+
+
+            /*
             //first find each row group and remove it
-            for(int row = 1; row <= worksheet.Dimension.Rows; row++)
+            for (int row = 1; row <= worksheet.Dimension.Rows; row++)
             {
                 row = FindStartOfNextGroup(worksheet, row);
 
@@ -340,6 +353,7 @@ namespace ExcelDataCleanup
 
                 ClearGroup(worksheet, row);
             }
+            */
         }
 
 
