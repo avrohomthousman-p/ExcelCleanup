@@ -57,6 +57,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-2\AdjustmentReport_7102023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CashFlow_7182023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ChargesCreditsReport_7182023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CreditCardStatement_7182023.xlsx
 
 
 
@@ -77,6 +78,7 @@ namespace ExcelDataCleanup
             string reportName = GetReportName(filepath);
             byte[] output = OpenXLSX(ConvertFileToBytes(filepath), reportName);
             SaveByteArrayAsFile(output, filepath.Replace(".xlsx", "_fixed.xlsx"));
+            Console.WriteLine("Press Enter to exit");
             Console.Read();
 
         }
@@ -167,25 +169,12 @@ namespace ExcelDataCleanup
 
             using (ExcelPackage package = new ExcelPackage(new MemoryStream(sourceFile)))
             {
-                //Get the first worksheet in the workbook
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
-
-                DeleteHiddenRows(worksheet);
-
-
-                RemoveAllHyperLinks(worksheet);
-
-
-                RemoveAllMerges(worksheet, reportName);
-
-
-                UnGroupAllRows(worksheet);
-
-
-                FixExcelTypeWarnings(worksheet);
-
-
+       
+                foreach (ExcelWorksheet worksheet in package.Workbook.Worksheets)
+                {
+                    CleanWorksheet(worksheet, reportName);
+                }
 
 
                 Console.WriteLine("Workbook Cleanup complete");
@@ -194,6 +183,32 @@ namespace ExcelDataCleanup
                 return package.GetAsByteArray();
 
             }
+        }
+
+
+
+        /// <summary>
+        /// Does the standard cleanup on the specified worksheet
+        /// </summary>
+        /// <param name="worksheet">the worksheet to be cleaned</param>
+        /// <param name="reportName">the name of the report we are working on</param>
+        public static void CleanWorksheet(ExcelWorksheet worksheet, string reportName)
+        {
+
+            DeleteHiddenRows(worksheet);
+
+
+            RemoveAllHyperLinks(worksheet);
+
+
+            RemoveAllMerges(worksheet, reportName);
+
+
+            UnGroupAllRows(worksheet);
+
+
+            FixExcelTypeWarnings(worksheet);
+
         }
 
 
@@ -338,25 +353,6 @@ namespace ExcelDataCleanup
                     currentRow.OutlineLevel = 0;
                 }
             }
-
-
-            /*
-            //first find each row group and remove it
-            for (int row = 1; row <= worksheet.Dimension.Rows; row++)
-            {
-                row = FindStartOfNextGroup(worksheet, row);
-
-
-                //if we hit the end of the file
-                if(row == -1)
-                {
-                    break;
-                }
-
-
-                ClearGroup(worksheet, row);
-            }
-            */
         }
 
 
