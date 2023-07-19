@@ -60,6 +60,9 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ProfitAndLossBudget_7182023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CreditCardStatement_7182023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\AgedAccountsReceivable_7192023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BankReconcilliation_7192023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\ChargesCreditsReport_7192023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BalanceSheetPropBreakdown_7192023.xlsx
 
 
 
@@ -500,11 +503,18 @@ namespace ExcelDataCleanup
 
                     }
                     //otherwise try to remove Dollar signs, parenthesis, and commas before the conversion
-                    else if (cell.Text.StartsWith("$") || (cell.Text.StartsWith("($") && cell.Text.EndsWith(")")))
+                    else if (cell.Text.StartsWith("$"))
                     {
 
                         cell.Value = Double.Parse(StripNonDigits(cell.Text));
-                        cell.Style.Numberformat.Format = "$#,##0.00;($#,##0.00)";
+                        cell.Style.Numberformat.Format = "$#,##0.00";
+
+                    }
+                    else if (cell.Text.StartsWith("($") && cell.Text.EndsWith(")"))
+                    {
+
+                        cell.Value = Double.Parse(StripNonDigits(cell.Text));
+                        cell.Style.Numberformat.Format = "($#,##0.00)";
 
                     }
                 }
@@ -551,11 +561,11 @@ namespace ExcelDataCleanup
 
             if (text.StartsWith("("))
             {
-                replacementText = text.Substring(2, text.Length - 3);
+                replacementText = text.Substring(2, text.Length - 3);   //remove $, starting, and ending parenthesis
             }
             else
             {
-                replacementText = text.Substring(1);
+                replacementText = text.Substring(1);                    //remove $ only
             }
 
 
