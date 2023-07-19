@@ -34,30 +34,32 @@ namespace ExcelDataCleanup
             else
             {
 
-                // C:\Users\avroh\Downloads\ExcelProject\PayablesAccountReport_large.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\PayablesAccountReport_1Prop.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\ReportPayablesRegister.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\PayablesAccountReport_large.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\PayablesAccountReport_1Prop.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\ReportPayablesRegister.xlsx
 
-                // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementDrillthrough.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\AgedReceivables.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\LedgerExport.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementDrillthrough.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\AgedReceivables.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\LedgerExport.xlsx
 
-                // C:\Users\avroh\Downloads\ExcelProject\TrialBalance.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementByPeriod.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\testFile.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\TrialBalance.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementByPeriod.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\testFile.xlsx
 
-                // C:\Users\avroh\Downloads\ExcelProject\BalanceSheetComp_742023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\BalanceSheetDrillthrough_722023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\BankReconcilliation_722023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\PaymentsHistory_722023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\LedgerReport_722023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports\AgedReceivables_7102023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports\BalanceSheetComp_7102023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports\AdjustmentReportMult_7102023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-2\AdjustmentReport_7102023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CashFlow_7182023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ChargesCreditsReport_7182023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CreditCardStatement_7182023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\BalanceSheetComp_742023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\BalanceSheetDrillthrough_722023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\BankReconcilliation_722023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\PaymentsHistory_722023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\LedgerReport_722023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports\AgedReceivables_7102023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports\BalanceSheetComp_7102023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports\AdjustmentReportMult_7102023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-2\AdjustmentReport_7102023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CashFlow_7182023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ChargesCreditsReport_7182023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ProfitAndLossBudget_7182023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CreditCardStatement_7182023.xlsx
+
 
 
 
@@ -170,9 +172,20 @@ namespace ExcelDataCleanup
             using (ExcelPackage package = new ExcelPackage(new MemoryStream(sourceFile)))
             {
 
-       
-                foreach (ExcelWorksheet worksheet in package.Workbook.Worksheets)
+
+                ExcelWorksheet worksheet;
+                for (int i = 0; i < package.Workbook.Worksheets.Count; i++)
                 {
+                    worksheet = package.Workbook.Worksheets[i];
+
+                    //If the worksheet is empty, Dimension will be null and the system will crash
+                    if(worksheet.Dimension == null)
+                    {
+                        package.Workbook.Worksheets.Delete(i);
+                        i--;
+                        continue;
+                    }
+
                     CleanWorksheet(worksheet, reportName);
                 }
 
@@ -194,6 +207,7 @@ namespace ExcelDataCleanup
         /// <param name="reportName">the name of the report we are working on</param>
         public static void CleanWorksheet(ExcelWorksheet worksheet, string reportName)
         {
+
 
             DeleteHiddenRows(worksheet);
 
@@ -220,6 +234,7 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
         private static void DeleteHiddenRows(ExcelWorksheet worksheet)
         {
+
             var end = worksheet.Dimension.End;
 
             for (int row = end.Row; row >= 1; row--)
@@ -304,6 +319,9 @@ namespace ExcelDataCleanup
             }
             catch(System.IO.InvalidDataException e)
             {
+                Console.WriteLine("Warning: Report " + reportName + " cannot be processed by the primary merge cleaner.");
+                Console.WriteLine("Consider adding it to the list of reports that use the backup system.");
+
                 mergeCleaner = new BackupMergeCleaner();
                 mergeCleaner.Unmerge(worksheet);
             }
