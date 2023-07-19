@@ -224,6 +224,16 @@ namespace ExcelDataCleanup
             SetCellStyles(currentCells, originalStyle); //reset the style to the way it was
 
 
+
+
+            //If there is more than one line of text in a header, it should be split into
+            //multiple seperate headers.
+            if (mergeType == MergeType.MAIN_HEADER)
+            {
+                SplitHeaderIntoMultipleRows(worksheet, currentCells);
+            }
+
+
             return true;
 
         }

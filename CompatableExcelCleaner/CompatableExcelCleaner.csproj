@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractMergeCleaner.cs.cs" />
+    <Compile Include="AbstractMergeCleaner.cs" />
     <Compile Include="BackupMergeCleaner.cs" />
     <Compile Include="FileCleaner.cs" />
     <Compile Include="IMergeCleaner.cs" />

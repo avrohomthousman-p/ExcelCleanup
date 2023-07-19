@@ -285,6 +285,16 @@ namespace ExcelDataCleanup
 
             //restore the original style
             SetCellStyles(currentCells, originalStyle);
+            
+
+
+            //If there is more than one line of text in a header, it should be split into
+            //multiple seperate headers.
+            if(mergeType == MergeType.MAIN_HEADER)
+            {
+                SplitHeaderIntoMultipleRows(worksheet, currentCells);
+            }
+
 
 
             return true;
@@ -443,7 +453,8 @@ namespace ExcelDataCleanup
                     originCell.CopyStyles(destinationCell);
 
                     //Move the text to the destination cell (store it as a string to avoid excel display issues with dates)
-                    destinationCell.Value = originCell.Text;
+                    //destinationCell.Value = originCell.Text;
+                    destinationCell.SetCellValue(0, 0, originCell.Text);
 
 
                     originCell.Value = null;

@@ -197,6 +197,41 @@ namespace ExcelDataCleanup
         {
             cell.SetCellValue(0, 0, cell.Text);
         }
+
+
+
+        /// <summary>
+        /// Splits a header cell with more than one line of text, into multiple rows,
+        /// one for each line of text. Note: this operation should be done AFTER unmerging the cell.
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        /// <param name="cells">the header cell containing multi-line text</param>
+        protected virtual void SplitHeaderIntoMultipleRows(ExcelWorksheet worksheet, ExcelRange cells)
+        {
+            if (!cells.Text.Contains("\n"))
+            {
+                return;
+            }
+
+
+            string[] linesOfText = cells.Text.Split('\n');
+
+            int numNewRows = linesOfText.Length - 1;
+            int startRow = cells.Start.Row;
+            int endRow = startRow + numNewRows;
+
+            worksheet.InsertRow(startRow + 1, numNewRows);
+
+
+            for (int rowNum = startRow; rowNum <= endRow; rowNum++)
+            {
+                var currentCell = worksheet.Cells[rowNum, cells.Start.Column];
+                int indexOfText = rowNum - startRow;
+                currentCell.SetCellValue(0, 0, linesOfText[indexOfText]);
+
+                cells.CopyStyles(currentCell);
+            }
+        }
     }
 }
 
