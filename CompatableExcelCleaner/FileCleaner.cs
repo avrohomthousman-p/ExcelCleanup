@@ -55,6 +55,8 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports\BalanceSheetComp_7102023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports\AdjustmentReportMult_7102023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-2\AdjustmentReport_7102023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CashFlow_7182023.xlsx
+                // 
 
 
 
@@ -319,7 +321,8 @@ namespace ExcelDataCleanup
 
 
         /// <summary>
-        /// Ungroups all grouped columns and deletes all the columns in the group other than the first
+        /// Ungroups all grouped columns so that excel should not display a colapse or expand
+        /// button (plus button or minus button) on the left margin.
         /// </summary>
         /// <param name="worksheet">the worksheet currently being cleaned</param>
         private static void UnGroupAllRows(ExcelWorksheet worksheet)

@@ -195,6 +195,7 @@ namespace ExcelDataCleanup
                 case MergeType.MAIN_HEADER:
                     currentCells.Style.WrapText = false;
                     currentCells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                    ConvertContentsToText(currentCells); //Ensure that dates are displayed correctly
                     break;
 
                 case MergeType.EMPTY:

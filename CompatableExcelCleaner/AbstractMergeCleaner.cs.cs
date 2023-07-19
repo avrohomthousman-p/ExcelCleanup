@@ -184,6 +184,19 @@ namespace ExcelDataCleanup
 
             return color;
         }
+
+
+
+        /// <summary>
+        /// Ensures that the data in the specified cell is stored as text, not as a number. This is usefull
+        /// if you need to ensure that a date in the report header does not get displayed as hashtags if the 
+        /// column is too small.
+        /// </summary>
+        /// <param name="cell">the cell whose data must be converted to text</param>
+        protected virtual void ConvertContentsToText(ExcelRange cell)
+        {
+            cell.SetCellValue(0, 0, cell.Text);
+        }
     }
 }
 
