@@ -453,7 +453,6 @@ namespace ExcelDataCleanup
                     originCell.CopyStyles(destinationCell);
 
                     //Move the text to the destination cell (store it as a string to avoid excel display issues with dates)
-                    //destinationCell.Value = originCell.Text;
                     destinationCell.SetCellValue(0, 0, originCell.Text);
 
 
