@@ -190,6 +190,7 @@ namespace ExcelDataCleanup
                         continue;
                     }
 
+                    Console.WriteLine("Height = " + worksheet.Row(11).Height);
                     CleanWorksheet(worksheet, reportName);
                 }
 
@@ -211,7 +212,6 @@ namespace ExcelDataCleanup
         /// <param name="reportName">the name of the report we are working on</param>
         public static void CleanWorksheet(ExcelWorksheet worksheet, string reportName)
         {
-
 
             DeleteHiddenRows(worksheet);
 
@@ -248,7 +248,7 @@ namespace ExcelDataCleanup
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Hidden Row : " + row);
                 }
-                else if(worksheet.Row(row).Height <= 3)
+                else if(worksheet.Row(row).Collapsed)
                 {
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Collapsed Row : " + row);
