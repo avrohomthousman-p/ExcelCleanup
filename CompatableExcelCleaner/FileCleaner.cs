@@ -471,13 +471,12 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet currently being cleaned</param>
         private static void CorrectCellDataTypes(ExcelWorksheet worksheet)
         {
-            for (int i = 1; i <= worksheet.Dimension.Rows; i++)
+            for (int i = 1; i <= worksheet.Dimension.End.Row; i++)
             {
-                for (int j = 1; j <= worksheet.Dimension.Columns; j++)
+                for (int j = 1; j <= worksheet.Dimension.End.Column; j++)
                 {
 
                     ExcelRange cell = worksheet.Cells[i, j];
-
 
                     
 
@@ -492,6 +491,7 @@ namespace ExcelDataCleanup
                     {
                         continue;
                     }
+                    
 
 
 
@@ -523,7 +523,6 @@ namespace ExcelDataCleanup
                     {
                         continue; //If this data cannot be coverted to a number, skip the formatting below
                     }
-
 
 
                     
@@ -586,7 +585,7 @@ namespace ExcelDataCleanup
             }
 
 
-            replacementText = replacementText.Replace(",", ""); //remove all commas
+            replacementText = replacementText.Replace(",", "");         //remove all commas
 
 
             return replacementText;
