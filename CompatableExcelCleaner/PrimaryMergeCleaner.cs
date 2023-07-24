@@ -23,7 +23,7 @@ namespace ExcelDataCleanup
         private static readonly int NUM_FULL_COLUMNS_REQUIRED = 3;
 
 
-        private int firstRowOfTable;
+        private int firstRowOfTable = -1;
 
 
         private bool[] isDataColumn;
@@ -38,24 +38,63 @@ namespace ExcelDataCleanup
         /// <inheritdoc/>
         protected override void FindTableBounds(ExcelWorksheet worksheet)
         {
+            /*
+             * We want the first data row to be the first row that has at least 3 non empty cells
+             * in it, and also has a border at its bottom. If there are no rows that have a border at the bottom
+             * instead just take the first row with 3 non-empty cells in it.
+             */
+
+            bool foundRowWith3Values = false;
 
             for (int row = 1; row <= worksheet.Dimension.Rows; row++)
             {
                 if (IsDataRow(worksheet, row))
                 {
-                    firstRowOfTable = row;
 
-                    Console.WriteLine("First data row is row " + row);
+                    if (RowHasBottomBorder(worksheet, row))
+                    {
+                        firstRowOfTable = row;
+                        break;
+                    }
+                    else if (!foundRowWith3Values)
+                    {
+                        firstRowOfTable = row;
+                        foundRowWith3Values = true;
+                    }
 
-                    TrackDataColumns(worksheet);
-
-                    return;
                 }
+
             }
 
 
-            //DEFAULT: if no data row is found there is something wrong
-            throw new System.IO.InvalidDataException("Could not find data table in excel report.");
+            if(firstRowOfTable == -1)
+            {
+                //if no data row is found there is something wrong
+                throw new System.IO.InvalidDataException("Could not find data table in excel report.");
+            }
+            else
+            {
+                Console.WriteLine("First data row is row " + firstRowOfTable);
+
+                TrackDataColumns(worksheet);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Checks if the row has a bottom border
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        /// <param name="row">the row whose border is being checked</param>
+        /// <returns>true if the specifed row has a border on its bottom side, and false otherwise</returns>
+        private bool RowHasBottomBorder(ExcelWorksheet worksheet, int row)
+        {
+            var cell = worksheet.Cells[row, 2];
+
+            var cellBorder = cell.Style.Border.Bottom.Style;
+
+            return !cellBorder.Equals(ExcelBorderStyle.None);
         }
 
 
