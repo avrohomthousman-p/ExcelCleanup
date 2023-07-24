@@ -26,7 +26,8 @@ namespace ExcelDataCleanup
         private int firstRowOfTable = -1;
 
 
-        private bool[] isDataColumn;
+        //private bool[] isDataColumn;
+        private HashSet<Tuple<int, int>> mergeRangesOfDataCells;
 
 
         private Dictionary<int, double> originalColumnWidths = new Dictionary<int, double>();
@@ -136,6 +137,7 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
         private void TrackDataColumns(ExcelWorksheet worksheet)
         {
+            /*
             isDataColumn = new bool[worksheet.Dimension.End.Column];
 
             for (int col = 1; col <= worksheet.Dimension.Columns; col++)
@@ -144,6 +146,22 @@ namespace ExcelDataCleanup
                 //a column is a data column if it has description text in the first row of the table.
                 isDataColumn[col - 1] = !IsEmptyCell(worksheet.Cells[firstRowOfTable, col]);
 
+            }
+            */
+
+            mergeRangesOfDataCells = new HashSet<Tuple<int, int>>();
+
+            for(int col = 1; col <= worksheet.Dimension.Columns; col++)
+            {
+                ExcelRange fullMerge = GetMergeCellByPosition(worksheet, firstRowOfTable, col);
+
+                if(fullMerge == null) //If the current cell is not a merge cell
+                {
+                    continue;
+                }
+
+                mergeRangesOfDataCells.Add(new Tuple<int, int>(fullMerge.Start.Column, fullMerge.End.Column));
+                col = fullMerge.End.Column;
             }
         }
 
@@ -188,7 +206,7 @@ namespace ExcelDataCleanup
         private void RecordOriginalColumnWidths(ExcelWorksheet worksheet)
         {
 
-            for (int col = 1; col <= isDataColumn.Length; col++)
+            for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
             {
 
                 ExcelRange currentCell = worksheet.Cells[firstRowOfTable, col];
@@ -220,10 +238,16 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
         /// <param name="row">the row of a cell that is part of the larger merge</param>
         /// <param name="col">the column of a cell that is part of the larger merge</param>
-        /// <returns>the Excel range object containing the entire merge</returns>
+        /// <returns>the Excel range object containing the entire merge, or null if the specifed cell is not a merge</returns>
         private ExcelRange GetMergeCellByPosition(ExcelWorksheet worksheet, int row, int col)
         {
             int index = worksheet.GetMergeCellId(row, col);
+
+            if(index < 1)
+            {
+                return null;
+            }
+
             string cellAddress = worksheet.MergedCells[index - 1];
             return worksheet.Cells[cellAddress];
         }
@@ -425,11 +449,12 @@ namespace ExcelDataCleanup
         /// <returns>the column number of the first data column</returns>
         private int FindFirstDataColumn(ExcelWorksheet worksheet)
         {
-            for (int i = 0; i < isDataColumn.Length; i++)
+            for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
             {
-                if (isDataColumn[i])
+                ExcelRange cell = worksheet.Cells[firstRowOfTable, col];
+                if (!IsEmptyCell(cell))
                 {
-                    return i + 1;
+                    return col + 1;
                 }
             }
 
@@ -507,7 +532,11 @@ namespace ExcelDataCleanup
         protected override bool IsDataCell(ExcelRange cell)
         {
 
-            return isDataColumn[cell.Start.Column - 1];
+            int start = cell.Start.Column;
+            int end = cell.End.Column;
+            return mergeRangesOfDataCells.Contains(new Tuple<int, int>(start, end));
+
+            //return isDataColumn[cell.Start.Column - 1];
 
         }
 
@@ -541,7 +570,8 @@ namespace ExcelDataCleanup
 
 
 
-            return !isDataColumn[cells.Start.Column - 1];
+            //return !isDataColumn[cells.Start.Column - 1];
+            return !IsDataCell(cells);
         }
     }
 }
