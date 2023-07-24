@@ -65,6 +65,8 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BalanceSheetPropBreakdown_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BalanceSheetComp_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\InvoiceDetail_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\LedgerReport_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportTenantBal_7232023.xlsx
 
 
 
@@ -477,11 +479,19 @@ namespace ExcelDataCleanup
                     ExcelRange cell = worksheet.Cells[i, j];
 
 
+                    
+
+                    //Skip Empty Cells
                     if (cell.Text == null || cell.Text.Length == 0)
                     {
                         continue;
                     }
 
+                    //Skip Cells that already contain numbers
+                    if(cell.Value.GetType() != typeof(string))
+                    {
+                        continue;
+                    }
 
 
 
@@ -508,6 +518,10 @@ namespace ExcelDataCleanup
                         cell.Value = Double.Parse(StripNonDigits(cell.Text));
                         cell.Style.Numberformat.Format = "($#,##0.00)";
 
+                    }
+                    else
+                    {
+                        continue; //If this data cannot be coverted to a number, skip the formatting below
                     }
 
 
