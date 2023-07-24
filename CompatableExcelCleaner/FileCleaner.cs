@@ -34,35 +34,36 @@ namespace ExcelDataCleanup
             else
             {
 
-                // C:\Users\avroh\Downloads\ExcelProject\PayablesAccountReport_large.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\PayablesAccountReport_1Prop.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\ReportPayablesRegister.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\PayablesAccountReport_large.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\PayablesAccountReport_1Prop.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\ReportPayablesRegister.xlsx
 
-                // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementDrillthrough.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\AgedReceivables.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\LedgerExport.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementDrillthrough.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\AgedReceivables.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\LedgerExport.xlsx
 
-                // C:\Users\avroh\Downloads\ExcelProject\TrialBalance.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementByPeriod.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\testFile.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\TrialBalance.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\ProfitAndLossStatementByPeriod.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\testFile.xlsx
 
-                // C:\Users\avroh\Downloads\ExcelProject\BalanceSheetComp_742023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\BalanceSheetDrillthrough_722023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\BankReconcilliation_722023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\PaymentsHistory_722023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\LedgerReport_722023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports\AgedReceivables_7102023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports\BalanceSheetComp_7102023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports\AdjustmentReportMult_7102023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-2\AdjustmentReport_7102023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CashFlow_7182023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ChargesCreditsReport_7182023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ProfitAndLossBudget_7182023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CreditCardStatement_7182023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\AgedAccountsReceivable_7192023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BankReconcilliation_7192023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\ChargesCreditsReport_7192023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BalanceSheetPropBreakdown_7192023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\BalanceSheetComp_742023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\BalanceSheetDrillthrough_722023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\BankReconcilliation_722023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\PaymentsHistory_722023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\LedgerReport_722023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports\AgedReceivables_7102023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports\BalanceSheetComp_7102023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports\AdjustmentReportMult_7102023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-2\AdjustmentReport_7102023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CashFlow_7182023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ChargesCreditsReport_7182023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ProfitAndLossBudget_7182023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CreditCardStatement_7182023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\AgedAccountsReceivable_7192023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BankReconcilliation_7192023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\ChargesCreditsReport_7192023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BalanceSheetPropBreakdown_7192023.xlsx
+            // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BalanceSheetComp_7232023.xlsx
 
 
 
@@ -190,7 +191,7 @@ namespace ExcelDataCleanup
                         continue;
                     }
 
-                    Console.WriteLine("Height = " + worksheet.Row(11).Height);
+
                     CleanWorksheet(worksheet, reportName);
                 }
 
@@ -491,16 +492,6 @@ namespace ExcelDataCleanup
 
                         cell.Value = data; //Replace the cell data with the same thing just not in text form
 
-
-                        //When the alignment is set to general, text is left aligned but numbers are right aligned.
-                        //Therefore if we change from text to number and we want to maintain alignment, we need to 
-                        //change to right aligned.
-                        if (cell.Style.HorizontalAlignment.Equals(ExcelHorizontalAlignment.General))
-                        {
-                            cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                        }
-
-
                     }
                     //otherwise try to remove Dollar signs, parenthesis, and commas before the conversion
                     else if (cell.Text.StartsWith("$"))
@@ -516,6 +507,17 @@ namespace ExcelDataCleanup
                         cell.Value = Double.Parse(StripNonDigits(cell.Text));
                         cell.Style.Numberformat.Format = "($#,##0.00)";
 
+                    }
+
+
+
+                    
+                    //When the alignment is set to general, text is left aligned but numbers are right aligned.
+                    //Therefore if we change from text to number and we want to maintain alignment, we need to 
+                    //change to right aligned.
+                    if (cell.Style.HorizontalAlignment.Equals(ExcelHorizontalAlignment.General))
+                    {
+                        cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                 }
             }
