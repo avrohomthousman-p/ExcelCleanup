@@ -355,8 +355,6 @@ namespace ExcelDataCleanup
                 case "BalanceSheetDrillthrough":
                 case "CashFlow":
                 case "InvoiceDetail":
-                case "PendingWebPayments":
-                //case "ReportChecksInvoiceInfo":
                     return new BackupMergeCleaner();
 
                 default:
