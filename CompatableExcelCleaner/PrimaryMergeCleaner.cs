@@ -47,7 +47,7 @@ namespace ExcelDataCleanup
 
             bool foundRowWith3Values = false;
 
-            for (int row = 1; row <= worksheet.Dimension.Rows; row++)
+            for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
             {
                 if (IsDataRow(worksheet, row))
                 {
@@ -137,17 +137,6 @@ namespace ExcelDataCleanup
         /// <param name="worksheet">the worksheet we are currently cleaning</param>
         private void TrackDataColumns(ExcelWorksheet worksheet)
         {
-            /*
-            isDataColumn = new bool[worksheet.Dimension.End.Column];
-
-            for (int col = 1; col <= worksheet.Dimension.Columns; col++)
-            {
-
-                //a column is a data column if it has description text in the first row of the table.
-                isDataColumn[col - 1] = !IsEmptyCell(worksheet.Cells[firstRowOfTable, col]);
-
-            }
-            */
 
             mergeRangesOfDataCells = new HashSet<Tuple<int, int>>();
 
@@ -479,7 +468,7 @@ namespace ExcelDataCleanup
         /// <returns>true if it is safe to delete the column and false if deleting it would result in data loss</returns>
         private bool SafeToDeleteColumn(ExcelWorksheet worksheet, int col)
         {
-            for (int row = firstRowOfTable; row <= worksheet.Dimension.Rows; row++)
+            for (int row = firstRowOfTable; row <= worksheet.Dimension.End.Row; row++)
             {
                 if (!IsEmptyCell(worksheet.Cells[row, col]))
                 {

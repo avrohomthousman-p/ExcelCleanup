@@ -72,7 +72,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\ReportTenantSummary_7252023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\TenantCustomFieldsReport_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\TenantNotificationLogReport_7252023.xlsx
 
 
 
@@ -376,6 +376,7 @@ namespace ExcelDataCleanup
             {
                 Console.WriteLine("Warning: Report " + reportName + " cannot be processed by the primary merge cleaner.");
                 Console.WriteLine("Consider adding it to the list of reports that use the backup system.");
+                Console.WriteLine(e.Message);
 
                 mergeCleaner = new BackupMergeCleaner();
                 mergeCleaner.Unmerge(worksheet);
@@ -545,13 +546,13 @@ namespace ExcelDataCleanup
 
                     double unused;
 
-                    if (Double.TryParse(cell.Text, out unused)) //if it is not a dollar value, we want to keep it as a string
+                    if (Double.TryParse(cell.Text, out unused))   //if it is not a dollar value, we want to keep it as a string
                     {
 
                         //Ignore the excel error that we have a number stored as a string
                         var error = worksheet.IgnoredErrors.Add(cell);
                         error.NumberStoredAsText = true;
-                        continue; //skip the formatting at the end of this if statement
+                        continue;                                 //skip the formatting at the end of this if statement
 
                     }
                     else if (cell.Text.StartsWith("$"))
