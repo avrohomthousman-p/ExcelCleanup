@@ -73,6 +73,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\ReportTenantSummary_7252023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\TenantNotificationLogReport_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\VendorInvoiceReportWithJournalAccounts_7252023.xlsx
 
 
 
@@ -376,7 +377,7 @@ namespace ExcelDataCleanup
             {
                 Console.WriteLine("Warning: Report " + reportName + " cannot be processed by the primary merge cleaner.");
                 Console.WriteLine("Consider adding it to the list of reports that use the backup system.");
-                Console.WriteLine(e.Message);
+                Console.WriteLine("Error Message: " + e.Message);
 
                 mergeCleaner = new BackupMergeCleaner();
                 mergeCleaner.Unmerge(worksheet);
@@ -396,11 +397,13 @@ namespace ExcelDataCleanup
             switch (reportType)
             {
                 case "TrialBalance":
+                case "TrialBalanceVariance":
                 case "ProfitAndLossStatementDrillthrough":
                 case "BalanceSheetDrillthrough":
                 case "CashFlow":
                 case "InvoiceDetail":
                 case "ReportTenantSummary":
+                case "UnitInfoReport":
                     return new BackupMergeCleaner();
 
                 default:
