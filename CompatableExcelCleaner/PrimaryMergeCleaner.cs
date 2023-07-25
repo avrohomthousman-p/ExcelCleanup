@@ -155,14 +155,21 @@ namespace ExcelDataCleanup
             {
                 ExcelRange fullMerge = GetMergeCellByPosition(worksheet, firstRowOfTable, col);
 
+
                 if(fullMerge == null) //If the current cell is not a merge cell
                 {
                     continue;
                 }
+                else if (IsEmptyCell(fullMerge))
+                {
+                    continue; //skip this cell
+                }
+
 
                 mergeRangesOfDataCells.Add(new Tuple<int, int>(fullMerge.Start.Column, fullMerge.End.Column));
                 col = fullMerge.End.Column;
             }
+
         }
 
 
