@@ -539,10 +539,22 @@ namespace ExcelDataCleanup
                     {
                         continue;
                     }
-                    
 
 
-                    if (cell.Text.StartsWith("$"))
+
+
+                    double unused;
+
+                    if (Double.TryParse(cell.Text, out unused)) //if it is not a dollar value, we want to keep it as a string
+                    {
+
+                        //Ignore the excel error that we have a number stored as a string
+                        var error = worksheet.IgnoredErrors.Add(cell);
+                        error.NumberStoredAsText = true;
+                        continue; //skip the formatting at the end of this if statement
+
+                    }
+                    else if (cell.Text.StartsWith("$"))
                     {
 
                         cell.Value = Double.Parse(StripNonDigits(cell.Text));
