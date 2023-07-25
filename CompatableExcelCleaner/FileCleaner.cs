@@ -72,6 +72,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\ReportTenantSummary_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\TenantCustomFieldsReport_7252023.xlsx
 
 
 
@@ -541,18 +542,7 @@ namespace ExcelDataCleanup
                     
 
 
-
-                    double? data = ConvertToNumber(cell.Text);
-
-                    //if it can be converted to a number straight away, do that conversion
-                    if (data != null)
-                    {
-
-                        cell.Value = data; //Replace the cell data with the same thing just not in text form
-
-                    }
-                    //otherwise try to remove Dollar signs, parenthesis, and commas before the conversion
-                    else if (cell.Text.StartsWith("$"))
+                    if (cell.Text.StartsWith("$"))
                     {
 
                         cell.Value = Double.Parse(StripNonDigits(cell.Text));
@@ -581,32 +571,6 @@ namespace ExcelDataCleanup
                         cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                 }
-            }
-        }
-
-
-
-        /// <summary>
-        /// Attempts to convert that specified string into a double using nothing other than parsing
-        /// </summary>
-        /// <param name="data">the text that should be converted to a number</param>
-        /// <returns>the text as a double object or null if it could not be converted</returns>
-        private static double? ConvertToNumber(string data)
-        {
-
-            double result;
-
-            bool sucsess = Double.TryParse(data, out result);
-
-
-
-            if (sucsess)
-            {
-                return result;
-            }
-            else
-            {
-                return null;
             }
         }
 
