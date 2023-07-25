@@ -71,6 +71,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\BankReconcilliation_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\ReportTenantSummary_7252023.xlsx
 
 
 
@@ -397,6 +398,7 @@ namespace ExcelDataCleanup
                 case "BalanceSheetDrillthrough":
                 case "CashFlow":
                 case "InvoiceDetail":
+                case "ReportTenantSummary":
                     return new BackupMergeCleaner();
 
                 default:
