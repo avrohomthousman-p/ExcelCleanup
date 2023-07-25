@@ -72,8 +72,8 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\ReportTenantSummary_7252023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\TenantNotificationLogReport_7252023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\VendorInvoiceReportWithJournalAccounts_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\acceptable\TenantDirectory_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\acceptable\VendorInvoiceReportWithJournalAccounts_7252023.xlsx
 
 
 

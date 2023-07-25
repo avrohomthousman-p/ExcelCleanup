@@ -353,6 +353,12 @@ namespace ExcelDataCleanup
             {
                 SplitHeaderIntoMultipleRows(worksheet, currentCells);
             }
+            //If there is a minor header that is aligned right, it usually should
+            //stay on the right side of the now unmerged range
+            else if(mergeType == MergeType.MINOR_HEADER)
+            {
+                MoveCellToMatchFormatting(worksheet, currentCells);
+            }
 
 
 
@@ -397,6 +403,34 @@ namespace ExcelDataCleanup
 
 
             throw new ArgumentException("Cannot determan merge type of specified cell");
+        }
+
+
+
+        /// <summary>
+        /// Moves minor headers that were aligned right, to the rightmost cell in the specified cell range
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        /// <param name="cellRange">the original range that held the minor header before the unmerge</param>
+        private void MoveCellToMatchFormatting(ExcelWorksheet worksheet, ExcelRange cellRange)
+        {
+            if (!cellRange.Style.HorizontalAlignment.Equals(ExcelHorizontalAlignment.Right))
+            {
+                return;
+            }
+
+
+            int row = cellRange.Start.Row;
+            int startCol = cellRange.Start.Column;
+            int endCol = cellRange.End.Column;
+
+            ExcelRange source = worksheet.Cells[row, startCol];
+            ExcelRange destination = worksheet.Cells[row, endCol];
+
+            source.Copy(destination);
+            source.CopyStyles(destination);
+
+            source.Value = null;
         }
 
 
