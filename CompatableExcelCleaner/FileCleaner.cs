@@ -256,12 +256,53 @@ namespace ExcelDataCleanup
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Hidden Row : " + row);
                 }
-                else if(worksheet.Row(row).Collapsed || worksheet.Row(row).Height <= 1.5)
+                else if(RowIsCollapsed(worksheet, row))
                 {
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Collapsed Row : " + row);
                 }
             }
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if a row is collapsed
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        /// <param name="rowNumber">the row being checked</param>
+        /// <returns>true if the row is collapsed and can be deleted</returns>
+        private static bool RowIsCollapsed(ExcelWorksheet worksheet, int rowNumber)
+        {
+
+            var row = worksheet.Row(rowNumber);
+
+            if(row.Collapsed || row.Height <= 1.5)
+            {
+                return true;
+            }
+            else if(row.Height > 3)
+            {
+                return false;
+            }
+
+
+
+            //Check to see if the row is empty and can be deleted
+            for (int colNumber = 1; colNumber <= worksheet.Dimension.Columns; colNumber++)
+            {
+
+                var cell = worksheet.Cells[rowNumber, colNumber];
+
+                if(cell.Text != null && cell.Text.Length > 0) //if the cell has text in it (its not empty)
+                {
+                    return false; //unsafe to delete this row as it might have important text
+                }
+            }
+
+            return true;
+
         }
 
 
