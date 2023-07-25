@@ -67,7 +67,8 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\InvoiceDetail_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\LedgerReport_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportTenantBal_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\ProfitAndLossBudget_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\ReportTenantBal_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\BankReconcilliation_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
 
@@ -189,7 +190,7 @@ namespace ExcelDataCleanup
                 {
                     worksheet = package.Workbook.Worksheets[i];
 
-                    //If the worksheet is empty, Dimension will be null and the system will crash
+                    //If the worksheet is empty, Dimension will be null
                     if(worksheet.Dimension == null)
                     {
                         package.Workbook.Worksheets.Delete(i);
@@ -255,7 +256,7 @@ namespace ExcelDataCleanup
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Hidden Row : " + row);
                 }
-                else if(worksheet.Row(row).Collapsed)
+                else if(worksheet.Row(row).Collapsed || worksheet.Row(row).Height <= 1.5)
                 {
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Collapsed Row : " + row);
@@ -328,7 +329,7 @@ namespace ExcelDataCleanup
             {
                 mergeCleaner.Unmerge(worksheet);
             }
-            catch(System.IO.InvalidDataException e)
+            catch(InvalidDataException e)
             {
                 Console.WriteLine("Warning: Report " + reportName + " cannot be processed by the primary merge cleaner.");
                 Console.WriteLine("Consider adding it to the list of reports that use the backup system.");
@@ -553,6 +554,7 @@ namespace ExcelDataCleanup
             double result;
 
             bool sucsess = Double.TryParse(data, out result);
+
 
 
             if (sucsess)
