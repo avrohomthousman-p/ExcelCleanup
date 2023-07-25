@@ -63,6 +63,7 @@
     <Compile Include="AbstractMergeCleaner.cs" />
     <Compile Include="BackupMergeCleaner.cs" />
     <Compile Include="FileCleaner.cs" />
+    <Compile Include="FormulaMaker.cs" />
     <Compile Include="IMergeCleaner.cs" />
     <Compile Include="MergeType.cs" />
     <Compile Include="PrimaryMergeCleaner.cs" />
