@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
-
+using CompatableExcelCleaner;
 
 namespace ExcelDataCleanup
 {
@@ -204,6 +204,9 @@ namespace ExcelDataCleanup
 
                     CleanWorksheet(worksheet, reportName);
                 }
+
+
+                FormulaMaker.AddFormulas(package.GetAsByteArray(), reportName);
 
 
                 Console.WriteLine("Workbook Cleanup complete");
