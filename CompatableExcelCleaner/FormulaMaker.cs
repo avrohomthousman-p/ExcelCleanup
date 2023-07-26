@@ -28,18 +28,20 @@ namespace CompatableExcelCleaner
                 for (int i = 0; i < package.Workbook.Worksheets.Count; i++)
                 {
                     worksheet = package.Workbook.Worksheets[i];
-
+                    
                     //TODO: add formulas
                     var ranges = GetRowRangeForFormula(worksheet, "Income");
                     foreach (var item in ranges)
                     {
-                        Console.WriteLine("range from " + item.Item1 + " to " + item.Item2);
+                        FillInFormulas(worksheet, item.Item1, item.Item2, item.Item3);
                     }
 
                 }
+
+
+                return package.GetAsByteArray();
             }
 
-            return sourceFile;
         }
 
 
@@ -49,8 +51,8 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="worksheet">the worksheet currently being given formulas</param>
         /// <param name="targetText">the text to look for to signal the start and end row</param>
-        /// <returns>a tuple containing the start-row and end-row of the formula range</returns>
-        private static IEnumerable<Tuple<int, int>> GetRowRangeForFormula(ExcelWorksheet worksheet, string targetText)
+        /// <returns>a tuple containing the start-row, end-row, and column of the formula range</returns>
+        private static IEnumerable<Tuple<int, int, int>> GetRowRangeForFormula(ExcelWorksheet worksheet, string targetText)
         {
             ExcelRange cell;
 
@@ -68,7 +70,7 @@ namespace CompatableExcelCleaner
 
                         if (end > 0)
                         {
-                            yield return new Tuple<int, int>(row, end);
+                            yield return new Tuple<int, int, int>(row, end, col);
 
                             //for the next iteration, jump to after the formula range we just returned
                             row = end + 1;
@@ -117,21 +119,24 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet currently being given formulas</param>
         /// <param name="startRow">the first row of the formula range (containing the header)</param>
         /// <param name="endRow">the last row of the formula range (containing the total)</param>
-        /// <param name="col">the column of oth the header and total for the formula range</param>
+        /// <param name="col">the column of the header and total for the formula range</param>
         private static void FillInFormulas(ExcelWorksheet worksheet, int startRow, int endRow, int col)
         {
-
+    
             //First, skip all empty cells between the current column and the actual data columns
+            //These empty columsn ususally come about as a result of unmerges
             ExcelRange cell;
 
             for(col++; col <= worksheet.Dimension.Columns; col++)
             {
                 cell = worksheet.Cells[endRow, col];
-                if (IsNumeric(cell.Text))
+
+                if (!IsEmptyCell(cell))
                 {
                     break;
                 }
             }
+            
 
 
             //If the loop ended becuase we went out of bounds
@@ -139,20 +144,27 @@ namespace CompatableExcelCleaner
             {
                 return;
             }
+            
 
 
-            for(; col <= worksheet.Dimension.Columns; col++)
+            //Often there are multiple columns that require a formula, so we need to iterate
+            //and apply the formulas in many columns
+            for(; col <= worksheet.Dimension.End.Column; col++)
             {
                 cell = worksheet.Cells[endRow, col];
-                if (IsNumeric(cell.Text))
+
+                if (IsDataCell(cell))
                 {
                     cell.FormulaR1C1 = GenerateFormula(worksheet, startRow, endRow, col);
+                    //Console.WriteLine(GenerateFormula(worksheet, startRow, endRow, col));
                 }
-                else
+                else if(!IsEmptyCell(cell))
                 {
                     return;
                 }
             }
+
+
 
         }
 
@@ -160,15 +172,25 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Checks if a string can be converted into a double
+        /// Checks if a cell is empty (has no text)
         /// </summary>
-        /// <param name="data">the text being checked</param>
-        /// <returns>true if the text can be safely converted to a double and false otherwise</returns>
-        private static bool IsNumeric(string data)
+        /// <param name="cell">the cell being checked</param>
+        /// <returns>true if the cell has no text and false otherwise</returns>
+        private static bool IsEmptyCell(ExcelRange cell)
         {
-            double unused;
+            return cell.Text == null || cell.Text.Length == 0;
+        }
 
-            return Double.TryParse(data, out unused);
+
+
+        /// <summary>
+        /// Checks if a cell contains a dollar value
+        /// </summary>
+        /// <param name="cell">the cell being checked</param>
+        /// <returns>true if the cell contains a dollar value and false otherwise</returns>
+        private static bool IsDataCell(ExcelRange cell)
+        {
+            return cell.Text.StartsWith("$") || (cell.Text.StartsWith("($") && cell.Text.EndsWith(")"));
         }
 
 
@@ -183,7 +205,7 @@ namespace CompatableExcelCleaner
         /// <returns>the proper formula for the specified formula range</returns>
         private static string GenerateFormula(ExcelWorksheet worksheet, int startRow, int endRow, int col)
         {
-            ExcelRange cells = worksheet.Cells[startRow - 1, col, endRow + 1, col];
+            ExcelRange cells = worksheet.Cells[startRow + 1, col, endRow - 1, col];
 
             return "SUM(" + cells.Address + ")";
         }

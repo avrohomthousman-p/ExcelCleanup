@@ -206,13 +206,13 @@ namespace ExcelDataCleanup
                 }
 
 
-                FormulaMaker.AddFormulas(package.GetAsByteArray(), reportName);
+                byte[] results = FormulaMaker.AddFormulas(package.GetAsByteArray(), reportName);
 
 
                 Console.WriteLine("Workbook Cleanup complete");
 
 
-                return package.GetAsByteArray();
+                return results;
 
             }
         }
