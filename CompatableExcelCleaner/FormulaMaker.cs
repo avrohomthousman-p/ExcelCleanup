@@ -13,6 +13,19 @@ namespace CompatableExcelCleaner
     {
 
 
+        // Stores each report that requires formulas and an array of all the headers to look for in that report
+        // (for where to add those formulas)
+        private static readonly Dictionary<string, string[]> rowsNeedingFormulas = new Dictionary<string, string[]>();
+
+
+
+        static FormulaMaker() 
+        {
+            rowsNeedingFormulas.Add("ProfitAndLossStatementByPeriod", new String[]{ "Income", "Expense" });
+        }
+
+
+
         /// <summary>
         /// Adds all necissary formulas to the appropriate cells in the specified file
         /// </summary>
@@ -21,6 +34,12 @@ namespace CompatableExcelCleaner
         /// <returns>the byte stream/arrray of the modified file</returns>
         public static byte[] AddFormulas(byte[] sourceFile, string reportName)
         {
+            string[] headers;
+            if(!rowsNeedingFormulas.TryGetValue(reportName, out headers))
+            {
+                return sourceFile; //this report is not supposed to get any formulas
+            }
+
 
             using (ExcelPackage package = new ExcelPackage(new MemoryStream(sourceFile)))
             {
@@ -29,11 +48,14 @@ namespace CompatableExcelCleaner
                 {
                     worksheet = package.Workbook.Worksheets[i];
                     
-                    //TODO: add formulas
-                    var ranges = GetRowRangeForFormula(worksheet, "Income");
-                    foreach (var item in ranges)
+                    foreach (string header in headers)              //for each header in the report that needs a formula 
                     {
-                        FillInFormulas(worksheet, item.Item1, item.Item2, item.Item3);
+                        var ranges = GetRowRangeForFormula(worksheet, header);
+
+                        foreach (var item in ranges)                // for each instance of that header
+                        {
+                            FillInFormulas(worksheet, item.Item1, item.Item2, item.Item3);
+                        }
                     }
 
                 }
@@ -156,7 +178,6 @@ namespace CompatableExcelCleaner
                 if (IsDataCell(cell))
                 {
                     cell.FormulaR1C1 = GenerateFormula(worksheet, startRow, endRow, col);
-                    //Console.WriteLine(GenerateFormula(worksheet, startRow, endRow, col));
                 }
                 else if(!IsEmptyCell(cell))
                 {
