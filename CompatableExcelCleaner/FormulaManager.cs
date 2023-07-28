@@ -129,9 +129,8 @@ namespace CompatableExcelCleaner
             switch(reportName)
             {
                 case "ProfitAndLossStatementByPeriod":
-                    return new RowSegmentFormulaGenerator();
                 default:
-                    return null;
+                    return new RowSegmentFormulaGenerator();
             }
         }
 
