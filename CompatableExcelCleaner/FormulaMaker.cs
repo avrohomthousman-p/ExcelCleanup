@@ -21,8 +21,11 @@ namespace CompatableExcelCleaner
 
         static FormulaMaker() 
         {
+
+            //Fill our dictionary with all the reports and all the data we need to give them formulas
+
             rowsNeedingFormulas.Add("ProfitAndLossStatementByPeriod", new String[]{ "Income", "Expense" });
-            rowsNeedingFormulas.Add("LedgerReport", new String[] { });
+            rowsNeedingFormulas.Add("LedgerReport", new String[] { "14850 - Prepaid Contracts" });
             rowsNeedingFormulas.Add("RentRollAll", new String[] { });
             rowsNeedingFormulas.Add("ProfitAndLossDrillThrough", new String[] { });
             rowsNeedingFormulas.Add("BalanceSheetDrillThrough", new String[] { });
@@ -198,34 +201,14 @@ namespace CompatableExcelCleaner
         /// <param name="col">the column of the header and total for the formula range</param>
         private static void FillInFormulas(ExcelWorksheet worksheet, int startRow, int endRow, int col)
         {
-    
-            //First, skip all empty cells between the current column and the actual data columns
-            //These empty columsn ususally come about as a result of unmerges
+
             ExcelRange cell;
-
-            for(col++; col <= worksheet.Dimension.Columns; col++)
-            {
-                cell = worksheet.Cells[endRow, col];
-
-                if (!IsEmptyCell(cell))
-                {
-                    break;
-                }
-            }
-            
-
-
-            //If the loop ended becuase we went out of bounds
-            if(col > worksheet.Dimension.End.Column)
-            {
-                return;
-            }
             
 
 
             //Often there are multiple columns that require a formula, so we need to iterate
             //and apply the formulas in many columns
-            for(; col <= worksheet.Dimension.End.Column; col++)
+            for(col++; col <= worksheet.Dimension.End.Column; col++)
             {
                 cell = worksheet.Cells[endRow, col];
 
