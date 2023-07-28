@@ -128,6 +128,9 @@ namespace CompatableExcelCleaner
         {
             switch(reportName)
             {
+                case "RentRowAll":
+                    return new FullTableFormulaGenerator();
+
                 case "ProfitAndLossStatementByPeriod":
                 default:
                     return new RowSegmentFormulaGenerator();

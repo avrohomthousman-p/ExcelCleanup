@@ -52,13 +52,13 @@ namespace CompatableExcelCleaner
 
                     if (cell.Text == targetText)
                     {
-                        Console.WriteLine("Matching header");
+
                         //search for end of sequence
                         int end = FindEndOfFormulaRange(worksheet, row, col, "Total " + targetText);
 
                         if (end > 0)
                         {
-                            Console.WriteLine("end found");
+;
                             yield return new Tuple<int, int, int>(row, end, col);
 
                             //for the next iteration, jump to after the formula range we just returned

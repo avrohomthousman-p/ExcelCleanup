@@ -64,6 +64,7 @@
     <Compile Include="BackupMergeCleaner.cs" />
     <Compile Include="FileCleaner.cs" />
     <Compile Include="FormulaManager.cs" />
+    <Compile Include="FullTableFormulaGenerator.cs" />
     <Compile Include="IFormulaGenerator.cs" />
     <Compile Include="IMergeCleaner.cs" />
     <Compile Include="MergeType.cs" />
