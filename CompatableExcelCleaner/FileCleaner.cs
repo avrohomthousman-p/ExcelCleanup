@@ -206,7 +206,7 @@ namespace ExcelDataCleanup
                 }
 
 
-                byte[] results = FormulaMaker.AddFormulas(package.GetAsByteArray(), reportName);
+                byte[] results = FormulaManager.AddFormulas(package.GetAsByteArray(), reportName);
 
 
                 Console.WriteLine("Workbook Cleanup complete");
