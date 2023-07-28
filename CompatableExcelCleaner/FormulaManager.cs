@@ -106,7 +106,7 @@ namespace CompatableExcelCleaner
                     worksheet = package.Workbook.Worksheets[i];
 
                     //call formula generator
-                    IFormulaGenerator formulaGenerator = new RowSegmentFormulaGenerator();
+                    IFormulaGenerator formulaGenerator = ChooseFormulaGenerator(reportName);
                     formulaGenerator.InsertFormulas(worksheet, headers);
                 }
 
@@ -124,7 +124,7 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="reportName">the name of the report that needs formulas</param>
         /// <returns>an implemenation of the IFormulaGenerator interface that should be used to add the formulas</returns>
-        private static IFormulaGenerator FormulaGeneratorFactory(string reportName)
+        private static IFormulaGenerator ChooseFormulaGenerator(string reportName)
         {
             switch(reportName)
             {
