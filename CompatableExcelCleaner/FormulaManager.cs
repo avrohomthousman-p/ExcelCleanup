@@ -118,6 +118,25 @@ namespace CompatableExcelCleaner
 
 
 
+        /// <summary>
+        /// Chooses the implementation of the IFormulaGenerator interface that should be used to add formulas
+        /// to the specified report.
+        /// </summary>
+        /// <param name="reportName">the name of the report that needs formulas</param>
+        /// <returns>an implemenation of the IFormulaGenerator interface that should be used to add the formulas</returns>
+        private static IFormulaGenerator FormulaGeneratorFactory(string reportName)
+        {
+            switch(reportName)
+            {
+                case "ProfitAndLossStatementByPeriod":
+                    return new RowSegmentFormulaGenerator();
+                default:
+                    return null;
+            }
+        }
+
+
+
 
 
         /* Some utility methods needed by the Formula generators */
