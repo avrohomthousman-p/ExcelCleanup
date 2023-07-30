@@ -259,17 +259,20 @@ namespace ExcelDataCleanup
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Hidden Row : " + row);
                 }
+                //this code casues issues in reports, but there is a possibility it will be needed again
+                /*
                 else if(RowIsCollapsed(worksheet, row))
                 {
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Collapsed Row : " + row);
                 }
+                */
             }
         }
 
 
 
-
+        //UNUSED
         /// <summary>
         /// Checks if a row is collapsed
         /// </summary>
@@ -303,6 +306,7 @@ namespace ExcelDataCleanup
                     return false; //unsafe to delete this row as it might have important text
                 }
             }
+
 
             return true;
 
