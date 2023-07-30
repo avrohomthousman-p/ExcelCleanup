@@ -26,7 +26,7 @@ namespace CompatableExcelCleaner
 
             rowsNeedingFormulas.Add("ProfitAndLossStatementByPeriod", new String[]{ "Income", "Expense" });
             rowsNeedingFormulas.Add("LedgerReport", new String[] { "14850 - Prepaid Contracts" });
-            rowsNeedingFormulas.Add("RentRollAll", new String[] { });
+            rowsNeedingFormulas.Add("RentRollAll", new String[] { "Total:" });
             rowsNeedingFormulas.Add("ProfitAndLossDrillThrough", new String[] { });
             rowsNeedingFormulas.Add("BalanceSheetDrillThrough", new String[] { });
             rowsNeedingFormulas.Add("ReportTenantBal", new String[] { });
@@ -128,7 +128,7 @@ namespace CompatableExcelCleaner
         {
             switch(reportName)
             {
-                case "RentRowAll":
+                case "RentRollAll":
                     return new FullTableFormulaGenerator();
 
                 case "ProfitAndLossStatementByPeriod":
@@ -169,16 +169,19 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Generates the formula for the cells in the given range
+        /// Generates the formula for the cells in the given range. Note: the range should only include the 
+        /// cells that are to be included in the formula. Not the that cell that will contain the formula itself
+        /// or any cells above the range.
         /// </summary>
         /// <param name="worksheet">the worksheet currently getting formulas</param>
-        /// <param name="startRow">the starting row of the formula range</param>
-        /// <param name="endRow">the ending row of the formula range</param>
+        /// <param name="startRow">the first data cell to be included in the formula</param>
+        /// <param name="endRow">the last data cell to be included in the formula</param>
         /// <param name="col">the column the formula is for</param>
         /// <returns>the proper formula for the specified formula range</returns>
         internal static string GenerateFormula(ExcelWorksheet worksheet, int startRow, int endRow, int col)
         {
-            ExcelRange cells = worksheet.Cells[startRow + 1, col, endRow - 1, col];
+            //ExcelRange cells = worksheet.Cells[startRow + 1, col, endRow - 1, col];
+            ExcelRange cells = worksheet.Cells[startRow, col, endRow, col];
 
             return "SUM(" + cells.Address + ")";
         }

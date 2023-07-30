@@ -89,7 +89,6 @@ namespace CompatableExcelCleaner
             for (int i = row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
                 cell = worksheet.Cells[i, col];
-                Console.WriteLine("cell text is " + cell.Text);
                 if (cell.Text == targetText)
                 {
                     return i;
@@ -125,7 +124,7 @@ namespace CompatableExcelCleaner
 
                 if (FormulaManager.IsDataCell(cell))
                 {
-                    cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, startRow, endRow, col);
+                    cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, startRow + 1, endRow - 1, col);
                 }
                 else if (!FormulaManager.IsEmptyCell(cell))
                 {

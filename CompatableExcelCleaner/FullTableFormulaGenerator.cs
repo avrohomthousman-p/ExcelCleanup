@@ -45,9 +45,9 @@ namespace CompatableExcelCleaner
             ExcelRange cell;
 
 
-            for (int row = 1; row < worksheet.Dimension.End.Row; row++)
+            for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
             {
-                for (int col = 1; col < worksheet.Dimension.End.Column; col++)
+                for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
                 {
                     cell = worksheet.Cells[row, col];
 
@@ -82,11 +82,20 @@ namespace CompatableExcelCleaner
             for (col++; col <= worksheet.Dimension.End.Column; col++)
             {
 
-                int topRowOfRange = FindTopRowOfFormulaRange(worksheet, row, col);
-
                 cell = worksheet.Cells[row, col];
 
-                cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, topRowOfRange, row, col);
+
+                if (FormulaManager.IsEmptyCell(cell))
+                {
+                    continue;
+                }
+
+
+                int topRowOfRange = FindTopRowOfFormulaRange(worksheet, row, col);
+
+                cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, topRowOfRange, row-1, col);
+
+                Console.WriteLine("Cell " + cell.Address + " has been given this formula: " + cell.Formula);
             }
 
         }
