@@ -24,10 +24,12 @@ namespace CompatableExcelCleaner
 
             //Fill our dictionary with all the reports and all the data we need to give them formulas
 
-            rowsNeedingFormulas.Add("ProfitAndLossStatementByPeriod", new String[]{ "Income", "Expense" });
-            rowsNeedingFormulas.Add("LedgerReport", new String[] { "14850 - Prepaid Contracts" });
+            rowsNeedingFormulas.Add("ProfitAndLossStatementByPeriod", new String[]{ "Total Income", "Total Expense" });
+            rowsNeedingFormulas.Add("LedgerReport", new String[] { "14850 - Prepaid Contracts" }); //ISSUE
             rowsNeedingFormulas.Add("RentRollAll", new String[] { "Total:" });
-            rowsNeedingFormulas.Add("ProfitAndLossDrillThrough", new String[] { });
+            rowsNeedingFormulas.Add("ProfitAndLossStatementDrillthrough", new String[] { "Total Expense", "Total Income" }); //ISSUE
+
+            //TODO: tryout all these reports
             rowsNeedingFormulas.Add("BalanceSheetDrillThrough", new String[] { });
             rowsNeedingFormulas.Add("ReportTenantBal", new String[] { });
             rowsNeedingFormulas.Add("ReportOutstandingBalance", new String[] { });
@@ -128,12 +130,15 @@ namespace CompatableExcelCleaner
         {
             switch(reportName)
             {
-                case "RentRollAll":
-                    return new FullTableFormulaGenerator();
-
-                case "ProfitAndLossStatementByPeriod":
-                default:
+                case "TODO":
                     return new RowSegmentFormulaGenerator();
+
+
+                //case "ProfitAndLossDrillthrough":
+                //case "ProfitAndLossStatementByPeriod":
+                //case "RentRollAll":
+                default:
+                    return new FullTableFormulaGenerator();
             }
         }
 
