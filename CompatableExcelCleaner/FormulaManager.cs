@@ -119,7 +119,7 @@ namespace CompatableExcelCleaner
                     worksheet = package.Workbook.Worksheets[i];
 
                     //call formula generator
-                    IFormulaGenerator formulaGenerator = ChooseFormulaGenerator(reportName);
+                    IFormulaGenerator formulaGenerator = CleanupSystemFactories.ChooseFormulaGenerator(reportName, i);
                     formulaGenerator.InsertFormulas(worksheet, headers);
                 }
 
@@ -127,27 +127,6 @@ namespace CompatableExcelCleaner
                 return package.GetAsByteArray();
             }
 
-        }
-
-
-
-        /// <summary>
-        /// Chooses the implementation of the IFormulaGenerator interface that should be used to add formulas
-        /// to the specified report.
-        /// </summary>
-        /// <param name="reportName">the name of the report that needs formulas</param>
-        /// <returns>an implemenation of the IFormulaGenerator interface that should be used to add the formulas</returns>
-        private static IFormulaGenerator ChooseFormulaGenerator(string reportName)
-        {
-            switch(reportName)
-            {
-                case "BalanceSheetDrillthrough":
-                case "ReportTenantBal":
-                    return new RowSegmentFormulaGenerator();
-
-                default:
-                    return new FullTableFormulaGenerator();
-            }
         }
 
 
