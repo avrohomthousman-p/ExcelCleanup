@@ -62,7 +62,7 @@
   <ItemGroup>
     <Compile Include="AbstractMergeCleaner.cs" />
     <Compile Include="BackupMergeCleaner.cs" />
-    <Compile Include="CleanupSystemFactories.cs" />
+    <Compile Include="ReportMetaData.cs" />
     <Compile Include="FileCleaner.cs" />
     <Compile Include="FormulaManager.cs" />
     <Compile Include="FullTableFormulaGenerator.cs" />

@@ -6,15 +6,15 @@ namespace CompatableExcelCleaner
 {
 
     /// <summary>
-    /// Just a place to store factory methods that are used to pick an implementation of a cleaning system or 
-    /// formula generator to use on a given report or worksheet.
+    /// Stores and makes accesible all meta data about reports, like what merge cleaner and formula generator to
+    /// use.
     /// </summary>
-    internal static class CleanupSystemFactories
+    internal static class ReportMetaData
     {
 
 
         /// <summary>
-        /// Chooses the version of merge cleanup code that would work best for the specified report
+        /// Factory method for choosing a version of the merge cleanup code that would work best for the specified report
         /// </summary>
         /// <param name="reportType">the type of report that needs unmerging</param>
         /// <param name="worksheetNumber">the worksheet withing the report that needs unmerging</param>
@@ -55,7 +55,7 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Chooses the implementation of the IFormulaGenerator interface that should be used to add formulas
+        /// Factory method for choosing the implementation of the IFormulaGenerator interface that should be used to add formulas
         /// to the specified report.
         /// </summary>
         /// <param name="reportName">the name of the report that needs formulas</param>

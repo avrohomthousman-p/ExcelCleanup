@@ -119,7 +119,7 @@ namespace CompatableExcelCleaner
                     worksheet = package.Workbook.Worksheets[i];
 
                     //call formula generator
-                    IFormulaGenerator formulaGenerator = CleanupSystemFactories.ChooseFormulaGenerator(reportName, i);
+                    IFormulaGenerator formulaGenerator = ReportMetaData.ChooseFormulaGenerator(reportName, i);
                     formulaGenerator.InsertFormulas(worksheet, headers);
                 }
 
