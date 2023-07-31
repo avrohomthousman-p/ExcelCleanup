@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
-
+using CompatableExcelCleaner;
 
 namespace ExcelDataCleanup
 {
@@ -70,7 +70,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollAll_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BankReconcilliation_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportOutstandingBalance_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\ReportTenantSummary_7252023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\TenantDirectory_7252023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\VendorInvoiceReportWithJournalAccounts_7252023.xlsx
@@ -362,7 +362,7 @@ namespace ExcelDataCleanup
         private static void RemoveAllMerges(ExcelWorksheet worksheet, string reportName)
         {
 
-            IMergeCleaner mergeCleaner = ChoosesCleanupSystem(reportName);
+            IMergeCleaner mergeCleaner = CleanupSystemFactories.ChoosesCleanupSystem(reportName, worksheet.Index);
 
             try
             {
@@ -378,32 +378,6 @@ namespace ExcelDataCleanup
                 mergeCleaner.Unmerge(worksheet);
             }
             
-        }
-
-
-
-        /// <summary>
-        /// Chosses the version of merge cleanup code that would work best for the specified report
-        /// </summary>
-        /// <param name="reportType">the type of report that needs unmerging</param>
-        /// <returns>an instance of IMergeCleaner that should be used to clean the report</returns>
-        private static IMergeCleaner ChoosesCleanupSystem(string reportType)
-        {
-            switch (reportType)
-            {
-                case "TrialBalance":
-                case "TrialBalanceVariance":
-                case "ProfitAndLossStatementDrillthrough":
-                case "BalanceSheetDrillthrough":
-                case "CashFlow":
-                case "InvoiceDetail":
-                case "ReportTenantSummary":
-                case "UnitInfoReport":
-                    return new BackupMergeCleaner();
-
-                default:
-                    return new PrimaryMergeCleaner();
-            }
         }
 
 
