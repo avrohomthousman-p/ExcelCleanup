@@ -131,7 +131,8 @@ namespace CompatableExcelCleaner
 
                 if (FormulaManager.IsDataCell(cell))
                 {
-                    cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, startRow + 1, endRow - 1, col);
+                    startRow += CountEmptyCellsOnTop(worksheet, startRow, endRow, col); //Skip the whitespace on top
+                    cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, startRow, endRow - 1, col);
                     cell.Style.Locked = true;
                 }
                 else if (!FormulaManager.IsEmptyCell(cell))
@@ -140,9 +141,39 @@ namespace CompatableExcelCleaner
                 }
             }
 
-
-
         }
 
+
+
+        /// <summary>
+        /// Counts the number of empty cells between the start header(inclusive) and the actual data cells in the 
+        /// formula range.
+        /// </summary>
+        /// <param name="worksheet">the worksheet in need of formulas</param>
+        /// <param name="startRow">the row where the start header was found</param>
+        /// <param name="endRow">te row where the end header was found</param>
+        /// <param name="col">the column of the formula range</param>
+        /// <returns>the number of empty cells at the start of the formula range</returns>
+        private static int CountEmptyCellsOnTop(ExcelWorksheet worksheet, int startRow, int endRow, int col)
+        {
+            int emptyCells = 0;
+            ExcelRange cell;
+
+            for(;startRow <= endRow; startRow++)
+            {
+                cell = worksheet.Cells[startRow, col];
+                if (FormulaManager.IsEmptyCell(cell))
+                {
+                    emptyCells++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+
+            return emptyCells;
+        }
     }
 }

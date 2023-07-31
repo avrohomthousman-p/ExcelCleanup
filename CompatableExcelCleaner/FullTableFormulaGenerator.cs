@@ -120,13 +120,27 @@ namespace CompatableExcelCleaner
             {
                 cell = worksheet.Cells[row, col];
 
-                if(FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDataCell(cell))
+                if(IsBeyondFormulaRange(cell))
                 {
                     return row + 1; //Return the row just before that non-data cell
                 }
             }
 
             return 1;
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if the specified cell is outside the formula range. In this implementation, that 
+        /// happens when the cell is empty or is not a data cell.
+        /// </summary>
+        /// <param name="cell">the cell that is being checked</param>
+        /// <returns>true if the specified cell is outside the formula range, and false otherwise</returns>
+        private bool IsBeyondFormulaRange(ExcelRange cell)
+        {
+            return FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDataCell(cell);
         }
     }
 }

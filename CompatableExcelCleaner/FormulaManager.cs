@@ -34,10 +34,12 @@ namespace CompatableExcelCleaner
                         "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
                         "Long Term Liability=Total Long Term Liability", "Equity=Total Equity" }); //SMALL ISSUE: one line isnt getting formula
 
+            rowsNeedingFormulas.Add("ReportTenantBal", new String[] { "Total Open Charges:=Balance:", "Electric Bill: 08/25/2022-09/28/2022=Trash" });
+
+
 
 
             //TODO: tryout all these reports
-            rowsNeedingFormulas.Add("ReportTenantBal", new String[] { });
             rowsNeedingFormulas.Add("ReportOutstandingBalance", new String[] { });
 
 
@@ -139,6 +141,7 @@ namespace CompatableExcelCleaner
             switch(reportName)
             {
                 case "BalanceSheetDrillthrough":
+                case "ReportTenantBal":
                     return new RowSegmentFormulaGenerator();
 
                 default:
