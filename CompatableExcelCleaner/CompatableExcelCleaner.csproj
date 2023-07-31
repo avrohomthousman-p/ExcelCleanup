@@ -64,10 +64,14 @@
     <Compile Include="BackupMergeCleaner.cs" />
     <Compile Include="CleanupSystemFactories.cs" />
     <Compile Include="FileCleaner.cs" />
+    <Compile Include="FormulaManager.cs" />
+    <Compile Include="FullTableFormulaGenerator.cs" />
+    <Compile Include="IFormulaGenerator.cs" />
     <Compile Include="IMergeCleaner.cs" />
     <Compile Include="MergeType.cs" />
     <Compile Include="PrimaryMergeCleaner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RowSegmentFormulaGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
