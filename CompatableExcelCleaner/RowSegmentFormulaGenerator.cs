@@ -8,19 +8,25 @@ using System.Threading.Tasks;
 namespace CompatableExcelCleaner
 {
     /// <summary>
-    /// Implementation of IFormulaGenerator that looks for the specifed header and a subsequent 
-    /// header with the same text except starting with the word "Total", and treats the rows between
-    /// those headers as a "formula range" that gets its own formula.
-    /// 
+    /// Implementation of IFormulaGenerator that looks for the specifed header followed by the other specified 
+    /// (e.g. "Income" and "Total Income"), and treats the rows between those headers as a "formula range" that 
+    /// gets its own formula.
     /// </summary>
     internal class RowSegmentFormulaGenerator : IFormulaGenerator
     {
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
+            string startHeader, endHeader;
 
             foreach (string header in headers)              //for each header in the report that needs a formula 
             {
-                var ranges = GetRowRangeForFormula(worksheet, header);
+
+                int seperator = header.IndexOf('=');
+
+                startHeader = header.Substring(0, seperator);
+                endHeader = header.Substring(seperator + 1);
+
+                var ranges = GetRowRangeForFormula(worksheet, startHeader, endHeader);
 
                 foreach (var item in ranges)                // for each instance of that header
                 {
@@ -37,9 +43,10 @@ namespace CompatableExcelCleaner
         /// Gets the row numbers of the first and last rows that should be included in the formula
         /// </summary>
         /// <param name="worksheet">the worksheet currently being given formulas</param>
-        /// <param name="targetText">the text to look for to signal the start and end row</param>
+        /// <param name="startHeader">the text to look for to signal the start row</param>
+        /// <param name="endHeader">The text to look for to signal the end row</param>
         /// <returns>a tuple containing the start-row, end-row, and column of the formula range</returns>
-        private static IEnumerable<Tuple<int, int, int>> GetRowRangeForFormula(ExcelWorksheet worksheet, string targetText)
+        private static IEnumerable<Tuple<int, int, int>> GetRowRangeForFormula(ExcelWorksheet worksheet, string startHeader, string endHeader)
         {
             ExcelRange cell;
 
@@ -50,11 +57,11 @@ namespace CompatableExcelCleaner
                 {
                     cell = worksheet.Cells[row, col];
 
-                    if (cell.Text == targetText)
+                    if (cell.Text == startHeader)
                     {
 
                         //search for end of sequence
-                        int end = FindEndOfFormulaRange(worksheet, row, col, "Total " + targetText);
+                        int end = FindEndOfFormulaRange(worksheet, row, col, endHeader);
 
                         if (end > 0)
                         {
@@ -125,6 +132,7 @@ namespace CompatableExcelCleaner
                 if (FormulaManager.IsDataCell(cell))
                 {
                     cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, startRow + 1, endRow - 1, col);
+                    cell.Style.Locked = true;
                 }
                 else if (!FormulaManager.IsEmptyCell(cell))
                 {

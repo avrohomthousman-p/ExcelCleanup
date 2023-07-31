@@ -94,6 +94,7 @@ namespace CompatableExcelCleaner
                 int topRowOfRange = FindTopRowOfFormulaRange(worksheet, row, col);
 
                 cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, topRowOfRange, row-1, col);
+                cell.Style.Locked = true;
 
                 Console.WriteLine("Cell " + cell.Address + " has been given this formula: " + cell.Formula);
             }

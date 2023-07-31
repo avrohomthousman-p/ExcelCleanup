@@ -64,6 +64,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\ChargesCreditsReport_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BalanceSheetPropBreakdown_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BalanceSheetComp_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BalanceSheetDrillthrough_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollAll_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\InvoiceDetail_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\LedgerReport_7232023.xlsx
@@ -207,8 +208,7 @@ namespace ExcelDataCleanup
                 }
 
 
-                //byte[] results = FormulaManager.AddFormulas(package.GetAsByteArray(), reportName);
-                byte[] results = package.GetAsByteArray();
+                byte[] results = FormulaManager.AddFormulas(package.GetAsByteArray(), reportName);
 
                 Console.WriteLine("Workbook Cleanup complete");
 
@@ -263,11 +263,13 @@ namespace ExcelDataCleanup
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Hidden Row : " + row);
                 }
+                /*
                 else if(RowIsCollapsed(worksheet, row))
                 {
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Collapsed Row : " + row);
                 }
+                */
             }
         }
 

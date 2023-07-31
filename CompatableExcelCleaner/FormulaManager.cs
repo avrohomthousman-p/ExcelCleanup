@@ -25,14 +25,22 @@ namespace CompatableExcelCleaner
             //Fill our dictionary with all the reports and all the data we need to give them formulas
 
             rowsNeedingFormulas.Add("ProfitAndLossStatementByPeriod", new String[]{ "Total Income", "Total Expense" });
-            rowsNeedingFormulas.Add("LedgerReport", new String[] { "14850 - Prepaid Contracts" }); //ISSUE
+            rowsNeedingFormulas.Add("LedgerReport", new String[] { "14850 - Prepaid Contracts" }); //ISSUE: numbers dont add up
             rowsNeedingFormulas.Add("RentRollAll", new String[] { "Total:" });
-            rowsNeedingFormulas.Add("ProfitAndLossStatementDrillthrough", new String[] { "Total Expense", "Total Income" }); //ISSUE
+            rowsNeedingFormulas.Add("ProfitAndLossStatementDrillthrough", new String[] { "Total Expense", "Total Income" });
+            rowsNeedingFormulas.Add("BalanceSheetDrillthrough", new String[] 
+                    { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset", 
+                        "Assets=Total Assets", "Liabilities And Equity=Total Liabilities And Equity", 
+                        "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
+                        "Long Term Liability=Total Long Term Liability", "Equity=Total Equity" }); //SMALL ISSUE: one line isnt getting formula
+
+
 
             //TODO: tryout all these reports
-            rowsNeedingFormulas.Add("BalanceSheetDrillThrough", new String[] { });
             rowsNeedingFormulas.Add("ReportTenantBal", new String[] { });
             rowsNeedingFormulas.Add("ReportOutstandingBalance", new String[] { });
+
+
             rowsNeedingFormulas.Add("BalanceSheetComp", new String[] { });
             rowsNeedingFormulas.Add("AgedReceivables", new String[] { });
             rowsNeedingFormulas.Add("ProfitAndLossComp", new String[] { });
@@ -130,13 +138,9 @@ namespace CompatableExcelCleaner
         {
             switch(reportName)
             {
-                case "TODO":
+                case "BalanceSheetDrillthrough":
                     return new RowSegmentFormulaGenerator();
 
-
-                //case "ProfitAndLossDrillthrough":
-                //case "ProfitAndLossStatementByPeriod":
-                //case "RentRollAll":
                 default:
                     return new FullTableFormulaGenerator();
             }
