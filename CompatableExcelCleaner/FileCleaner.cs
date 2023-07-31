@@ -67,7 +67,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\InvoiceDetail_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\LedgerReport_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportTenantBal_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportTenantBal_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollAll_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BankReconcilliation_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
@@ -567,6 +567,12 @@ namespace ExcelDataCleanup
                         cell.Style.Numberformat.Format = "($#,##0.00)";
 
                     }
+                    else if (IsDateWith2DigitYear(cell.Text))
+                    {
+                        string fourDigitYear = cell.Text.Substring(0, 6) + "20" + cell.Text.Substring(6);
+                        cell.SetCellValue(0, 0, fourDigitYear);
+                        continue;
+                    }
                     else
                     {
                         continue; //If this data cannot be coverted to a number, skip the formatting below
@@ -612,6 +618,20 @@ namespace ExcelDataCleanup
 
 
             return replacementText;
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if the specified text stores a date with a 2 digit year
+        /// </summary>
+        /// <param name="text">the text in question</param>
+        /// <returns>true if the text matches the pattern of a date with a 2 digit year, and false otherwise</returns>
+        private static bool IsDateWith2DigitYear(string text)
+        {
+            Regex reg = new Regex("^\\d\\d/\\d\\d/\\d\\d$");
+            return reg.IsMatch(text);
         }
 
 
