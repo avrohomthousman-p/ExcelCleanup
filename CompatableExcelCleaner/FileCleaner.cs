@@ -73,10 +73,10 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\ReportTenantBal_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\BankReconcilliation_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportOutstandingBalance_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\ReportTenantSummary_7252023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\acceptable\TenantDirectory_7252023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\acceptable\VendorInvoiceReportWithJournalAccounts_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\TenantDirectory_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\VendorInvoiceReportWithJournalAccounts_7252023.xlsx
 
 
 
@@ -264,35 +264,27 @@ namespace ExcelDataCleanup
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Hidden Row : " + row);
                 }
-                /*
-                else if(RowIsCollapsed(worksheet, row))
+                else if(RowIsSafeToDelete(worksheet, row))
                 {
                     worksheet.DeleteRow(row);
-                    Console.WriteLine("Deleted Collapsed Row : " + row);
+                    Console.WriteLine("Deleted Very Small Row : " + row);
                 }
-                */
             }
         }
 
 
 
-
         /// <summary>
-        /// Checks if a row is collapsed
+        /// Checks if a row is empty and really really small and therefore no data would be lost if it was deleted
         /// </summary>
         /// <param name="worksheet">the worksheet currently being cleaned</param>
         /// <param name="rowNumber">the row being checked</param>
-        /// <returns>true if the row is collapsed and can be deleted</returns>
-        private static bool RowIsCollapsed(ExcelWorksheet worksheet, int rowNumber)
+        /// <returns>true if the row is safe to delete becuase it has no data in it</returns>
+        private static bool RowIsSafeToDelete(ExcelWorksheet worksheet, int rowNumber)
         {
 
             var row = worksheet.Row(rowNumber);
-
-            if(row.Collapsed || row.Height <= 1.5)
-            {
-                return true;
-            }
-            else if(row.Height > 3)
+            if(row.Height >= 3)
             {
                 return false;
             }
@@ -310,6 +302,7 @@ namespace ExcelDataCleanup
                     return false; //unsafe to delete this row as it might have important text
                 }
             }
+
 
             return true;
 
@@ -374,7 +367,7 @@ namespace ExcelDataCleanup
         private static void RemoveAllMerges(ExcelWorksheet worksheet, string reportName)
         {
 
-            IMergeCleaner mergeCleaner = ChoosesCleanupSystem(reportName);
+            IMergeCleaner mergeCleaner = CleanupSystemFactories.ChoosesCleanupSystem(reportName, worksheet.Index);
 
             try
             {
@@ -390,32 +383,6 @@ namespace ExcelDataCleanup
                 mergeCleaner.Unmerge(worksheet);
             }
             
-        }
-
-
-
-        /// <summary>
-        /// Chosses the version of merge cleanup code that would work best for the specified report
-        /// </summary>
-        /// <param name="reportType">the type of report that needs unmerging</param>
-        /// <returns>an instance of IMergeCleaner that should be used to clean the report</returns>
-        private static IMergeCleaner ChoosesCleanupSystem(string reportType)
-        {
-            switch (reportType)
-            {
-                case "TrialBalance":
-                case "TrialBalanceVariance":
-                case "ProfitAndLossStatementDrillthrough":
-                case "BalanceSheetDrillthrough":
-                case "CashFlow":
-                case "InvoiceDetail":
-                case "ReportTenantSummary":
-                case "UnitInfoReport":
-                    return new BackupMergeCleaner();
-
-                default:
-                    return new PrimaryMergeCleaner();
-            }
         }
 
 
@@ -579,6 +546,12 @@ namespace ExcelDataCleanup
                         cell.Style.Numberformat.Format = "($#,##0.00)";
 
                     }
+                    else if (IsDateWith2DigitYear(cell.Text))
+                    {
+                        string fourDigitYear = cell.Text.Substring(0, 6) + "20" + cell.Text.Substring(6);
+                        cell.SetCellValue(0, 0, fourDigitYear);
+                        continue;
+                    }
                     else
                     {
                         continue; //If this data cannot be coverted to a number, skip the formatting below
@@ -624,6 +597,20 @@ namespace ExcelDataCleanup
 
 
             return replacementText;
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if the specified text stores a date with a 2 digit year
+        /// </summary>
+        /// <param name="text">the text in question</param>
+        /// <returns>true if the text matches the pattern of a date with a 2 digit year, and false otherwise</returns>
+        private static bool IsDateWith2DigitYear(string text)
+        {
+            Regex reg = new Regex("^\\d\\d/\\d\\d/\\d\\d$");
+            return reg.IsMatch(text);
         }
 
 
