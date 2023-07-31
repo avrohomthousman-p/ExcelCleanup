@@ -367,7 +367,7 @@ namespace ExcelDataCleanup
         private static void RemoveAllMerges(ExcelWorksheet worksheet, string reportName)
         {
 
-            IMergeCleaner mergeCleaner = CleanupSystemFactories.ChoosesCleanupSystem(reportName, worksheet.Index);
+            IMergeCleaner mergeCleaner = ReportMetaData.ChoosesCleanupSystem(reportName, worksheet.Index);
 
             try
             {

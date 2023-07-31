@@ -13,88 +13,6 @@ namespace CompatableExcelCleaner
     {
 
 
-        // Stores each report that requires formulas and an array of all the headers to look for in that report
-        // (for where to add those formulas)
-        private static readonly Dictionary<string, string[]> rowsNeedingFormulas = new Dictionary<string, string[]>();
-
-
-        
-        static FormulaManager() 
-        {
-
-            //Fill our dictionary with all the reports and all the data we need to give them formulas
-
-            rowsNeedingFormulas.Add("ProfitAndLossStatementByPeriod", new String[]{ "Total Income", "Total Expense" });
-            rowsNeedingFormulas.Add("LedgerReport", new String[] { "14850 - Prepaid Contracts" }); //ISSUE: numbers dont add up
-            rowsNeedingFormulas.Add("RentRollAll", new String[] { "Total:" });
-            rowsNeedingFormulas.Add("ProfitAndLossStatementDrillthrough", new String[] { "Total Expense", "Total Income" });
-            rowsNeedingFormulas.Add("BalanceSheetDrillthrough", new String[] 
-                    { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset", 
-                        "Assets=Total Assets", "Liabilities And Equity=Total Liabilities And Equity", 
-                        "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
-                        "Long Term Liability=Total Long Term Liability", "Equity=Total Equity" }); //SMALL ISSUE: one line isnt getting formula
-
-            //ISSUE: small empty rows that have not been deleted
-            rowsNeedingFormulas.Add("ReportTenantBal", new String[] { "Total Open Charges:=Balance:", "Electric Bill: 08/25/2022-09/28/2022=Trash" });
-
-
-
-
-            //TODO: tryout all these reports
-            rowsNeedingFormulas.Add("ReportOutstandingBalance", new String[] { });
-
-
-            rowsNeedingFormulas.Add("BalanceSheetComp", new String[] { });
-            rowsNeedingFormulas.Add("AgedReceivables", new String[] { });
-            rowsNeedingFormulas.Add("ProfitAndLossComp", new String[] { });
-            rowsNeedingFormulas.Add("RentRollActivity_New", new String[] { });
-            rowsNeedingFormulas.Add("TrialBalance", new String[] { });
-            rowsNeedingFormulas.Add("ReportCashReceiptsSummary", new String[] { });
-            rowsNeedingFormulas.Add("ReportPayablesRegister", new String[] { });
-            rowsNeedingFormulas.Add("AgedPayables", new String[] { });
-            rowsNeedingFormulas.Add("ChargesCreditReport", new String[] { });
-            rowsNeedingFormulas.Add("UnitInvoiceReport", new String[] { });
-            rowsNeedingFormulas.Add("ReportCashReceipts", new String[] { });
-            rowsNeedingFormulas.Add("PayablesAccountReport", new String[] { });
-            rowsNeedingFormulas.Add("VendorInvoiceReport", new String[] { });
-            rowsNeedingFormulas.Add("CollectionsAnaysisSummary", new String[] { });
-            rowsNeedingFormulas.Add("ReportTenantSummary", new String[] { });
-            rowsNeedingFormulas.Add("ProfitAndLossBudget", new String[] { });
-            rowsNeedingFormulas.Add("VendorInvoiceReportWithJournalAccounts", new String[] { });
-            rowsNeedingFormulas.Add("RentRollActivityItemized_New", new String[] { });
-            rowsNeedingFormulas.Add("RentHistoryReport", new String[] { });
-            rowsNeedingFormulas.Add("ProfitAndLossExtendedVariance", new String[] { });
-            rowsNeedingFormulas.Add("RentRollActivity", new String[] { });
-            rowsNeedingFormulas.Add("RentRollAllItemized", new String[] { });
-            rowsNeedingFormulas.Add("RentRollHistory", new String[] { });
-            rowsNeedingFormulas.Add("TrialBalanceVariance", new String[] { });
-            rowsNeedingFormulas.Add("JournalLedger", new String[] { });
-            rowsNeedingFormulas.Add("CollectionsAnalysis", new String[] { });
-            rowsNeedingFormulas.Add("ProfitAndLossStatementByJob", new String[] { });
-            rowsNeedingFormulas.Add("VendorPropertyReport", new String[] { });
-            rowsNeedingFormulas.Add("RentRollPortfolio", new String[] { });
-            rowsNeedingFormulas.Add("AgedAccountsReceivable", new String[] { });
-            rowsNeedingFormulas.Add("BalanceSheetPropBreakdown", new String[] { });
-            rowsNeedingFormulas.Add("SubsidyRentRollReport", new String[] { });
-            rowsNeedingFormulas.Add("VacancyLoss", new String[] { });
-            rowsNeedingFormulas.Add("PropBankAccountReport", new String[] { });
-            rowsNeedingFormulas.Add("PayablesAuditTrail", new String[] { });
-            rowsNeedingFormulas.Add("PaymentsHistory", new String[] { });
-            rowsNeedingFormulas.Add("MarketRentReport", new String[] { });
-            rowsNeedingFormulas.Add("Budget", new String[] { });
-            rowsNeedingFormulas.Add("ReportAccountBalances", new String[] { });
-            rowsNeedingFormulas.Add("CCTransactionsReport", new String[] { });
-            rowsNeedingFormulas.Add("RentRollActivityCompSummary", new String[] { });
-            rowsNeedingFormulas.Add("RentRollCommercialItemized", new String[] { });
-            rowsNeedingFormulas.Add("RentRollActivityTotals", new String[] { });
-            rowsNeedingFormulas.Add("RentRollBalanceHistory", new String[] { });
-            rowsNeedingFormulas.Add("PreprintedLeasesReport", new String[] { });
-            rowsNeedingFormulas.Add("ReportEscalateCharges", new String[] { });
-            rowsNeedingFormulas.Add("RentRollActivityItemized", new String[] { });
-            rowsNeedingFormulas.Add("InvoiceRecurringReport", new String[] { });
-        }
-
-
 
         /// <summary>
         /// Adds all necissary formulas to the appropriate cells in the specified file
@@ -104,22 +22,26 @@ namespace CompatableExcelCleaner
         /// <returns>the byte stream/arrray of the modified file</returns>
         public static byte[] AddFormulas(byte[] sourceFile, string reportName)
         {
-            string[] headers;
-            if(!rowsNeedingFormulas.TryGetValue(reportName, out headers))
-            {
-                return sourceFile; //this report is not supposed to get any formulas
-            }
-
-
+            
             using (ExcelPackage package = new ExcelPackage(new MemoryStream(sourceFile)))
             {
+
+                string[] headers;
                 ExcelWorksheet worksheet;
+
                 for (int i = 0; i < package.Workbook.Worksheets.Count; i++)
                 {
                     worksheet = package.Workbook.Worksheets[i];
 
-                    //call formula generator
                     IFormulaGenerator formulaGenerator = ReportMetaData.ChooseFormulaGenerator(reportName, i);
+
+                    if(formulaGenerator == null) //if this worksheet doesnt need formulas
+                    {
+                        continue; //skip this worksheet
+                    }
+
+                    headers = ReportMetaData.GetFormulaGenerationArguments(reportName, i);
+
                     formulaGenerator.InsertFormulas(worksheet, headers);
                 }
 

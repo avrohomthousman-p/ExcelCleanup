@@ -145,7 +145,10 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="reportName">the name of the report that needs formulas</param>
         /// <param name="worksheetNum">the index of the worksheet that needs formulas</param>
-        /// <returns>an implemenation of the IFormulaGenerator interface that should be used to add the formulas</returns>
+        /// <returns>
+        /// an implemenation of the IFormulaGenerator interface that should be used to add the formulas,
+        /// or null if the worksheet doesnt need formulas
+        /// </returns>
         internal static IFormulaGenerator ChooseFormulaGenerator(string reportName, int worksheetNum)
         {
             switch (reportName)
@@ -154,8 +157,64 @@ namespace CompatableExcelCleaner
                 case "ReportTenantBal":
                     return new RowSegmentFormulaGenerator();
 
-                default:
+
+                case "ProfitAndLossStatementByPeriod":
+                case "LedgerReport":
+                case "RentRollAll":
+                case "ProfitAndLossStatementDrillthrough":
+                case "ReportOutstandingBalance":
+                case "AgedReceivables":
+                case "ProfitAndLossComp":
+                case "RentRollActivity_New":
+                case "TrialBalance":
+                case "ReportCashReceiptsSummary":
+                case "ReportPayablesRegister":
+                case "AgedPayables":
+                case "ChargesCreditReport":
+                case "UnitInvoiceReport":
+                case "ReportCashReceipts":
+                case "PayablesAccountReport":
+                case "VendorInvoiceReport":
+                case "CollectionsAnaysisSummary":
+                case "ReportTenantSummary":
+                case "ProfitAndLossBudget":
+                case "VendorInvoiceReportWithJournalAccounts":
+                case "RentRollActivityItemized_New":
+                case "RentHistoryReport":
+                case "ProfitAndLossExtendedVariance":
+                case "RentRollActivity":
+                case "RentRollAllItemized":
+                case "RentRollHistory":
+                case "TrialBalanceVariance":
+                case "JournalLedger":
+                case "CollectionsAnalysis":
+                case "ProfitAndLossStatementByJob":
+                case "VendorPropertyReport":
+                case "RentRollPortfolio":
+                case "AgedAccountsReceivable":
+                case "BalanceSheetPropBreakdown":
+                case "SubsidyRentRollReport":
+                case "VacancyLoss":
+                case "PropBankAccountReport":
+                case "PayablesAuditTrail":
+                case "PaymentsHistory":
+                case "MarketRentReport":
+                case "Budget":
+                case "ReportAccountBalances":
+                case "CCTransactionsReport":
+                case "RentRollActivityCompSummary":
+                case "RentRollCommercialItemized":
+                case "RentRollActivityTotals":
+                case "RentRollBalanceHistory":
+                case "PreprintedLeasesReport":
+                case "ReportEscalateCharges":
+                case "RentRollActivityItemized":
+                case "InvoiceRecurringReport":
                     return new FullTableFormulaGenerator();
+
+
+                default:
+                    return null;
             }
         }
 
@@ -167,10 +226,28 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="reportName">the name of the report getting the formulas</param>
         /// <param name="worksheetNum">the index of the worksheet getting the formulas</param>
-        /// <returns>a list of strings that should be passed to the formula generator when formulas are being added</returns>
+        /// <returns>
+        /// a list of strings that should be passed to the formula generator when formulas are being added,
+        /// or null if the worksheet does not require formulas
+        /// </returns>
         internal static string[] GetFormulaGenerationArguments(string reportName, int worksheetNum)
         {
             return formulaGenerationArguments[  new Worksheet(reportName, worksheetNum)  ];
+        }
+
+
+
+        /// <summary>
+        /// Checks if the specified worksheet in the specified report requires formulas
+        /// </summary>
+        /// <param name="reportName">the name of the report</param>
+        /// <param name="worksheetNumber">the index of the worksheet</param>
+        /// <returns>true if the worksheet specified needs formulas and false otherwise</returns>
+        internal static bool RequiresFormulas(string reportName, int worksheetNumber)
+        {
+            string[] ignoredResult = new string[0];
+
+            return formulaGenerationArguments.TryGetValue(new Worksheet(reportName, worksheetNumber), out ignoredResult);
         }
     }
 }

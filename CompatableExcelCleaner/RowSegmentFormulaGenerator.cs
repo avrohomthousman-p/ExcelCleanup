@@ -134,6 +134,7 @@ namespace CompatableExcelCleaner
                     startRow += CountEmptyCellsOnTop(worksheet, startRow, endRow, col); //Skip the whitespace on top
                     cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, startRow, endRow - 1, col);
                     cell.Style.Locked = true;
+                    Console.WriteLine("Cell " + cell.Address + " has been given this formula: " + cell.Formula);
                 }
                 else if (!FormulaManager.IsEmptyCell(cell))
                 {
