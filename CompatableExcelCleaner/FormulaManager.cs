@@ -18,7 +18,7 @@ namespace CompatableExcelCleaner
         private static readonly Dictionary<string, string[]> rowsNeedingFormulas = new Dictionary<string, string[]>();
 
 
-
+        
         static FormulaManager() 
         {
 
@@ -179,4 +179,6 @@ namespace CompatableExcelCleaner
         }
 
     }
+
+
 }
