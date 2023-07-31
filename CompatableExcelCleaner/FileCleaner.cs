@@ -67,13 +67,13 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\InvoiceDetail_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\LedgerReport_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportTenantBal_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\ReportTenantBal_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\BankReconcilliation_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportTenantBal_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BankReconcilliation_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportChecksInvoiceInfo_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\ReportTenantSummary_7252023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\acceptable\TenantDirectory_7252023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\acceptable\VendorInvoiceReportWithJournalAccounts_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\TenantDirectory_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\VendorInvoiceReportWithJournalAccounts_7252023.xlsx
 
 
 
@@ -259,36 +259,27 @@ namespace ExcelDataCleanup
                     worksheet.DeleteRow(row);
                     Console.WriteLine("Deleted Hidden Row : " + row);
                 }
-                //this code casues issues in reports, but there is a possibility it will be needed again
-                /*
-                else if(RowIsCollapsed(worksheet, row))
+                else if(RowIsSafeToDelete(worksheet, row))
                 {
                     worksheet.DeleteRow(row);
-                    Console.WriteLine("Deleted Collapsed Row : " + row);
+                    Console.WriteLine("Deleted Very Small Row : " + row);
                 }
-                */
             }
         }
 
 
 
-        //UNUSED
         /// <summary>
-        /// Checks if a row is collapsed
+        /// Checks if a row is empty and really really small and therefore no data would be lost if it was deleted
         /// </summary>
         /// <param name="worksheet">the worksheet currently being cleaned</param>
         /// <param name="rowNumber">the row being checked</param>
-        /// <returns>true if the row is collapsed and can be deleted</returns>
-        private static bool RowIsCollapsed(ExcelWorksheet worksheet, int rowNumber)
+        /// <returns>true if the row is safe to delete becuase it has no data in it</returns>
+        private static bool RowIsSafeToDelete(ExcelWorksheet worksheet, int rowNumber)
         {
 
             var row = worksheet.Row(rowNumber);
-
-            if(row.Collapsed || row.Height <= 1.5)
-            {
-                return true;
-            }
-            else if(row.Height > 3)
+            if(row.Height >= 3)
             {
                 return false;
             }
