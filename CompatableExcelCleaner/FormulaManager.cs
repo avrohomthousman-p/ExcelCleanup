@@ -34,6 +34,7 @@ namespace CompatableExcelCleaner
                         "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
                         "Long Term Liability=Total Long Term Liability", "Equity=Total Equity" }); //SMALL ISSUE: one line isnt getting formula
 
+            //ISSUE: small empty rows that have not been deleted
             rowsNeedingFormulas.Add("ReportTenantBal", new String[] { "Total Open Charges:=Balance:", "Electric Bill: 08/25/2022-09/28/2022=Trash" });
 
 
