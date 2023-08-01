@@ -247,7 +247,7 @@ namespace CompatableExcelCleaner
         /// <returns>true if the iterator has gone out of bounds, and false otherwise</returns>
         private bool OutOfBounds()
         {
-            return col > 0 && col <= worksheet.Dimension.End.Column && row > 0 && row <= worksheet.Dimension.End.Row;
+            return col < 1 || col > worksheet.Dimension.End.Column || row < 1 || row > worksheet.Dimension.End.Row;
         }
     }
 }
