@@ -37,12 +37,9 @@ namespace CompatableExcelCleaner
 
             //ISSUE: small empty rows that have not been deleted
             formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:=Balance:", "Electric Bill: 08/25/2022-09/28/2022=Trash" });
-
-
-
-
-            //TODO: tryout all these reports
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { });
+            //ISSUE last formula missing
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" });
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
 
 
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetComp", 0), new String[] { });
@@ -158,11 +155,21 @@ namespace CompatableExcelCleaner
                     return new RowSegmentFormulaGenerator();
 
 
+
+                case "ReportOutstandingBalance":
+                    switch (worksheetNum)
+                    {
+                        case 0:
+                            return new DataColumnFormulaGenerator();
+                        default:
+                            return new FullTableFormulaGenerator();
+                    }
+
+
                 case "ProfitAndLossStatementByPeriod":
                 case "LedgerReport":
                 case "RentRollAll":
                 case "ProfitAndLossStatementDrillthrough":
-                case "ReportOutstandingBalance":
                 case "AgedReceivables":
                 case "ProfitAndLossComp":
                 case "RentRollActivity_New":
