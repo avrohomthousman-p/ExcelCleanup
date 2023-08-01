@@ -40,10 +40,15 @@ namespace CompatableExcelCleaner
             //ISSUE last formula missing
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" });
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
+            formulaGenerationArguments.Add(new Worksheet("BalanceSheetComp", 0), new String[] 
+            { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset", 
+                "Assets=Total Assets",  "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
+                "Liabilities And Equity=Total Liabilities And Equity", "Long Term Liability=Total Long Term Liability",
+                "Equity=Total Equity"}); //ISSUE: one header skipped
+
+            formulaGenerationArguments.Add(new Worksheet("AgedReceivables", 0), new String[] { "Total" });
 
 
-            formulaGenerationArguments.Add(new Worksheet("BalanceSheetComp", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("AgedReceivables", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossComp", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("TrialBalance", 0), new String[] { });
@@ -152,6 +157,7 @@ namespace CompatableExcelCleaner
             {
                 case "BalanceSheetDrillthrough":
                 case "ReportTenantBal":
+                case "BalanceSheetComp":
                     return new RowSegmentFormulaGenerator();
 
 
@@ -166,11 +172,17 @@ namespace CompatableExcelCleaner
                     }
 
 
+
+                case "AgedReceivables":
+                    return new WhitespaceFriendlyFullTableGenerator();
+
+
+
                 case "ProfitAndLossStatementByPeriod":
                 case "LedgerReport":
                 case "RentRollAll":
                 case "ProfitAndLossStatementDrillthrough":
-                case "AgedReceivables":
+
                 case "ProfitAndLossComp":
                 case "RentRollActivity_New":
                 case "TrialBalance":
