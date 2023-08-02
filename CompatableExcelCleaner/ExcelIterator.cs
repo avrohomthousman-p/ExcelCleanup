@@ -34,6 +34,15 @@ namespace CompatableExcelCleaner
 
 
 
+        public ExcelIterator(ExcelWorksheet w, int startRow, int startCol)
+        {
+            this.worksheet = w;
+            this.row = startRow;
+            this.col = startCol;
+        }
+
+
+
         public ExcelIterator(ExcelIterator template)
         {
             this.worksheet = template.worksheet;
@@ -139,7 +148,7 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Finds all cells in thewhole table that match specified predicate. Note: this method works independently 
+        /// Finds all cells in the whole table that match specified predicate. Note: this method works independently 
         /// of what the iterator is referencing, and will not change what it references at all. This method is an 
         /// alternitive to FindAllMatchingCoordinates that returns the cell itself instead of the coordinates.
         /// </summary>

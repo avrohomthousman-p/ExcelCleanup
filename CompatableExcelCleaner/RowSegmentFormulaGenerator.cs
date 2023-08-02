@@ -10,7 +10,8 @@ namespace CompatableExcelCleaner
     /// <summary>
     /// Implementation of IFormulaGenerator that looks for the specifed header followed by the other specified 
     /// (e.g. "Income" and "Total Income"), and treats the rows between those headers as a "formula range" that 
-    /// gets its own formula.
+    /// gets its own formula. Each header pair should be included in the string array passed to IsertFormulas
+    /// in this format:  [text of start header]=[text of end header]
     /// </summary>
     internal class RowSegmentFormulaGenerator : IFormulaGenerator
     {
@@ -48,31 +49,20 @@ namespace CompatableExcelCleaner
         /// <returns>a tuple containing the start-row, end-row, and column of the formula range</returns>
         private static IEnumerable<Tuple<int, int, int>> GetRowRangeForFormula(ExcelWorksheet worksheet, string startHeader, string endHeader)
         {
-            ExcelRange cell;
+            ExcelIterator iter = new ExcelIterator(worksheet);
 
+            Predicate<ExcelRange> cellMatchesStartingHeader = (cell => cell.Text == startHeader);
 
-            for (int row = 1; row < worksheet.Dimension.End.Row; row++)
+            var cellsInWorksheet = iter.FindAllMatchingCoordinates( cellMatchesStartingHeader );
+
+            foreach (Tuple<int, int> cell in cellsInWorksheet)
             {
-                for (int col = 1; col < worksheet.Dimension.End.Column; col++)
+                //search for end of sequence
+                int end = FindEndOfFormulaRange(worksheet, cell.Item1, cell.Item2, endHeader);
+
+                if (end > 0)
                 {
-                    cell = worksheet.Cells[row, col];
-
-                    if (cell.Text == startHeader)
-                    {
-
-                        //search for end of sequence
-                        int end = FindEndOfFormulaRange(worksheet, row, col, endHeader);
-
-                        if (end > 0)
-                        {
-;
-                            yield return new Tuple<int, int, int>(row, end, col);
-
-                            //for the next iteration, jump to after the formula range we just returned
-                            row = end + 1;
-                            col = 1;
-                        }
-                    }
+                    yield return new Tuple<int, int, int>(cell.Item1, end, cell.Item2);
                 }
             }
         }
@@ -88,22 +78,16 @@ namespace CompatableExcelCleaner
         /// <param name="row">the row number of the starting cell in the formula range</param>
         /// <param name="col">the column number of the starting cell in the formula range</param>
         /// <param name="targetText">the text to look for that signals the end cell of the formula range</param>
-        /// <returns>the row number of the last cell in the formula range, or -1 if no appropriate last cell is found</returns>
+        /// <returns>the row number of the last cell in the formula range</returns>
         private static int FindEndOfFormulaRange(ExcelWorksheet worksheet, int row, int col, string targetText)
         {
-            ExcelRange cell;
+            ExcelIterator iter = new ExcelIterator(worksheet, row + 1, col);
 
-            for (int i = row + 1; i <= worksheet.Dimension.End.Row; i++)
-            {
-                cell = worksheet.Cells[i, col];
-                if (cell.Text == targetText)
-                {
-                    return i;
-                }
-            }
+            Predicate<ExcelRange> matchesEndHeader = (cell => cell.Text == targetText);
 
+            Tuple<int, int> endCell = iter.GetCellCoordinates(ExcelIterator.SHIFT_DOWN, stopIf:matchesEndHeader).Last();
 
-            return -1;
+            return endCell.Item1;
         }
 
 

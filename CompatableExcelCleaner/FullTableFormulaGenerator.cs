@@ -116,8 +116,9 @@ namespace CompatableExcelCleaner
             ExcelIterator iterateOverFormulaRange = new ExcelIterator(iter);
 
             Tuple<int, int> cellAboveRange = iterateOverFormulaRange
-                .GetCellCoordinates(ExcelIterator.SHIFT_UP, IsBeyondFormulaRange)
+                .GetCellCoordinates(ExcelIterator.SHIFT_UP, stopIf:IsBeyondFormulaRange)
                 .Last();
+
 
 
             return cellAboveRange.Item1 + 1; //The row below that cell
