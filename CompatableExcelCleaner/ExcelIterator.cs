@@ -120,8 +120,40 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Finds all cells in the whole table that match specified predicate. Note: this method works independently 
-        /// of what the iterator is referencing, and will not change what it references at all.
+        /// Starting from the iterators current location, iterates and finds the first cell in the table that match 
+        /// specified predicate.
+        /// </summary>
+        /// <param name="isDesiredCell">a predicate that returns true if this is the cell that you are looking for</param>
+        /// <returns>the first cell found that matches the predicate, or null if no matching cell was found</returns>
+
+        public ExcelRange GetFirstMatchingCell(Predicate<ExcelRange> isDesiredCell)
+        {
+            ExcelRange cell;
+
+
+            for (; row <= worksheet.Dimension.End.Row; row++)
+            {
+                for (; col <= worksheet.Dimension.End.Column; col++)
+                {
+                    cell = worksheet.Cells[row, col];
+
+                    if (isDesiredCell.Invoke(cell))
+                    {
+                        return cell;
+                    }
+                }
+            }
+
+
+            return null;
+        }
+
+
+
+
+        /// <summary>
+        /// Starting from the iterators current location, iterates and finds all cells in the whole table that match 
+        /// specified predicate.
         /// </summary>
         /// <param name="isDesiredCell">a predicate that returns true if a cell should be returned</param>
         /// <returns>the row and column of the cell with matching the predicate as a tuple</returns>
@@ -130,9 +162,9 @@ namespace CompatableExcelCleaner
             ExcelRange cell;
 
 
-            for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
+            for (; row <= worksheet.Dimension.End.Row; row++)
             {
-                for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+                for (; col <= worksheet.Dimension.End.Column; col++)
                 {
                     cell = worksheet.Cells[row, col];
 
@@ -148,9 +180,9 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Finds all cells in the whole table that match specified predicate. Note: this method works independently 
-        /// of what the iterator is referencing, and will not change what it references at all. This method is an 
-        /// alternitive to FindAllMatchingCoordinates that returns the cell itself instead of the coordinates.
+        /// Starting from the iterator's current location, iterates and finds all cells in the whole table that match 
+        /// specified predicate. This method is an  alternitive to FindAllMatchingCoordinates that returns the cell
+        /// itself instead of the coordinates.
         /// </summary>
         /// <param name="isDesiredCell">a predicate that returns true if a cell should be returned</param>
         /// <returns>the ExcelRange object of the cell with matching the predicate as a tuple</returns>
