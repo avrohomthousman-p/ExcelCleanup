@@ -51,9 +51,10 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossComp", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 1), new String[] { "Total For International City:" });
+            formulaGenerationArguments.Add(new Worksheet("TrialBalance", 0), new String[] { "Total:" });
 
 
-            formulaGenerationArguments.Add(new Worksheet("TrialBalance", 0), new String[] { });
+
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("AgedPayables", 0), new String[] { });
@@ -186,10 +187,10 @@ namespace CompatableExcelCleaner
                 case "RentRollAll":
                 case "ProfitAndLossStatementDrillthrough": 
                 case "RentRollActivity_New":
-
-
-
                 case "TrialBalance":
+
+
+
                 case "ReportCashReceiptsSummary":
                 case "ReportPayablesRegister":
                 case "AgedPayables":
