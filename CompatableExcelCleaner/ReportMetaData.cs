@@ -177,7 +177,7 @@ namespace CompatableExcelCleaner
 
 
                 case "AgedReceivables":
-                    return new WhitespaceFriendlyFullTableGenerator();
+                    return new FullTableFormulaGenerator(FullTableFormulaGenerator.IsNonDataCell);
 
 
 
