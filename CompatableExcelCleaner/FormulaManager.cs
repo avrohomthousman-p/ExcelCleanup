@@ -33,6 +33,18 @@ namespace CompatableExcelCleaner
                 {
                     worksheet = package.Workbook.Worksheets[i];
 
+
+
+                    //If the worksheet is empty, Dimension will be null
+                    if (worksheet.Dimension == null)
+                    {
+                        package.Workbook.Worksheets.Delete(i);
+                        i--;
+                        continue;
+                    }
+
+
+
                     IFormulaGenerator formulaGenerator = ReportMetaData.ChooseFormulaGenerator(reportName, i);
 
                     if(formulaGenerator == null) //if this worksheet doesnt need formulas

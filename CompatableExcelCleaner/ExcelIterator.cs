@@ -34,6 +34,15 @@ namespace CompatableExcelCleaner
 
 
 
+        public ExcelIterator(ExcelIterator template)
+        {
+            this.worksheet = template.worksheet;
+            this.row = template.row;
+            this.col = template.col;
+        }
+
+
+
         public int GetCurrentRow()
         {
             return row;
@@ -220,7 +229,7 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="shift">the direction to move in, represented as a tuple with row change, and column change</param>
         /// <returns>the row and column of the cells it iterates through (stored in a tuple)</returns>
-        public IEnumerable<Tuple<int, int>> GetCellCoordinnates(Tuple<int, int> shift)
+        public IEnumerable<Tuple<int, int>> GetCellCoordinates(Tuple<int, int> shift)
         {
             foreach(ExcelRange cell in GetCells(shift))
             {

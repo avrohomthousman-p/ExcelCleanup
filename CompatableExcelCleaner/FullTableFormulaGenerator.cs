@@ -1,6 +1,7 @@
 ﻿using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CompatableExcelCleaner
 {
@@ -10,16 +11,20 @@ namespace CompatableExcelCleaner
     /// </summary>
     internal class FullTableFormulaGenerator : IFormulaGenerator
     {
+
+        private ExcelIterator iter;
+
+
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
-
+            iter = new ExcelIterator(worksheet);
 
             //for each header in the report that needs a formula 
             foreach (string header in headers)              
             {
-
-                var allHeaderCoordinates = FindAllHeaders(worksheet, header);
-
+                
+                var allHeaderCoordinates = iter.FindAllMatchingCoordinates(cell => cell.Text == header); 
+                
                 //Find each instance of that header and add formulas
                 foreach(var coordinates in allHeaderCoordinates)
                 {
@@ -27,36 +32,6 @@ namespace CompatableExcelCleaner
                 }
             }
 
-        }
-
-
-
-        /// <summary>
-        /// Finds all cells in the table that have the specified header and therefore signal the need for formulas
-        /// </summary>
-        /// <param name="worksheet">the worksheet in need of formulas</param>
-        /// <param name="targetHeader">the text that signals the need for a formula on that row</param>
-        /// <returns>the row and column of the cell with the target header as a tuple</returns>
-        protected virtual IEnumerable<Tuple<int, int>> FindAllHeaders(ExcelWorksheet worksheet, string targetHeader)
-        {
-            ExcelRange cell;
-
-
-            for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
-            {
-                for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
-                {
-                    cell = worksheet.Cells[row, col];
-
-                    if (cell.Text == targetHeader)
-                    {
-                        yield return new Tuple<int, int>(row, col);
-
-                        col = 1;
-                        row++;
-                    }
-                }
-            }
         }
 
 
@@ -70,19 +45,11 @@ namespace CompatableExcelCleaner
         /// <param name="col">the column of the header</param>
         protected virtual void FillInFormulas(ExcelWorksheet worksheet, int row, int col)
         {
+            iter.SetCurrentLocation(row, col);
 
-            ExcelRange cell;
-
-
-            //Often there are multiple columns that require a formula, so we need to iterate
-            //and apply the formulas in many columns
-            for (col++; col <= worksheet.Dimension.End.Column; col++)
+            foreach (ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_RIGHT))
             {
-
-                cell = worksheet.Cells[row, col];
-
-
-                if (FormulaManager.IsEmptyCell(cell))
+                if (FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDataCell(cell))
                 {
                     continue;
                 }
@@ -90,7 +57,7 @@ namespace CompatableExcelCleaner
 
                 int topRowOfRange = FindTopRowOfFormulaRange(worksheet, row, col);
 
-                cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, topRowOfRange, row-1, col);
+                cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, topRowOfRange, row - 1, iter.GetCurrentCol());
                 cell.Style.Locked = true;
 
                 Console.WriteLine("Cell " + cell.Address + " has been given this formula: " + cell.Formula);
@@ -110,20 +77,14 @@ namespace CompatableExcelCleaner
         /// <returns>the row number of the top most cell thats still part of the formula range</returns>
         protected virtual int FindTopRowOfFormulaRange(ExcelWorksheet worksheet, int row, int col)
         {
+            ExcelIterator iterateOverFormulaRange = new ExcelIterator(iter);
 
-            ExcelRange cell;
+            Tuple<int, int> cellAboveRange = iterateOverFormulaRange
+                .GetCellCoordinates(ExcelIterator.SHIFT_UP, IsBeyondFormulaRange)
+                .Last();
 
-            for(row--; row >= 1; row--)
-            {
-                cell = worksheet.Cells[row, col];
 
-                if(IsBeyondFormulaRange(cell))
-                {
-                    return row + 1; //Return the row just before that non-data cell
-                }
-            }
-
-            return 1;
+            return cellAboveRange.Item1 + 1; //The row below that cell
         }
 
 

@@ -26,9 +26,10 @@ namespace CompatableExcelCleaner
             //Fill our dictionary with all the reports and all the data we need to give them formulas
 
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByPeriod", 0), new String[] { "Total Income", "Total Expense" });
-            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "14850 - Prepaid Contracts" }); //ISSUE: numbers dont add up
+            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total 14850 - Prepaid Contracts" }); //ISSUE: numbers dont add up
             formulaGenerationArguments.Add(new Worksheet("RentRollAll", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 0), new String[] { "Total Expense", "Total Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 1), new String[] { "Total Expense", "Total Income" });
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetDrillthrough", 0), new String[]
                     { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
                         "Assets=Total Assets", "Liabilities And Equity=Total Liabilities And Equity",
