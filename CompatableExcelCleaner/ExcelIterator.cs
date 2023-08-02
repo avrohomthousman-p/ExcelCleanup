@@ -48,6 +48,12 @@ namespace CompatableExcelCleaner
 
 
 
+        /// <summary>
+        /// Gets the cell the iterator is currently referencing as a tuple with the row and column. The returned cell will
+        /// be the same as the cell most recently returned by any of the iteration methods (GetCells or GetCellCoordinates)
+        /// unless SetCurrentLocation was called since using those methods.
+        /// </summary>
+        /// <returns>the cell the iterator is refrencing</returns>
         public Tuple<int, int> GetCurrentLocation()
         {
             return new Tuple<int, int>(row, col);
@@ -56,15 +62,16 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Gets the cell the iterator is currently referencing. This will be the same as the cell most recently returned
-        /// by any of the iteration methods (GetCells or GetCellCoordinates) unless SetCurrentLocation was called since
-        /// using those methods.
+        /// Gets the cell the iterator is currently referencing. The returned cell will be the same as the cell most recently
+        /// returned by any of the iteration methods (GetCells or GetCellCoordinates) unless SetCurrentLocation was called
+        /// since using those methods.
         /// </summary>
         /// <returns>the cell the iterator is refrencing</returns>
         public ExcelRange GetCurrentCell()
         {
             return worksheet.Cells[row, col];
         }
+
 
 
 
@@ -76,11 +83,11 @@ namespace CompatableExcelCleaner
         /// <exception cref="ArgumentOutOfRangeException">if the row or column are out of bounds</exception>
         public void SetCurrentLocation(int row, int col)
         {
-            if(row < 1 || row > worksheet.Dimension.End.Row)
+            if (row < 1 || row > worksheet.Dimension.End.Row)
             {
                 throw new ArgumentOutOfRangeException("Row " + row + " is out of range for this worksheet");
             }
-            if(col < 1 || col > worksheet.Dimension.End.Column)
+            if (col < 1 || col > worksheet.Dimension.End.Column)
             {
                 throw new ArgumentOutOfRangeException("Column " + col + " is out range for this worksheet");
             }
@@ -89,6 +96,52 @@ namespace CompatableExcelCleaner
 
             this.row = row;
             this.col = col;
+        }
+
+
+
+
+        /// <summary>
+        /// Finds all cells in the whole table that match specified predicate. Note: this method works independently 
+        /// of what the iterator is referencing, and will not change what it references at all.
+        /// </summary>
+        /// <param name="isDesiredCell">a predicate that returns true if a cell should be returned</param>
+        /// <returns>the row and column of the cell with matching the predicate as a tuple</returns>
+        public IEnumerable<Tuple<int, int>> FindAllMatchingCoordinates(Predicate<ExcelRange> isDesiredCell)
+        {
+            ExcelRange cell;
+
+
+            for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
+            {
+                for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+                {
+                    cell = worksheet.Cells[row, col];
+
+                    if (isDesiredCell.Invoke(cell))
+                    {
+                        yield return new Tuple<int, int>(row, col);
+                    }
+                }
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Finds all cells in thewhole table that match specified predicate. Note: this method works independently 
+        /// of what the iterator is referencing, and will not change what it references at all. This method is an 
+        /// alternitive to FindAllMatchingCoordinates that returns the cell itself instead of the coordinates.
+        /// </summary>
+        /// <param name="isDesiredCell">a predicate that returns true if a cell should be returned</param>
+        /// <returns>the ExcelRange object of the cell with matching the predicate as a tuple</returns>
+        public IEnumerable<ExcelRange> FindAllMatchingCells(Predicate<ExcelRange> isDesiredCell)
+        {
+            foreach (Tuple<int, int> coordinates in FindAllMatchingCoordinates(isDesiredCell))
+            {
+                yield return worksheet.Cells[coordinates.Item1, coordinates.Item2];
+            }
         }
 
 
