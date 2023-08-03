@@ -13,7 +13,7 @@ namespace CompatableExcelCleaner
     {
 
         //Used for checking what kind of data was passed to a formula manager as a header
-        private static Regex inputTypeMatcher = new Regex("^([a-zA-Z0-9 :]+)=([a-zA-Z0-9 :]+,)*([a-zA-Z0-9 :]+)$");
+        private static Regex inputTypeMatcher = new Regex("^([a-zA-Z0-9 :]+)~([a-zA-Z0-9 :]+,)*([a-zA-Z0-9 :]+)$");
 
 
 

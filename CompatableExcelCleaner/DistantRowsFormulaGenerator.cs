@@ -9,7 +9,7 @@ namespace CompatableExcelCleaner
 {
     /// <summary>
     /// Generates formulas that add up cells from anywhere else in the worksheet. Header data should be passed
-    /// to this class in this format: "headerOfFormulaCell=header1,header2,header3" where headerOfFormula cell
+    /// to this class in this format: "headerOfFormulaCell~header1,header2,header3" where headerOfFormula cell
     /// is the header before the cell that needs the formula and the other comma seperated headers are headers in front
     /// of cells that should be included in the sum.
     /// 
@@ -37,7 +37,7 @@ namespace CompatableExcelCleaner
                 
 
 
-                int indexOfEqualsSign = header.IndexOf('=');
+                int indexOfEqualsSign = header.IndexOf('~');
                 string formulaHeader = header.Substring(0, indexOfEqualsSign);
                 string[] dataCells = header.Substring(indexOfEqualsSign + 1).Split(',');
 
@@ -96,7 +96,6 @@ namespace CompatableExcelCleaner
             formulaCell.Style.Locked = true;
 
             Console.WriteLine("Cell " + formulaCell.Address + " has been given this formula: " + formulaCell.Formula);
-
         }
 
 

@@ -34,7 +34,9 @@ namespace CompatableExcelCleaner
                     { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
                         "Assets=Total Assets", "Liabilities And Equity=Total Liabilities And Equity",
                         "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
-                        "Long Term Liability=Total Long Term Liability", "Equity=Total Equity" }); //SMALL ISSUE: one line isnt getting formula
+                        "Long Term Liability=Total Long Term Liability", "Equity=Total Equity",
+                        "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities"
+                    }); //SMALL ISSUE: one line isnt getting formula
 
             //ISSUE: small empty rows that have not been deleted
             formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:=Balance:", "Electric Bill: 08/25/2022-09/28/2022=Trash" });
@@ -57,8 +59,8 @@ namespace CompatableExcelCleaner
 
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] {
                         "Total Tenant Receivables:", "Total Other Receivables:",
-                        "Total For May 2023:=Total Tenant Receivables:,Total Other Receivables:",
-                        "Total For Commons at White Marsh:=Total For May 2023:"});
+                        "Total For May 2023:~Total Tenant Receivables:,Total Other Receivables:",
+                        "Total For Commons at White Marsh:~Total For May 2023:"});
 
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 1), new String[] { });
 
