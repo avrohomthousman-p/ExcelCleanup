@@ -72,7 +72,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportTenantBal_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollActivity_New_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportOutstandingBalance_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\ReportTenantBal_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportCashReceiptsSummary_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\acceptable\BankReconcilliation_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportOutstandingBalance_7232023.xlsx
@@ -206,10 +206,8 @@ namespace ExcelDataCleanup
                         continue;
                     }
 
-
                     CleanWorksheet(worksheet, reportName);
                 }
-
 
                 byte[] results = FormulaManager.AddFormulas(package.GetAsByteArray(), reportName);
                 //byte[] results = package.GetAsByteArray();

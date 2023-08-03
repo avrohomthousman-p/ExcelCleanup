@@ -49,7 +49,6 @@ namespace CompatableExcelCleaner
                     }
 
 
-
                     IFormulaGenerator formulaGenerator = ReportMetaData.ChooseFormulaGenerator(reportName, i);
 
                     if(formulaGenerator == null) //if this worksheet doesnt need formulas

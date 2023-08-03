@@ -55,7 +55,14 @@ namespace CompatableExcelCleaner
 
 
 
-            formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] {
+                        "Total Tenant Receivables:", "Total Other Receivables:",
+                        "Total For May 2023:=Total Tenant Receivables:,Total Other Receivables:",
+                        "Total For Commons at White Marsh:=Total For May 2023:"});
+
+            formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 1), new String[] { });
+
+
             formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("AgedPayables", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ChargesCreditReport", 0), new String[] { });
@@ -121,6 +128,7 @@ namespace CompatableExcelCleaner
                 case "InvoiceDetail":
                 case "ReportTenantSummary":
                 case "UnitInfoReport":
+                case "ReportCashReceiptsSummary":
                     return new BackupMergeCleaner();
 
 
@@ -188,11 +196,12 @@ namespace CompatableExcelCleaner
                 case "ProfitAndLossStatementDrillthrough": 
                 case "RentRollActivity_New":
                 case "TrialBalance":
+                case "ReportCashReceiptsSummary":
                     return new FullTableFormulaGenerator();
 
 
 
-                case "ReportCashReceiptsSummary":
+                
                 case "ReportPayablesRegister":
                 case "AgedPayables":
                 case "ChargesCreditReport":

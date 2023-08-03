@@ -142,6 +142,9 @@ namespace CompatableExcelCleaner
                         return cell;
                     }
                 }
+
+
+                col = 1;
             }
 
 

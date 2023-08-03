@@ -66,7 +66,6 @@ namespace CompatableExcelCleaner
                 }
 
 
-
                 iter.SetCurrentLocation(1, 1);
                 var allHeaderCoordinates = iter.FindAllMatchingCoordinates(cell => cell.Text == header);
 

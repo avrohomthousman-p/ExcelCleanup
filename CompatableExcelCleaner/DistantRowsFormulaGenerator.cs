@@ -34,6 +34,7 @@ namespace CompatableExcelCleaner
                 {
                     continue;
                 }
+                
 
 
                 int indexOfEqualsSign = header.IndexOf('=');
@@ -59,10 +60,16 @@ namespace CompatableExcelCleaner
 
             ExcelRange formulaCell = iter.GetFirstMatchingCell(cell => cell.Text == formulaHeader);
 
+            if(formulaCell == null)
+            {
+                Console.WriteLine("Cell with text " + formulaHeader + " not found. Formula insertion failed.");
+                return;
+            }
 
 
             //Now get all the addresses of the data cells that should be part of the formula
             iter.SkipWhile(ExcelIterator.SHIFT_RIGHT, cell => FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDataCell(cell));
+            formulaCell = iter.GetCurrentCell();
 
             int dataColumn = iter.GetCurrentCol();
 
@@ -78,7 +85,7 @@ namespace CompatableExcelCleaner
                 formula.Append(GetAddress(worksheet, i, dataColumn)).Append(",");
             }
 
-            formula.Remove(formula.Length - 2, formula.Length - 1); //delete the trailing comma
+            formula.Remove(formula.Length - 1, 1); //delete the trailing comma
 
             formula.Append(")");
 
@@ -105,9 +112,9 @@ namespace CompatableExcelCleaner
             HashSet<string> allHeaders = new HashSet<string>(headers);
 
             ExcelIterator iter = new ExcelIterator(worksheet);
-
             return iter.FindAllMatchingCoordinates(cell => allHeaders.Contains(cell.Text))
                                 .Select(tup => tup.Item1).ToArray();
+
         }
 
 
