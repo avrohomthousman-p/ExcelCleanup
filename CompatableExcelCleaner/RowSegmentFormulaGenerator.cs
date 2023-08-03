@@ -22,6 +22,14 @@ namespace CompatableExcelCleaner
             foreach (string header in headers)              //for each header in the report that needs a formula 
             {
 
+                //Ensure that the header was intended for this class and not the DistantRowsFormulaGenerator class
+                if (FormulaManager.IsNonContiguousFormulaRange(header))
+                {
+                    return;
+                }
+
+
+
                 int seperator = header.IndexOf('=');
 
                 startHeader = header.Substring(0, seperator);

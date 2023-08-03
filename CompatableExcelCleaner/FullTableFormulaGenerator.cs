@@ -58,8 +58,18 @@ namespace CompatableExcelCleaner
             //for each header in the report that needs a formula 
             foreach (string header in headers)              
             {
-                
-                var allHeaderCoordinates = iter.FindAllMatchingCoordinates(cell => cell.Text == header); 
+
+                //Ensure that the header was intended for this class and not the DistantRowsFormulaGenerator class
+                if (FormulaManager.IsNonContiguousFormulaRange(header))
+                {
+                    return;
+                }
+
+
+
+                iter.SetCurrentLocation(1, 1);
+                var allHeaderCoordinates = iter.FindAllMatchingCoordinates(cell => cell.Text == header);
+
                 
                 //Find each instance of that header and add formulas
                 foreach(var coordinates in allHeaderCoordinates)

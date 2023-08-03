@@ -25,16 +25,12 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="worksheet">the worksheet in need of formulas</param>
         /// <param name="headers">headers to look for to tell us which cells to add up</param>
-        public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
+        public static void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
-            string pattern = "^([a-zA-Z0-9 :]+)=([a-zA-Z0-9 :]+,)*([a-zA-Z0-9 :]+)$";
-            Regex reg = new Regex(pattern);
-
-
             foreach(string header in headers)
             {
                 //Ensure that the header was intended for this class and not the FormulaGenerator
-                if (!reg.IsMatch(header))
+                if (!FormulaManager.IsNonContiguousFormulaRange(header))
                 {
                     return;
                 }
@@ -57,7 +53,7 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet being given formulas</param>
         /// <param name="formulaHeader">the text that should be found near the cell requiring a formula</param>
         /// <param name="dataCells">headers pointing to cells that should be included in the formula</param>
-        private void FillInFormulas(ExcelWorksheet worksheet, string formulaHeader, string[] dataCells)
+        private static void FillInFormulas(ExcelWorksheet worksheet, string formulaHeader, string[] dataCells)
         {
             ExcelIterator iter = new ExcelIterator(worksheet);
 
@@ -104,7 +100,7 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet that is being given formulas</param>
         /// <param name="headers">the text that signals that this data cell should be part of the formula</param>
         /// <returns>an array of row numbers of the cells that should be part of the formula</returns>
-        private int[] GetRowsToIncludeInFormula(ExcelWorksheet worksheet, string[] headers)
+        private static int[] GetRowsToIncludeInFormula(ExcelWorksheet worksheet, string[] headers)
         {
             HashSet<string> allHeaders = new HashSet<string>(headers);
 
@@ -124,7 +120,7 @@ namespace CompatableExcelCleaner
         /// <param name="row">the row the cell is in</param>
         /// <param name="col">the column the cell is in</param>
         /// <returns>the cell address</returns>
-        private string GetAddress(ExcelWorksheet worksheet, int row, int col)
+        private static string GetAddress(ExcelWorksheet worksheet, int row, int col)
         {
             return worksheet.Cells[row, col].Address;
         }

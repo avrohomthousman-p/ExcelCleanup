@@ -188,6 +188,7 @@ namespace CompatableExcelCleaner
                 case "ProfitAndLossStatementDrillthrough": 
                 case "RentRollActivity_New":
                 case "TrialBalance":
+                    return new FullTableFormulaGenerator();
 
 
 
@@ -234,7 +235,7 @@ namespace CompatableExcelCleaner
                 case "ReportEscalateCharges":
                 case "RentRollActivityItemized":
                 case "InvoiceRecurringReport":
-                    return new FullTableFormulaGenerator();
+                    
 
 
                 default:

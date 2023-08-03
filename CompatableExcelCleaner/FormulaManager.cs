@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-
+using System.Text.RegularExpressions;
 
 namespace CompatableExcelCleaner
 {
@@ -11,6 +11,11 @@ namespace CompatableExcelCleaner
     /// </summary>
     public class FormulaManager
     {
+
+        //Used for checking what kind of data was passed to a formula manager as a header
+        private static Regex inputTypeMatcher = new Regex("^([a-zA-Z0-9 :]+)=([a-zA-Z0-9 :]+,)*([a-zA-Z0-9 :]+)$");
+
+
 
 
 
@@ -55,6 +60,10 @@ namespace CompatableExcelCleaner
                     headers = ReportMetaData.GetFormulaGenerationArguments(reportName, i);
 
                     formulaGenerator.InsertFormulas(worksheet, headers);
+
+
+                    //Add formulas for rows that are not contiguous if needed
+                    DistantRowsFormulaGenerator.InsertFormulas(worksheet, headers);
                 }
 
 
@@ -110,6 +119,19 @@ namespace CompatableExcelCleaner
             ExcelRange cells = worksheet.Cells[startRow, col, endRow, col];
 
             return "SUM(" + cells.Address + ")";
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if a header is intened for the DistantRowsFormulaGenerator or not.
+        /// </summary>
+        /// <param name="header">the header in question</param>
+        /// <returns>true if the specified header is intended for the DistantRowsFormulaGenerator class, and false otherwise</returns>
+        internal static bool IsNonContiguousFormulaRange(string header)
+        {
+            return inputTypeMatcher.IsMatch(header);
         }
 
     }
