@@ -32,7 +32,7 @@ namespace CompatableExcelCleaner
                 //Ensure that the header was intended for this class and not the FormulaGenerator
                 if (!FormulaManager.IsNonContiguousFormulaRange(header))
                 {
-                    return;
+                    continue;
                 }
 
 
