@@ -161,7 +161,6 @@ namespace CompatableExcelCleaner
         {
             ExcelRange cell;
 
-
             for (; row <= worksheet.Dimension.End.Row; row++)
             {
                 for (; col <= worksheet.Dimension.End.Column; col++)
@@ -173,6 +172,8 @@ namespace CompatableExcelCleaner
                         yield return new Tuple<int, int>(row, col);
                     }
                 }
+
+                col = 1;
             }
         }
 
@@ -243,7 +244,7 @@ namespace CompatableExcelCleaner
                     break;
                 }
 
-
+                
                 yield return cell;
 
                 row += shift.Item1;
