@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -34,7 +35,6 @@ namespace CompatableExcelCleaner
                 {
                     continue;
                 }
-                
 
 
                 int indexOfEqualsSign = header.IndexOf('~');
@@ -58,7 +58,7 @@ namespace CompatableExcelCleaner
         {
             ExcelIterator iter = new ExcelIterator(worksheet);
 
-            ExcelRange formulaCell = iter.GetFirstMatchingCell(cell => cell.Text == formulaHeader);
+            ExcelRange formulaCell = iter.GetFirstMatchingCell(cell => FormulaManager.TextMatches(cell.Text, formulaHeader));
 
             if(formulaCell == null)
             {
@@ -108,11 +108,12 @@ namespace CompatableExcelCleaner
         /// <returns>an array of row numbers of the cells that should be part of the formula</returns>
         private static int[] GetRowsToIncludeInFormula(ExcelWorksheet worksheet, string[] headers)
         {
-            HashSet<string> allHeaders = new HashSet<string>(headers);
+            List<string> allHeaders = new List<string>(headers);
 
             ExcelIterator iter = new ExcelIterator(worksheet);
-            return iter.FindAllMatchingCoordinates(cell => allHeaders.Contains(cell.Text))
-                                .Select(tup => tup.Item1).ToArray();
+            return iter.FindAllMatchingCoordinates(cell => allHeaders
+                                .Any<string>(header => FormulaManager.TextMatches(cell.Text, header)))
+                        .Select(tup => tup.Item1).ToArray();
 
         }
 

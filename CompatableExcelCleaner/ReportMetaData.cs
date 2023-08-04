@@ -12,10 +12,15 @@ namespace CompatableExcelCleaner
     internal static class ReportMetaData
     {
 
+        private static readonly string anyMonth = "(January|February|March|April|May|June|July|August|September|October|November|December)";
+        private static readonly string anyDate = "\\d{2}/\\d{2}/\\d{4}";
+        private static readonly string anyYear = "\\d{4}";
+
 
         // Stores the arguments needed to generate formulas for each report and worksheet. If a report/worksheet
         // is not in the dictionary, that means it doesnt need any formulas
         private static readonly Dictionary<Worksheet, string[]> formulaGenerationArguments = new Dictionary<Worksheet, string[]>();
+
 
 
 
@@ -25,8 +30,8 @@ namespace CompatableExcelCleaner
 
             //Fill our dictionary with all the reports and all the data we need to give them formulas
 
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByPeriod", 0), new String[] { "Total Income", "Total Expense" });
-            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total 14850 - Prepaid Contracts" }); //ISSUE: numbers dont add up
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByPeriod", 0), new String[] { "Total Income", "^Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //ISSUE: numbers dont add up
             formulaGenerationArguments.Add(new Worksheet("RentRollAll", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 0), new String[] { "Total Expense", "Total Income" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 1), new String[] { "Total Expense", "Total Income" });
@@ -39,7 +44,7 @@ namespace CompatableExcelCleaner
                     }); //SMALL ISSUE: one line isnt getting formula
 
             //ISSUE: small empty rows that have not been deleted
-            formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:=Balance:", "Electric Bill: 08/25/2022-09/28/2022=Trash" });
+            formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:", "Balance:~Total Open Charges:,Total Future Charges:,Total Unallocated Payments:" });
             //ISSUE last formula missing
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" });
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
@@ -59,8 +64,8 @@ namespace CompatableExcelCleaner
 
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] {
                         "Total Tenant Receivables:", "Total Other Receivables:",
-                        "Total For May 2023:~Total Tenant Receivables:,Total Other Receivables:",
-                        "Total For Commons at White Marsh:~Total For May 2023:"});
+                        $"Total For {anyMonth} {anyYear}:~Total Tenant Receivables:,Total Other Receivables:",
+                        $"Total For Commons at White Marsh:~Total For {anyMonth} {anyYear}:"});
 
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 1), new String[] { });
 
@@ -169,7 +174,6 @@ namespace CompatableExcelCleaner
             switch (reportName)
             {
                 case "BalanceSheetDrillthrough":
-                case "ReportTenantBal":
                 case "BalanceSheetComp":
                 case "ProfitAndLossComp":
                     return new RowSegmentFormulaGenerator();
@@ -192,6 +196,7 @@ namespace CompatableExcelCleaner
 
 
 
+                case "ReportTenantBal":
                 case "ProfitAndLossStatementByPeriod":
                 case "LedgerReport":
                 case "RentRollAll":

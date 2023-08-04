@@ -67,7 +67,7 @@ namespace CompatableExcelCleaner
 
 
                 iter.SetCurrentLocation(1, 1);
-                var allHeaderCoordinates = iter.FindAllMatchingCoordinates(cell => cell.Text == header);
+                var allHeaderCoordinates = iter.FindAllMatchingCoordinates(cell => FormulaManager.TextMatches(cell.Text, header));
 
                 
                 //Find each instance of that header and add formulas

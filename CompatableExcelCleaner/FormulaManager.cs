@@ -12,11 +12,6 @@ namespace CompatableExcelCleaner
     public class FormulaManager
     {
 
-        //Used for checking what kind of data was passed to a formula manager as a header
-        private static Regex inputTypeMatcher = new Regex("^([a-zA-Z0-9 :]+)~([a-zA-Z0-9 :]+,)*([a-zA-Z0-9 :]+)$");
-
-
-
 
 
         /// <summary>
@@ -130,7 +125,21 @@ namespace CompatableExcelCleaner
         /// <returns>true if the specified header is intended for the DistantRowsFormulaGenerator class, and false otherwise</returns>
         internal static bool IsNonContiguousFormulaRange(string header)
         {
-            return inputTypeMatcher.IsMatch(header);
+            return header.IndexOf('~') >= 0;
+        }
+
+
+        
+
+        /// <summary>
+        /// Checks if the specified text matches (in its entirety) the specified regex.
+        /// </summary>
+        /// <param name="text">the text to be matched</param>
+        /// <param name="pattern">the pattern the text should match</param>
+        /// <returns>true if the text matches the pattern and false otherwise</returns>
+        internal static bool TextMatches(string text, string pattern)
+        {
+            return Regex.IsMatch(text, "^" + pattern + "$");
         }
 
     }

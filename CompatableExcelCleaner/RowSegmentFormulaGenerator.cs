@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,7 +60,7 @@ namespace CompatableExcelCleaner
         {
             ExcelIterator iter = new ExcelIterator(worksheet);
 
-            Predicate<ExcelRange> cellMatchesStartingHeader = (cell => cell.Text == startHeader);
+            Predicate<ExcelRange> cellMatchesStartingHeader = (cell => FormulaManager.TextMatches(cell.Text, startHeader));
 
             var cellsInWorksheet = iter.FindAllMatchingCoordinates( cellMatchesStartingHeader );
 
@@ -99,7 +100,7 @@ namespace CompatableExcelCleaner
         {
             ExcelIterator iter = new ExcelIterator(worksheet, row + 1, col);
 
-            Predicate<ExcelRange> matchesEndHeader = (cell => cell.Text == targetText);
+            Predicate<ExcelRange> matchesEndHeader = (cell => FormulaManager.TextMatches(cell.Text, targetText));
 
             Tuple<int, int> endCell = iter.GetCellCoordinates(ExcelIterator.SHIFT_DOWN, stopIf:matchesEndHeader).Last();
 
