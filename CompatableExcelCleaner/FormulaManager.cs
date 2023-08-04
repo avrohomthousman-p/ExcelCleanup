@@ -139,7 +139,7 @@ namespace CompatableExcelCleaner
         /// <returns>true if the text matches the pattern and false otherwise</returns>
         internal static bool TextMatches(string text, string pattern)
         {
-            return Regex.IsMatch(text, "^" + pattern + "$");
+            return Regex.IsMatch(text.Trim(), "^" + pattern + "$");
         }
 
     }

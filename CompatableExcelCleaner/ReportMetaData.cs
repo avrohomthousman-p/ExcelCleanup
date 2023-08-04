@@ -41,9 +41,8 @@ namespace CompatableExcelCleaner
                         "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
                         "Long Term Liability=Total Long Term Liability", "Equity=Total Equity",
                         "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities"
-                    }); //SMALL ISSUE: one line isnt getting formula
+                    });
 
-            //ISSUE: small empty rows that have not been deleted
             formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:", "Balance:~Total Open Charges:,Total Future Charges:,Total Unallocated Payments:" });
             //ISSUE last formula missing
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" });
@@ -70,12 +69,22 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 1), new String[] { });
 
 
-            formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("AgedPayables", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("ChargesCreditReport", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { }); //corrupted file
+            formulaGenerationArguments.Add(new Worksheet("AgedPayables", 0), new String[] { "Total" });
+            formulaGenerationArguments.Add(new Worksheet("ChargesCreditReport", 0), new String[] { "Total: $(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });//fixme: needs special system
+            formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });//dont have this report
+            formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { }); //needs new system
+            formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] { 
+                "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", "Garage=Total Garage", 
+                "Elevators=Total Elevators", "Clubhouse=Total Clubhouse", 
+                "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse", 
+                "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });
+
+
+
+
+
+
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("CollectionsAnaysisSummary", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportTenantSummary", 0), new String[] { });
@@ -176,6 +185,7 @@ namespace CompatableExcelCleaner
                 case "BalanceSheetDrillthrough":
                 case "BalanceSheetComp":
                 case "ProfitAndLossComp":
+                case "PayablesAccountReport":
                     return new RowSegmentFormulaGenerator();
 
 
@@ -190,7 +200,8 @@ namespace CompatableExcelCleaner
                     }
 
 
-
+                
+                case "AgedPayables":
                 case "AgedReceivables":
                     return new FullTableFormulaGenerator(FullTableFormulaGenerator.IsNonDataCell);
 
@@ -208,13 +219,23 @@ namespace CompatableExcelCleaner
 
 
 
-                
-                case "ReportPayablesRegister":
-                case "AgedPayables":
+
+                //These reports dont fit into any existing system
                 case "ChargesCreditReport":
-                case "UnitInvoiceReport":
                 case "ReportCashReceipts":
-                case "PayablesAccountReport":
+
+
+
+
+
+                //Reports I dont have
+                case "ReportPayablesRegister":
+                case "UnitInvoiceReport":
+
+
+
+
+                //Reports I have not yet checked
                 case "VendorInvoiceReport":
                 case "CollectionsAnaysisSummary":
                 case "ReportTenantSummary":
