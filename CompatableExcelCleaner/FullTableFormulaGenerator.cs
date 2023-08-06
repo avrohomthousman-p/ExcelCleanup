@@ -5,6 +5,11 @@ using System.Linq;
 
 namespace CompatableExcelCleaner
 {
+
+    public delegate bool IsBeyondFormulaRange(ExcelRange cell);
+
+
+
     /// <summary>
     /// Implementation of the IFormulaGenerator interface that searches for a row with the specifed header
     /// and adds a formula that spans as far up as it can.
@@ -12,19 +17,9 @@ namespace CompatableExcelCleaner
     internal class FullTableFormulaGenerator : IFormulaGenerator
     {
 
-        //Just convienences that you can pass to this classes constructor
-        public static readonly Predicate<ExcelRange> IsEmptyOrNonDataCell = 
-            (cell => FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDataCell(cell));
-
-
-        public static readonly Predicate<ExcelRange> IsNonDataCell =
-            (cell => !FormulaManager.IsEmptyCell(cell) && !FormulaManager.IsDataCell(cell));
-
-
-
-
         private ExcelIterator iter;
-        private Predicate<ExcelRange> IsBeyondFormulaRange;
+        private IsBeyondFormulaRange beyondFormulaRange;
+        private IsDataCell isDataCell;
 
 
 
@@ -35,20 +30,33 @@ namespace CompatableExcelCleaner
         /// </summary>
         public FullTableFormulaGenerator()
         {
-            IsBeyondFormulaRange = IsEmptyOrNonDataCell;
+            //Set default implemenatations of all delegates
+            isDataCell = new IsDataCell(FormulaManager.IsDollarValue);
+            beyondFormulaRange = new IsBeyondFormulaRange(IsEmptyOrNonDataCell);
         }
+
+
+
+        /// <inheritdoc/>
+        public void SetDataCellDefenition(IsDataCell isDataCell)
+        {
+            this.isDataCell = isDataCell;
+        }
+
 
 
 
         /// <summary>
-        /// Constructs a FullTableFormulaGenerator that considers a forumal range to end when it encounters a 
-        /// cell that matches the specified predicate
+        /// Sets the implementation for how this object determans if a cell is outside a formula range.
+        /// Note, two implementations are predefined and can be paased into this method: IsNonDataCell and
+        /// IsEmptyOrNonDataCell
         /// </summary>
-        /// <param name="IsBeyondFormulaRange">a predicate that tells the system if a cell is considered outside the formula range</param>
-        public FullTableFormulaGenerator(Predicate<ExcelRange> FormulaRangeEndsIf)
+        /// <param name="altImplemenation">the implementation that should be used</param>
+        public void SetDefenitionForBeyondFormulaRange(IsBeyondFormulaRange altImplemenation)
         {
-            this.IsBeyondFormulaRange = FormulaRangeEndsIf;
+            this.beyondFormulaRange = altImplemenation;
         }
+
 
 
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
@@ -94,7 +102,7 @@ namespace CompatableExcelCleaner
 
             foreach (ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_RIGHT))
             {
-                if (FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDataCell(cell))
+                if (FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDollarValue(cell))
                 {
                     continue;
                 }
@@ -125,7 +133,7 @@ namespace CompatableExcelCleaner
             ExcelIterator iterateOverFormulaRange = new ExcelIterator(iter);
 
             Tuple<int, int> cellAboveRange = iterateOverFormulaRange
-                .GetCellCoordinates(ExcelIterator.SHIFT_UP, stopIf:IsBeyondFormulaRange)
+                .GetCellCoordinates(ExcelIterator.SHIFT_UP, stopIf:new Predicate<ExcelRange>(beyondFormulaRange))
                 .Last();
 
 
@@ -133,5 +141,41 @@ namespace CompatableExcelCleaner
             return cellAboveRange.Item1 + 1; //The row below that cell
         }
 
+
+
+
+
+
+
+        //Just convienences that you can pass to this classes setter methods
+
+
+        /// <summary>
+        /// Checks if the specified cell is not part of the formula range becuase it is an empty cell or 
+        /// it contains text and not data. This method is just a convienence that you can pass to this classes'
+        /// SetDefenitionForBeyondFormulaRange method if that is the behavior you want.
+        /// </summary>
+        /// <param name="cell">the cell being checked</param>
+        /// <returns>true if the cell is empty or if it contains text that isnt data, or false otherwise</returns>
+        public bool IsEmptyOrNonDataCell(ExcelRange cell)
+        {
+            return FormulaManager.IsEmptyCell(cell) || !isDataCell(cell);
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if the specified cell is not part of the formula range becuase it contains text that is not data.
+        /// This method is just a convienence that you can pass to this classes'
+        /// SetDefenitionForBeyondFormulaRange method if that is the behavior you want.
+        /// </summary>
+        /// <param name="cell">the cell being checked</param>
+        /// <returns>true if the cell contains text that isnt data (and isnt empty), or false otherwise</returns>
+        public bool IsNonDataCell(ExcelRange cell)
+        {
+            return !FormulaManager.IsEmptyCell(cell) && !isDataCell(cell);
+        }
+            
     }
 }

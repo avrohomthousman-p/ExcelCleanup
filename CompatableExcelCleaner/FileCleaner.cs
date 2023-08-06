@@ -59,6 +59,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ChargesCreditsReport_7182023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ProfitAndLossBudget_7182023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CreditCardStatement_7182023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CollectionsAnalysisSummary_7182023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\AgedAccountsReceivable_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BankReconcilliation_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\ChargesCreditsReport_7192023.xlsx

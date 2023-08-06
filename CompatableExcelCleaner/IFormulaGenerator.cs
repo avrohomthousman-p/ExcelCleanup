@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace CompatableExcelCleaner
 {
+    public delegate bool IsDataCell(ExcelRange cell);
+
+
+
     internal interface IFormulaGenerator
     {
         /// <summary>
@@ -18,5 +22,13 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet in need of formulas</param>
         /// <param name="headers">an array of all minor headers that are right in front of cells requiring formulas</param>
         void InsertFormulas(ExcelWorksheet worksheet, string[] headers);
+
+
+
+        /// <summary>
+        /// Chenges how the formula generator defines a data cell.
+        /// </summary>
+        /// <param name="isDataCell">a function to use to check if a cell is a data cell</param>
+        void SetDataCellDefenition(IsDataCell isDataCell);
     }
 }

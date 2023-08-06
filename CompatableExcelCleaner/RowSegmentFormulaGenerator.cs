@@ -16,6 +16,18 @@ namespace CompatableExcelCleaner
     /// </summary>
     internal class RowSegmentFormulaGenerator : IFormulaGenerator
     {
+
+        private IsDataCell isDataCell = new IsDataCell(FormulaManager.IsDollarValue);
+
+
+
+        public void SetDataCellDefenition(IsDataCell altImplementation)
+        {
+            this.isDataCell = altImplementation;
+        }
+
+
+
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
             string startHeader, endHeader;
@@ -117,7 +129,7 @@ namespace CompatableExcelCleaner
         /// <param name="startRow">the first row of the formula range (containing the header)</param>
         /// <param name="endRow">the last row of the formula range (containing the total)</param>
         /// <param name="col">the column of the header and total for the formula range</param>
-        private static void FillInFormulas(ExcelWorksheet worksheet, int startRow, int endRow, int col)
+        private void FillInFormulas(ExcelWorksheet worksheet, int startRow, int endRow, int col)
         {
 
             ExcelRange cell;
@@ -130,7 +142,7 @@ namespace CompatableExcelCleaner
             {
                 cell = worksheet.Cells[endRow, col];
 
-                if (FormulaManager.IsDataCell(cell))
+                if (this.isDataCell(cell))
                 {
                     startRow += CountEmptyCellsOnTop(worksheet, startRow, endRow, col); //Skip the whitespace on top
                     cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, startRow, endRow - 1, col);

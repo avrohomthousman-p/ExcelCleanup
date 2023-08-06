@@ -11,12 +11,23 @@ namespace CompatableExcelCleaner
 
     /// <summary>
     /// Adds formulas to the end of "sections" found inside data columns of the worksheet. A section is defined as
-    /// a series of data cells (cells that start with $) seperated from the rest of the data cells by at least 
+    /// a series of data cells seperated from the rest of the data cells by at least 
     /// one empty cell on the top and a bottom border on bottom. The titles of each data column that need formulas 
     /// should be passed in via the headers string array.
     /// </summary>
     internal class DataColumnFormulaGenerator : IFormulaGenerator
     {
+
+        private IsDataCell isDataCell = new IsDataCell(FormulaManager.IsDollarValue); //default implementation
+
+
+        public void SetDataCellDefenition(IsDataCell isDataCell)
+        {
+            this.isDataCell = isDataCell;
+        }
+
+
+
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
             foreach (string header in headers)
@@ -139,7 +150,7 @@ namespace CompatableExcelCleaner
                     oldTotalCell.SetCellValue(0, 0, ""); 
                     return;
                 }
-                else if (FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDataCell(cell))
+                else if (FormulaManager.IsEmptyCell(cell) || !this.isDataCell(cell))
                 {
                     //This isnt an actual formula range
                     return;

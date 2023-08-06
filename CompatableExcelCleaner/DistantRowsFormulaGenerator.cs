@@ -68,7 +68,7 @@ namespace CompatableExcelCleaner
 
 
             //Now get all the addresses of the data cells that should be part of the formula
-            iter.SkipWhile(ExcelIterator.SHIFT_RIGHT, cell => FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDataCell(cell));
+            iter.SkipWhile(ExcelIterator.SHIFT_RIGHT, cell => FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDollarValue(cell));
             formulaCell = iter.GetCurrentCell();
 
             int dataColumn = iter.GetCurrentCol();

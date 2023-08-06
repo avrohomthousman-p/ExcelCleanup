@@ -45,7 +45,7 @@ namespace CompatableExcelCleaner
 
             formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:", "Balance:~Total Open Charges:,Total Future Charges:,Total Unallocated Payments:" });
             //ISSUE last formula missing
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" });
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" }); //ISSUE: last row skipped
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetComp", 0), new String[] 
             { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset", 
@@ -80,13 +80,14 @@ namespace CompatableExcelCleaner
                 "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse", 
                 "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });
 
+            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { }); //Dont have this report
+            formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysisSummary", 0), new String[] { "Total" });//TODO: not finished with this one
 
 
 
 
 
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("CollectionsAnaysisSummary", 0), new String[] { });
+
             formulaGenerationArguments.Add(new Worksheet("ReportTenantSummary", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 0), new String[] { });
@@ -203,7 +204,9 @@ namespace CompatableExcelCleaner
                 
                 case "AgedPayables":
                 case "AgedReceivables":
-                    return new FullTableFormulaGenerator(FullTableFormulaGenerator.IsNonDataCell);
+                    FullTableFormulaGenerator formulaGenerator = new FullTableFormulaGenerator();
+                    formulaGenerator.SetDefenitionForBeyondFormulaRange(formulaGenerator.IsNonDataCell);
+                    return formulaGenerator;
 
 
 
@@ -215,6 +218,7 @@ namespace CompatableExcelCleaner
                 case "RentRollActivity_New":
                 case "TrialBalance":
                 case "ReportCashReceiptsSummary":
+                case "CollectionsAnalysisSummary":
                     return new FullTableFormulaGenerator();
 
 
@@ -231,13 +235,11 @@ namespace CompatableExcelCleaner
                 //Reports I dont have
                 case "ReportPayablesRegister":
                 case "UnitInvoiceReport":
-
+                case "VendorInvoiceReport":
 
 
 
                 //Reports I have not yet checked
-                case "VendorInvoiceReport":
-                case "CollectionsAnaysisSummary":
                 case "ReportTenantSummary":
                 case "ProfitAndLossBudget":
                 case "VendorInvoiceReportWithJournalAccounts":

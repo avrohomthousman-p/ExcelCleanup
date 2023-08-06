@@ -86,11 +86,13 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Checks if a cell contains a dollar value
+        /// Checks if a cell contains a dollar value. This is used as a default implementation for IsDataCell in 
+        /// formula managers. Formula managers can be set to use a different defenition for a data cell 
+        /// by calling the method IFormulaManager.SetDataCellDefenition(  specify alternate implementation  )
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell contains a dollar value and false otherwise</returns>
-        internal static bool IsDataCell(ExcelRange cell)
+        internal static bool IsDollarValue(ExcelRange cell)
         {
             return cell.Text.StartsWith("$") || (cell.Text.StartsWith("($") && cell.Text.EndsWith(")"));
         }
