@@ -31,8 +31,10 @@ namespace CompatableExcelCleaner
 
             //Fill our dictionary with all the reports and all the data we need to give them formulas
 
+
+
+            //reports that work fine (last time I checked)
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByPeriod", 0), new String[] { "Total Income", "^Total Expense" });
-            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //ISSUE: numbers dont add up
             formulaGenerationArguments.Add(new Worksheet("RentRollAll", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 0), new String[] { "Total Expense", "Total Income" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 1), new String[] { "Total Expense", "Total Income" });
@@ -43,67 +45,87 @@ namespace CompatableExcelCleaner
                         "Long Term Liability=Total Long Term Liability", "Equity=Total Equity",
                         "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities"
                     });
-
-            formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:", "Balance:~Total Open Charges:,Total Future Charges:,Total Unallocated Payments:" });
-            //ISSUE last formula missing
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" }); //ISSUE: last row skipped
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("BalanceSheetComp", 0), new String[] 
-            { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset", 
-                "Assets=Total Assets",  "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
-                "Liabilities And Equity=Total Liabilities And Equity", "Long Term Liability=Total Long Term Liability",
-                "Equity=Total Equity"}); //ISSUE: one header skipped
-
             formulaGenerationArguments.Add(new Worksheet("AgedReceivables", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossComp", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 1), new String[] { "Total For International City:" });
             formulaGenerationArguments.Add(new Worksheet("TrialBalance", 0), new String[] { "Total:" });
-
-
-
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] {
                         "Total Tenant Receivables:", "Total Other Receivables:",
                         $"Total For {anyMonth} {anyYear}:~Total Tenant Receivables:,Total Other Receivables:",
                         $"Total For Commons at White Marsh:~Total For {anyMonth} {anyYear}:"});
 
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 1), new String[] { });
-
-
-            formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { }); //corrupted file
             formulaGenerationArguments.Add(new Worksheet("AgedPayables", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("ChargesCreditReport", 0), new String[] { "Total: $(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });//fixme: needs special system
-            formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });//dont have this report
-            formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { }); //needs new system
-            formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] { 
-                "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", "Garage=Total Garage", 
-                "Elevators=Total Elevators", "Clubhouse=Total Clubhouse", 
-                "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse", 
+            formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:", "Balance:~Total Open Charges:,Total Future Charges:,Total Unallocated Payments:" });
+            formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] {
+                "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", "Garage=Total Garage",
+                "Elevators=Total Elevators", "Clubhouse=Total Clubhouse",
+                "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse",
                 "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });
+            formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysisSummary", 0), new String[] { "Total" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 1), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 2), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 3), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 4), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 5), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 6), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 7), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 8), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 9), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 10), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 11), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
 
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { }); //Dont have this report
-            formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysisSummary", 0), new String[] { "Total" });//TODO: not finished with this one
 
 
 
+            //reports that mostly work but have small issues
+            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //ISSUE: numbers dont add up
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" }); //ISSUE: last row skipped
+            formulaGenerationArguments.Add(new Worksheet("BalanceSheetComp", 0), new String[]
+            { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
+                "Assets=Total Assets",  "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
+                "Liabilities And Equity=Total Liabilities And Equity", "Long Term Liability=Total Long Term Liability",
+                "Equity=Total Equity"}); //ISSUE: one header skipped
+
+            
 
 
-
-            formulaGenerationArguments.Add(new Worksheet("ReportTenantSummary", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 0), new String[] { });
+            //reports that cannot be processed by any existing system
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentHistoryReport", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("ChargesCreditReport", 0), new String[] { "Total: $(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });
+
+
+
+            //Reports I dont have
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("TrialBalanceVariance", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("JournalLedger", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysis", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByJob", 0), new String[] { });
+
+
+
+
+            //reports I have questions about
+            formulaGenerationArguments.Add(new Worksheet("ReportTenantSummary", 0), new String[] { });//No idea what I should be adding up
+            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("VendorPropertyReport", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollPortfolio", 0), new String[] { });
+
+
+
+            //reports I have not checked yet
+            formulaGenerationArguments.Add(new Worksheet("RentRollPortfolio", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("SubsidyRentRollReport", 0), new String[] { });
@@ -188,6 +210,7 @@ namespace CompatableExcelCleaner
                 case "BalanceSheetComp":
                 case "ProfitAndLossComp":
                 case "PayablesAccountReport":
+                case "ProfitAndLossBudget":
                     return new RowSegmentFormulaGenerator();
 
 
@@ -221,6 +244,13 @@ namespace CompatableExcelCleaner
 
 
 
+                case "RentRollPortfolio":
+                    formulaGenerator = new FullTableFormulaGenerator();
+                    //TODO: change how we find columns that need totals
+                    return formulaGenerator;
+
+
+
                 case "ReportTenantBal":
                 case "ProfitAndLossStatementByPeriod":
                 case "LedgerReport":
@@ -237,7 +267,15 @@ namespace CompatableExcelCleaner
                 //These reports dont fit into any existing system
                 case "ChargesCreditReport":
                 case "ReportCashReceipts":
+                case "VendorInvoiceReportWithJournalAccounts":
+                case "RentHistoryReport":
+                
 
+                
+                //Reports I have questions about
+                case "ReportTenantSummary":
+                case "RentRollHistory":
+                case "VendorPropertyReport":
 
 
 
@@ -246,25 +284,19 @@ namespace CompatableExcelCleaner
                 case "ReportPayablesRegister":
                 case "UnitInvoiceReport":
                 case "VendorInvoiceReport":
-
-
-
-                //Reports I have not yet checked
-                case "ReportTenantSummary":
-                case "ProfitAndLossBudget":
-                case "VendorInvoiceReportWithJournalAccounts":
                 case "RentRollActivityItemized_New":
-                case "RentHistoryReport":
                 case "ProfitAndLossExtendedVariance":
                 case "RentRollActivity":
                 case "RentRollAllItemized":
-                case "RentRollHistory":
                 case "TrialBalanceVariance":
                 case "JournalLedger":
                 case "CollectionsAnalysis":
                 case "ProfitAndLossStatementByJob":
-                case "VendorPropertyReport":
-                case "RentRollPortfolio":
+
+
+
+
+                //Reports I have not yet checked
                 case "AgedAccountsReceivable":
                 case "BalanceSheetPropBreakdown":
                 case "SubsidyRentRollReport":
