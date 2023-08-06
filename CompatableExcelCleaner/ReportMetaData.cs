@@ -1,6 +1,7 @@
 ﻿using ExcelDataCleanup;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace CompatableExcelCleaner
 {
@@ -14,7 +15,7 @@ namespace CompatableExcelCleaner
 
         private static readonly string anyMonth = "(January|February|March|April|May|June|July|August|September|October|November|December)";
         private static readonly string anyDate = "\\d{2}/\\d{2}/\\d{4}";
-        private static readonly string anyYear = "\\d{4}";
+        private static readonly string anyYear = "[12]\\d\\d\\d";
 
 
         // Stores the arguments needed to generate formulas for each report and worksheet. If a report/worksheet
@@ -210,6 +211,16 @@ namespace CompatableExcelCleaner
 
 
 
+                case "CollectionsAnalysisSummary":
+                    formulaGenerator = new FullTableFormulaGenerator();
+                    formulaGenerator.SetDataCellDefenition(                                     //matches a percentage
+                        cell => FormulaManager.IsDollarValue(cell) || Regex.IsMatch(cell.Text, "^\\d?\\d{2}([.]\\d{2})?%$"));
+
+
+                    return formulaGenerator;
+
+
+
                 case "ReportTenantBal":
                 case "ProfitAndLossStatementByPeriod":
                 case "LedgerReport":
@@ -218,7 +229,6 @@ namespace CompatableExcelCleaner
                 case "RentRollActivity_New":
                 case "TrialBalance":
                 case "ReportCashReceiptsSummary":
-                case "CollectionsAnalysisSummary":
                     return new FullTableFormulaGenerator();
 
 

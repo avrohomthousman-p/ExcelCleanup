@@ -102,7 +102,7 @@ namespace CompatableExcelCleaner
 
             foreach (ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_RIGHT))
             {
-                if (FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDollarValue(cell))
+                if (FormulaManager.IsEmptyCell(cell) || !isDataCell(cell))
                 {
                     continue;
                 }
