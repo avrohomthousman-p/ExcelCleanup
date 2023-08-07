@@ -246,7 +246,9 @@ namespace CompatableExcelCleaner
 
                 case "RentRollPortfolio":
                     formulaGenerator = new FullTableFormulaGenerator();
-                    //TODO: change how we find columns that need totals
+                    double ignored;
+                    formulaGenerator.SetDataCellDefenition(cell => FormulaManager.IsDollarValue(cell) || Double.TryParse(cell.Text, out ignored));
+                    formulaGenerator.SetDefenitionForBeyondFormulaRange(formulaGenerator.IsNonDataCell);
                     return formulaGenerator;
 
 

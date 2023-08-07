@@ -98,7 +98,7 @@ namespace CompatableExcelCleaner
         /// <param name="col">the column of the header</param>
         private void FillInFormulas(ExcelWorksheet worksheet, int row, int col)
         {
-            iter.SetCurrentLocation(row, col);
+            iter.SetCurrentLocation(row, col+1);
 
             foreach (ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_RIGHT))
             {
@@ -110,7 +110,7 @@ namespace CompatableExcelCleaner
 
                 int topRowOfRange = FindTopRowOfFormulaRange(worksheet, row, col);
 
-                cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, topRowOfRange, row - 1, iter.GetCurrentCol());
+                cell.Formula = FormulaManager.GenerateFormula(worksheet, topRowOfRange, row - 1, iter.GetCurrentCol());
                 cell.Style.Locked = true;
 
                 Console.WriteLine("Cell " + cell.Address + " has been given this formula: " + cell.Formula);
