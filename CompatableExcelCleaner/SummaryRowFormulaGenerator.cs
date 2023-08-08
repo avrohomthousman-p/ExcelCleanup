@@ -18,7 +18,7 @@ namespace CompatableExcelCleaner
     /// other systems becuase their cells are not near each other. This class should be used in addition to whatever other
     /// formula generator is appropriate for the report being cleaned.
     /// </summary>
-    internal class DistantRowsFormulaGenerator
+    internal class SummaryRowFormulaGenerator
     {
 
         /// <summary>
@@ -37,9 +37,9 @@ namespace CompatableExcelCleaner
                 }
 
 
-                int indexOfEqualsSign = header.IndexOf('~');
-                string formulaHeader = header.Substring(0, indexOfEqualsSign);
-                string[] dataCells = header.Substring(indexOfEqualsSign + 1).Split(',');
+                int indexOfTilda = header.IndexOf('~');
+                string formulaHeader = header.Substring(0, indexOfTilda);
+                string[] dataCells = header.Substring(indexOfTilda + 1).Split(',');
 
 
                 FillInFormulas(worksheet, formulaHeader, dataCells);
