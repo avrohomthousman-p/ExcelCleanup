@@ -153,6 +153,27 @@ namespace CompatableExcelCleaner
 
 
 
+        /// <summary>
+        /// Starting from the iterators current location, iterates and returns every cell in the table
+        /// </summary>
+        /// <returns>the row and column of each cell as a tuple</returns>
+        public IEnumerable<Tuple<int, int>> FindAllMatchingCoordinates()
+        {
+            ExcelRange cell;
+
+            for (; row <= worksheet.Dimension.End.Row; row++)
+            {
+                for (; col <= worksheet.Dimension.End.Column; col++)
+                {
+                    yield return new Tuple<int, int>(row, col);
+                }
+
+                col = 1;
+            }
+        }
+
+
+
 
         /// <summary>
         /// Starting from the iterators current location, iterates and finds all cells in the whole table that match 
@@ -184,12 +205,29 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Starting from the iterator's current location, iterates and finds all cells in the whole table that match 
-        /// specified predicate. This method is an  alternitive to FindAllMatchingCoordinates that returns the cell
+        /// Starting from the iterator's current location, iterates and returns each cell in the table.
+        /// This method is an alternitive to FindAllMatchingCoordinates() that returns the cell
         /// itself instead of the coordinates.
         /// </summary>
+        /// <returns>the ExcelRange object of each cell</returns>
+        public IEnumerable<ExcelRange> FindAllMatchingCells()
+        {
+            foreach (Tuple<int, int> coordinates in FindAllMatchingCoordinates())
+            {
+                yield return worksheet.Cells[coordinates.Item1, coordinates.Item2];
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Starting from the iterator's current location, iterates and finds all cells in the whole table that match 
+        /// specified predicate. This method is an alternitive to FindAllMatchingCoordinates(isDesiredCell) that 
+        /// returns the cell itself instead of the coordinates.
+        /// </summary>
         /// <param name="isDesiredCell">a predicate that returns true if a cell should be returned</param>
-        /// <returns>the ExcelRange object of the cell with matching the predicate as a tuple</returns>
+        /// <returns>the ExcelRange object of the cell with matching the predicate</returns>
         public IEnumerable<ExcelRange> FindAllMatchingCells(Predicate<ExcelRange> isDesiredCell)
         {
             foreach (Tuple<int, int> coordinates in FindAllMatchingCoordinates(isDesiredCell))
