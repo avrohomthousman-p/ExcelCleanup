@@ -67,35 +67,32 @@ namespace CompatableExcelCleaner
             }
 
 
-            //Now get all the addresses of the data cells that should be part of the formula
-            iter.SkipWhile(ExcelIterator.SHIFT_RIGHT, cell => FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDollarValue(cell));
-            formulaCell = iter.GetCurrentCell();
-
-            int dataColumn = iter.GetCurrentCol();
-
             int[] dataRows = GetRowsToIncludeInFormula(worksheet, dataCells);
 
 
-
-            //now build the formula
-            StringBuilder formula = new StringBuilder("SUM(");
-
-            foreach(int i in dataRows)
+            var nextDataColumn = iter.GetCells(ExcelIterator.SHIFT_RIGHT);
+            foreach (ExcelRange cell in nextDataColumn)
             {
-                formula.Append(GetAddress(worksheet, i, dataColumn)).Append(",");
+
+                //if this isnt a data cell, skip it (dont put a formula here)
+                if(FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDollarValue(cell))
+                {
+                    continue;
+                }
+
+
+                
+                formulaCell = iter.GetCurrentCell();
+
+                int dataColumn = iter.GetCurrentCol();
+
+
+                //now add the formula to the cell
+                formulaCell.Formula = BuildFormula(worksheet, dataRows, dataColumn);
+                formulaCell.Style.Locked = true;
+
+                Console.WriteLine("Cell " + formulaCell.Address + " has been given this formula: " + formulaCell.Formula);
             }
-
-            formula.Remove(formula.Length - 1, 1); //delete the trailing comma
-
-            formula.Append(")");
-
-
-
-            //now add the formula to the cell
-            formulaCell.FormulaR1C1 = formula.ToString();
-            formulaCell.Style.Locked = true;
-
-            Console.WriteLine("Cell " + formulaCell.Address + " has been given this formula: " + formulaCell.Formula);
         }
 
 
@@ -115,6 +112,32 @@ namespace CompatableExcelCleaner
                                 .Any<string>(header => FormulaManager.TextMatches(cell.Text, header)))
                         .Select(tup => tup.Item1).ToArray();
 
+        }
+
+
+
+
+        /// <summary>
+        /// Builds the actual formula that should be inserted into the worksheet
+        /// </summary>
+        /// <param name="worksheet">the worksheet getting formulas</param>
+        /// <param name="rows">an array of all the row numbers that should be included in the formula</param>
+        /// <param name="column">the column the formula is in</param>
+        /// <returns>the formula that needs to be added to the cell as a string</returns>
+        private static string BuildFormula(ExcelWorksheet worksheet, int[] rows, int column)
+        {
+            StringBuilder formula = new StringBuilder("SUM(");
+
+            foreach (int i in rows)
+            {
+                formula.Append(GetAddress(worksheet, i, column)).Append(",");
+            }
+
+            formula.Remove(formula.Length - 1, 1); //delete the trailing comma
+
+            formula.Append(")");
+
+            return formula.ToString();
         }
 
 

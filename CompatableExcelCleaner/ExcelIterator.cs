@@ -228,7 +228,7 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Iterates through every cell in the chosen direction until it reaches the end of the worksheet of the 
+        /// Iterates through every cell in the chosen direction until it reaches the end of the worksheet or the 
         /// specified predicate evaluates to true. After this operation the iterator will reference the cell that
         /// made our predicate true or the last cell before the iterator would go out of bounds.
         /// </summary>

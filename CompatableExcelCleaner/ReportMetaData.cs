@@ -60,11 +60,6 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 1), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("AgedPayables", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:", "Balance:~Total Open Charges:,Total Future Charges:,Total Unallocated Payments:" });
-            formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] {
-                "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", "Garage=Total Garage",
-                "Elevators=Total Elevators", "Clubhouse=Total Clubhouse",
-                "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse",
-                "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });
             formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysisSummary", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 1), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
@@ -81,6 +76,13 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("RentRollPortfolio", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("VacancyLoss", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("VacancyLoss", 1), new String[] { "Total" });
+            formulaGenerationArguments.Add(new Worksheet("BalanceSheetComp", 0), new String[]
+            { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
+                "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
+                "Liabilities And Equity=Total Liabilities And Equity", "Long Term Liability=Total Long Term Liability",
+                "Equity=Total Equity", "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities",
+                "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets"
+            });
 
 
 
@@ -88,13 +90,13 @@ namespace CompatableExcelCleaner
             //reports that mostly work but have small issues
             formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //ISSUE: numbers dont add up
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" }); //ISSUE: last row skipped
-            formulaGenerationArguments.Add(new Worksheet("BalanceSheetComp", 0), new String[]
-            { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
-                "Assets=Total Assets",  "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
-                "Liabilities And Equity=Total Liabilities And Equity", "Long Term Liability=Total Long Term Liability",
-                "Equity=Total Equity", "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities"}); //ISSUE: one header skipped
+            formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] {
+                "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", "Garage=Total Garage",
+                "Elevators=Total Elevators", "Clubhouse=Total Clubhouse",
+                "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse",
+                "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });//not sure if this one needs horizontal summaries
 
-            
+
 
 
             //reports that cannot be processed by any existing system
