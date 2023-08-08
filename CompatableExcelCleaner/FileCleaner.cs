@@ -539,18 +539,18 @@ namespace ExcelDataCleanup
                         continue;                                 //skip the formatting at the end of this if statement
 
                     }
-                    else if (cell.Text.StartsWith("$"))
+                    else if (cell.Text.StartsWith("$") || (cell.Text.StartsWith("($") && cell.Text.EndsWith(")")))
                     {
 
-                        cell.Value = Double.Parse(StripNonDigits(cell.Text));
-                        cell.Style.Numberformat.Format = "$#,##0.00";
+                        bool isNegative = cell.Text.StartsWith("(");
 
-                    }
-                    else if (cell.Text.StartsWith("($") && cell.Text.EndsWith(")"))
-                    {
-
+                        cell.Style.Numberformat.Format = "$#,##0.00;($#,##0.00)";
                         cell.Value = Double.Parse(StripNonDigits(cell.Text));
-                        cell.Style.Numberformat.Format = "($#,##0.00)";
+
+                        if (isNegative)
+                        {
+                            cell.Value = (double)cell.Value * -1;
+                        }
 
                     }
                     else if (IsDateWith2DigitYear(cell.Text))

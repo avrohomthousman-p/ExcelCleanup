@@ -40,10 +40,11 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 1), new String[] { "Total Expense", "Total Income" });
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetDrillthrough", 0), new String[]
                     { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
-                        "Assets=Total Assets", "Liabilities And Equity=Total Liabilities And Equity",
+                        "Liabilities And Equity=Total Liabilities And Equity",
                         "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
                         "Long Term Liability=Total Long Term Liability", "Equity=Total Equity",
-                        "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities"
+                        "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities",
+                        "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets"
                     });
             formulaGenerationArguments.Add(new Worksheet("AgedReceivables", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossComp", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense" });
@@ -91,7 +92,7 @@ namespace CompatableExcelCleaner
             { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
                 "Assets=Total Assets",  "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
                 "Liabilities And Equity=Total Liabilities And Equity", "Long Term Liability=Total Long Term Liability",
-                "Equity=Total Equity"}); //ISSUE: one header skipped
+                "Equity=Total Equity", "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities"}); //ISSUE: one header skipped
 
             
 
