@@ -34,7 +34,8 @@ namespace CompatableExcelCleaner
 
 
             //reports that work fine (last time I checked)
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByPeriod", 0), new String[] { "Total Income", "^Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByPeriod", 0), new String[] { 
+                "Total Income", "Total Expense", "Net Operating Income~-Total Expense,Total Income",  "Net Income~Net Operating Income,-Total Expense"});
             formulaGenerationArguments.Add(new Worksheet("RentRollAll", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 0), new String[] { "Total Expense", "Total Income" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 1), new String[] { "Total Expense", "Total Income" });

@@ -157,10 +157,8 @@ namespace CompatableExcelCleaner
         /// Starting from the iterators current location, iterates and returns every cell in the table
         /// </summary>
         /// <returns>the row and column of each cell as a tuple</returns>
-        public IEnumerable<Tuple<int, int>> FindAllMatchingCoordinates()
+        public IEnumerable<Tuple<int, int>> FindAllCellCoordinates()
         {
-            ExcelRange cell;
-
             for (; row <= worksheet.Dimension.End.Row; row++)
             {
                 for (; col <= worksheet.Dimension.End.Column; col++)
@@ -210,9 +208,9 @@ namespace CompatableExcelCleaner
         /// itself instead of the coordinates.
         /// </summary>
         /// <returns>the ExcelRange object of each cell</returns>
-        public IEnumerable<ExcelRange> FindAllMatchingCells()
+        public IEnumerable<ExcelRange> FindAllCells()
         {
-            foreach (Tuple<int, int> coordinates in FindAllMatchingCoordinates())
+            foreach (Tuple<int, int> coordinates in FindAllCellCoordinates())
             {
                 yield return worksheet.Cells[coordinates.Item1, coordinates.Item2];
             }
@@ -233,6 +231,40 @@ namespace CompatableExcelCleaner
             foreach (Tuple<int, int> coordinates in FindAllMatchingCoordinates(isDesiredCell))
             {
                 yield return worksheet.Cells[coordinates.Item1, coordinates.Item2];
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Iterates from the iterators current position, backwards, through every cell in the table.
+        /// </summary>
+        /// <returns>each cell the iterator passed through</returns>
+        private IEnumerable<Tuple<int, int>> FindAllCellCoordinatesReverse()
+        {
+            for (; row > 0; row--)
+            {
+                for (; col > 0; col--)
+                {
+                    yield return new Tuple<int, int>(row, col);
+                }
+
+                col = worksheet.Dimension.End.Column;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Iterates from the iterators current position, backwards, through every cell in the table.
+        /// </summary>
+        /// <returns>each cell the iterator passed through</returns>
+        private IEnumerable<ExcelRange> FindAllCellsReverse()
+        {
+            foreach(Tuple<int, int> coordinate in FindAllCellCoordinatesReverse())
+            {
+                yield return worksheet.Cells[coordinate.Item1, coordinate.Item2];
             }
         }
 

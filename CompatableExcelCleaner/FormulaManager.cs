@@ -111,7 +111,6 @@ namespace CompatableExcelCleaner
         /// <returns>the proper formula for the specified formula range</returns>
         internal static string GenerateFormula(ExcelWorksheet worksheet, int startRow, int endRow, int col)
         {
-            //ExcelRange cells = worksheet.Cells[startRow + 1, col, endRow - 1, col];
             ExcelRange cells = worksheet.Cells[startRow, col, endRow, col];
 
             return "SUM(" + cells.Address + ")";

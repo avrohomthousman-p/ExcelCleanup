@@ -12,7 +12,8 @@ namespace CompatableExcelCleaner
     /// Generates formulas that add up cells from anywhere else in the worksheet. Header data should be passed
     /// to this class in this format: "headerOfFormulaCell~header1,header2,header3" where headerOfFormula cell
     /// is the header before the cell that needs the formula and the other comma seperated headers are headers in front
-    /// of cells that should be included in the sum.
+    /// of cells that should be included in the sum. If needed you can also specify subtraction by putting a minus sign
+    /// before the name of any of the headers.
     /// 
     /// Note: this class will NOT do all the formulas necessary on the worksheet, only the ones that cant be done by
     /// other systems becuase their cells are not near each other. This class should be used in addition to whatever other
@@ -67,7 +68,7 @@ namespace CompatableExcelCleaner
             }
 
 
-            int[] dataRows = GetRowsToIncludeInFormula(worksheet, dataCells);
+            List< Tuple<int, bool>> dataRows = GetRowsToIncludeInFormula(worksheet, dataCells);
 
 
             var nextDataColumn = iter.GetCells(ExcelIterator.SHIFT_RIGHT);
@@ -98,20 +99,68 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Gets all the row numbers of the cells that are to be included in the formula
+        /// Gets all the row numbers of the cells that are to be included in the formula, and if they should be subtracted 
+        /// instead of added.
         /// </summary>
         /// <param name="worksheet">the worksheet that is being given formulas</param>
         /// <param name="headers">the text that signals that this data cell should be part of the formula</param>
-        /// <returns>an array of row numbers of the cells that should be part of the formula</returns>
-        private static int[] GetRowsToIncludeInFormula(ExcelWorksheet worksheet, string[] headers)
+        /// <returns>
+        /// a list of row numbers of the cells that should be part of the formula, and booleans that are true
+        /// if that row should be subtracted instead of added
+        /// </returns>
+        private static List<Tuple<int, bool>> GetRowsToIncludeInFormula(ExcelWorksheet worksheet, string[] headers)
         {
-            List<string> allHeaders = new List<string>(headers);
+
+            Tuple<string, bool>[] headerAndIsSubtraction = ConvertArray(headers);
+
+            List<Tuple<int, bool>> results = new List<Tuple<int, bool>>();
+
 
             ExcelIterator iter = new ExcelIterator(worksheet);
-            return iter.FindAllMatchingCoordinates(cell => allHeaders
-                                .Any<string>(header => FormulaManager.TextMatches(cell.Text, header)))
-                        .Select(tup => tup.Item1).ToArray();
+            foreach(ExcelRange cell in iter.FindAllCells())
+            {
 
+                //if the cell has a dollar value or is empty, it isnt a header, so we can skip it
+                if(FormulaManager.IsEmptyCell(cell) || FormulaManager.IsDollarValue(cell))
+                {
+                    continue;
+                }
+
+
+
+                foreach(Tuple<string, bool> tup in headerAndIsSubtraction)
+                {
+                    if(FormulaManager.TextMatches(cell.Text, tup.Item1))
+                    {
+                        results.Add(new Tuple<int, bool>(iter.GetCurrentRow(), tup.Item2));
+                        break;
+                    }
+                }
+            }
+
+
+            return results;
+        }
+
+
+
+
+        /// <summary>
+        /// Converts an array of headers into an array of Tuples storing headers without the leading minus and a bool that
+        /// is true if that header used to have a minus sign.
+        /// </summary>
+        /// <param name="headers">the headers that are to be included in the formula being created</param>
+        /// <returns>an array of each header and a bool isSubtraction (true if this row should be subtracted in the formula)</returns>
+        private static Tuple<string, bool>[] ConvertArray(string[] headers)
+        {
+            return headers.Select(                                      
+                    (text => {
+                        if (text.StartsWith("-"))
+                            return new Tuple<string, bool>(text.Substring(1), true);
+                        else
+                            return new Tuple<string, bool>(text, false);
+                    }))
+                .ToArray();
         }
 
 
@@ -121,17 +170,27 @@ namespace CompatableExcelCleaner
         /// Builds the actual formula that should be inserted into the worksheet
         /// </summary>
         /// <param name="worksheet">the worksheet getting formulas</param>
-        /// <param name="rows">an array of all the row numbers that should be included in the formula</param>
+        /// <param name="rowData">an array of tuples with row numbers that should be included in the formula,
+        /// and booleans stating if they should be subtracted</param>
         /// <param name="column">the column the formula is in</param>
         /// <returns>the formula that needs to be added to the cell as a string</returns>
-        private static string BuildFormula(ExcelWorksheet worksheet, int[] rows, int column)
+        private static string BuildFormula(ExcelWorksheet worksheet, List<Tuple<int, bool>> rowData, int column)
         {
             StringBuilder formula = new StringBuilder("SUM(");
 
-            foreach (int i in rows)
+            foreach (Tuple<int, bool> i in rowData)
             {
-                formula.Append(GetAddress(worksheet, i, column)).Append(",");
+
+                if (i.Item2)
+                {
+                    formula.Append("-");
+                }
+
+                formula.Append(GetAddress(worksheet, i.Item1, column)).Append(",");
+
             }
+
+
 
             formula.Remove(formula.Length - 1, 1); //delete the trailing comma
 
