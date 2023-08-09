@@ -241,7 +241,7 @@ namespace CompatableExcelCleaner
         /// Iterates from the iterators current position, backwards, through every cell in the table.
         /// </summary>
         /// <returns>each cell the iterator passed through</returns>
-        private IEnumerable<Tuple<int, int>> FindAllCellCoordinatesReverse()
+        public IEnumerable<Tuple<int, int>> FindAllCellCoordinatesReverse()
         {
             for (; row > 0; row--)
             {
@@ -260,7 +260,7 @@ namespace CompatableExcelCleaner
         /// Iterates from the iterators current position, backwards, through every cell in the table.
         /// </summary>
         /// <returns>each cell the iterator passed through</returns>
-        private IEnumerable<ExcelRange> FindAllCellsReverse()
+        public IEnumerable<ExcelRange> FindAllCellsReverse()
         {
             foreach(Tuple<int, int> coordinate in FindAllCellCoordinatesReverse())
             {
