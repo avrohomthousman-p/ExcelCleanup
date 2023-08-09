@@ -68,7 +68,7 @@ namespace CompatableExcelCleaner
             }
 
 
-            List< Tuple<int, bool>> dataRows = GetRowsToIncludeInFormula(worksheet, dataCells);
+            List< Tuple<int, bool>> dataRows = GetRowsToIncludeInFormula(worksheet, dataCells, formulaCell.Start.Row);
 
 
             var nextDataColumn = iter.GetCells(ExcelIterator.SHIFT_RIGHT);
@@ -104,21 +104,29 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="worksheet">the worksheet that is being given formulas</param>
         /// <param name="headers">the text that signals that this data cell should be part of the formula</param>
+        /// <param name="rowOfFormula">the row number of the cell the formula will be placed in</param>
         /// <returns>
         /// a list of row numbers of the cells that should be part of the formula, and booleans that are true
         /// if that row should be subtracted instead of added
         /// </returns>
-        private static List<Tuple<int, bool>> GetRowsToIncludeInFormula(ExcelWorksheet worksheet, string[] headers)
+        private static List<Tuple<int, bool>> GetRowsToIncludeInFormula(ExcelWorksheet worksheet, string[] headers, int rowOfFormula)
         {
 
-            Tuple<string, bool>[] headerAndIsSubtraction = ConvertArray(headers);
+            List<Tuple<string, bool>> headerAndIsSubtraction = ConvertArray(headers);
 
             List<Tuple<int, bool>> results = new List<Tuple<int, bool>>();
 
 
-            ExcelIterator iter = new ExcelIterator(worksheet);
-            foreach(ExcelRange cell in iter.FindAllCells())
+            //Create iterator that points to the location of the formula cell
+            ExcelIterator iter = new ExcelIterator(worksheet, rowOfFormula, 1);
+
+            foreach(ExcelRange cell in iter.FindAllCellsReverse())
             {
+                //If we already found all the headers we need
+                if(headerAndIsSubtraction.Count == 0)
+                {
+                    break;
+                }
 
                 //if the cell has a dollar value or is empty, it isnt a header, so we can skip it
                 if(FormulaManager.IsEmptyCell(cell) || FormulaManager.IsDollarValue(cell))
@@ -128,11 +136,14 @@ namespace CompatableExcelCleaner
 
 
 
-                foreach(Tuple<string, bool> tup in headerAndIsSubtraction)
+                for(int i = 0; i < headerAndIsSubtraction.Count; i++)
                 {
+                    Tuple<string, bool> tup = headerAndIsSubtraction[i];
+
                     if(FormulaManager.TextMatches(cell.Text, tup.Item1))
                     {
                         results.Add(new Tuple<int, bool>(iter.GetCurrentRow(), tup.Item2));
+                        headerAndIsSubtraction.RemoveAt(i);
                         break;
                     }
                 }
@@ -146,12 +157,12 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Converts an array of headers into an array of Tuples storing headers without the leading minus and a bool that
+        /// Converts an array of headers into a list of Tuples storing headers without the leading minus and a bool that
         /// is true if that header used to have a minus sign.
         /// </summary>
         /// <param name="headers">the headers that are to be included in the formula being created</param>
-        /// <returns>an array of each header and a bool isSubtraction (true if this row should be subtracted in the formula)</returns>
-        private static Tuple<string, bool>[] ConvertArray(string[] headers)
+        /// <returns>a list of each header and a bool isSubtraction (true if this row should be subtracted in the formula)</returns>
+        private static List<Tuple<string, bool>> ConvertArray(string[] headers)
         {
             return headers.Select(                                      
                     (text => {
@@ -160,7 +171,7 @@ namespace CompatableExcelCleaner
                         else
                             return new Tuple<string, bool>(text, false);
                     }))
-                .ToArray();
+                .ToList();
         }
 
 
