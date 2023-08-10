@@ -167,7 +167,7 @@ namespace ExcelDataCleanup
         /// <inheritdoc/>
         protected override void UnMergeMergedSections(ExcelWorksheet worksheet)
         {
-
+            Console.WriteLine("unmerging worksheet " + worksheet.Index);
             RecordOriginalColumnWidths(worksheet);
 
 
@@ -419,20 +419,36 @@ namespace ExcelDataCleanup
                 return;
             }
 
-            //if it is actually a data cell, its just considered a minor header because its in the wrong row
-            if (cellRange.Text.StartsWith("$") || (cellRange.Text.StartsWith("($") && cellRange.Text.EndsWith(")")))
-            {
-                return;
-            }
-            
-
 
             int row = cellRange.Start.Row;
             int startCol = cellRange.Start.Column;
             int endCol = cellRange.End.Column;
 
             ExcelRange source = worksheet.Cells[row, startCol];
-            ExcelRange destination = worksheet.Cells[row, endCol];
+            ExcelRange destination;
+
+
+
+            //if it is actually a data cell, its just considered a minor header because its in the wrong row
+            if (cellRange.Text.StartsWith("$") || (cellRange.Text.StartsWith("($") && cellRange.Text.EndsWith(")")))
+            {
+                //return;
+                int endOfDataColumn = GetNearestDataColumn(startCol, endCol).Item1;
+                destination = worksheet.Cells[row, endOfDataColumn];
+
+                //if we cant move the data there becuase its in use
+                if (destination.Merge || !IsEmptyCell(destination)) 
+                {
+                    destination = worksheet.Cells[row, endCol];
+                }
+
+            }
+            else
+            {
+                destination = worksheet.Cells[row, endCol];
+            }
+
+
 
             source.Copy(destination);
             source.CopyStyles(destination);
@@ -440,6 +456,72 @@ namespace ExcelDataCleanup
             source.Value = null;
         }
 
+
+
+        /// <summary>
+        /// Given the span of a merge cell, gets the span of the data column that most closely matches that merge cell,
+        /// or the span of the merge cell itself if no matches are found.
+        /// </summary>
+        /// <param name="startCol">the starting column of the merge cell</param>
+        /// <param name="endCol">the ending column of the merge cell</param>
+        /// <returns>
+        /// a tuple with the starting and ending columns of the data column most similar to the specified merge span, or
+        /// the span of the merge itself if no appropriate data column is found.
+        /// </returns>
+        private Tuple<int, int> GetNearestDataColumn(int startCol, int endCol)
+        {
+            foreach(Tuple<int, int> column in mergeRangesOfDataCells)
+            {
+                if (MergeMatchesDataColumn(startCol, endCol, column))
+                {
+                    return column;
+                }
+            }
+
+
+            return new Tuple<int, int>(startCol, endCol);
+        }
+
+
+
+        /// <summary>
+        /// Checks if the specified merge span closely matches the specified data column span
+        /// </summary>
+        /// <param name="mergeStart">the column number that the merge starts in</param>
+        /// <param name="mergeEnd">the column number that the merge ends in</param>
+        /// <param name="dataColumn">a tuple containing the start and end column of the data column span</param>
+        /// <returns>true if the data column and merge cell span mostly the same area</returns>
+        private bool MergeMatchesDataColumn(int mergeStart, int mergeEnd, Tuple<int, int> dataColumn)
+        {
+            int numOverlappingCols;
+
+            //now count how many columns are shared in both spans (overlap)
+
+            //if the merge cell is a bit to the right of the data column
+            if(mergeStart >= dataColumn.Item1 &&  mergeEnd >= dataColumn.Item2) 
+            {
+                numOverlappingCols = dataColumn.Item2 - mergeStart;
+            }
+            //if the merge cell is a bit to the left of the data column
+            else if (mergeStart <= dataColumn.Item1 && mergeEnd <= dataColumn.Item2)
+            {
+                numOverlappingCols =  mergeEnd - dataColumn.Item1;
+            }
+            //if there is no overlap
+            else if (dataColumn.Item2 < mergeStart || dataColumn.Item1 > mergeEnd) 
+            {
+                numOverlappingCols = 0;
+            }
+            //if there is complete overlap except that one is bigger than the other
+            else
+            {
+                numOverlappingCols = dataColumn.Item2 - dataColumn.Item1;
+            }
+
+
+            //if at least 2/3 of the cells overlap return true
+            return ((double)numOverlappingCols) / (dataColumn.Item2 - dataColumn.Item1) >= 0.66;
+        }
 
 
 
