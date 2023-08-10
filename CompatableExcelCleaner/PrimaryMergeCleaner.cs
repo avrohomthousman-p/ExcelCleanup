@@ -419,6 +419,13 @@ namespace ExcelDataCleanup
                 return;
             }
 
+            //if it is actually a data cell, its just considered a minor header because its in the wrong row
+            if (cellRange.Text.StartsWith("$") || (cellRange.Text.StartsWith("($") && cellRange.Text.EndsWith(")")))
+            {
+                return;
+            }
+            
+
 
             int row = cellRange.Start.Row;
             int startCol = cellRange.Start.Column;
