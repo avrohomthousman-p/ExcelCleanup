@@ -141,13 +141,9 @@ namespace CompatableExcelCleaner
 
 
                     //Add a formula
-                    //ExcelRange oldTotalCell = worksheet.Cells[row, col + 1];
-                    //cell = worksheet.Cells[row, col];
-                    //oldTotalCell.CopyStyles(cell);
                     cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, start, row - 1, col);
                     cell.Style.Locked = true;
 
-                    //oldTotalCell.SetCellValue(0, 0, ""); 
                     return;
                 }
                 else if (FormulaManager.IsEmptyCell(cell) || !this.isDataCell(cell))
