@@ -428,28 +428,15 @@ namespace ExcelDataCleanup
             ExcelRange destination;
 
 
-            //if the cell is a summary cell that also has a header in it (e.g. Total: $...)
-            if(IsSummaryCellAsText(cellRange))
-            {
-                Console.WriteLine("found a summary cell");
-                if(SplitCellIntoHeaderAndData(worksheet, cellRange))
-                {
-                    return;
-                }
-                else
-                {
-                    destination = worksheet.Cells[row, endCol];
-                }
-                
-            }
+
             //if it is actually a data cell, its just considered a minor header because its in the wrong row
-            else if (source.Text.StartsWith("$") || (source.Text.StartsWith("($") && source.Text.EndsWith(")")))
+            if (source.Text.StartsWith("$") || (source.Text.StartsWith("($") && source.Text.EndsWith(")")))
             {
                 int endOfDataColumn = GetNearestDataColumn(startCol, endCol).Item1;
                 destination = worksheet.Cells[row, endOfDataColumn];
 
                 //if we cant move the data there becuase its in use
-                if (destination.Merge || !IsEmptyCell(destination)) 
+                if (SafeToCopyTextTo(destination)) 
                 {
                     destination = worksheet.Cells[row, endCol];
                 }
@@ -466,70 +453,6 @@ namespace ExcelDataCleanup
             source.CopyStyles(destination);
 
             source.Value = null;
-        }
-
-
-
-        /// <summary>
-        /// Checks if the specified cell is supposed to be a summary cell, except that it hase text in it also
-        /// (e.g. "Total: $100.00)
-        /// </summary>
-        /// <param name="cell">the cell being checked</param>
-        /// <returns>true if the specified cell contains text and a summary value, and false otherwise</returns>
-        private bool IsSummaryCellAsText(ExcelRange cell)
-        {
-            return Regex.IsMatch(cell.Text, $"Total: \\$(\\d+,)*\\d+[.]\\d\\d");
-        }
-
-
-
-        /// <summary>
-        /// Converts the specified cell with text and dollar values into two seperate cells, one for each.
-        /// </summary>
-        /// <param name="worksheet">the worksheet currently being cleaned</param>
-        /// <param name="unmergedCell">the full cell being checked including the cells that were created as a 
-        /// result of the unmerge.</param>
-        /// <returns>true if the cell was able to be split and false otherwise</returns>
-        private bool SplitCellIntoHeaderAndData(ExcelWorksheet worksheet, ExcelRange unmergedCell)
-        {
-            int row = unmergedCell.Start.Row;
-            int startCol = unmergedCell.Start.Column;
-            int endCol = unmergedCell.End.Column;
-
-            ExcelRange source = worksheet.Cells[row, startCol];
-            ExcelRange headerDestination;
-            ExcelRange dataDestination;
-
-
-            //need to remove the text from the source cell or the system wont allow adding in the replacement
-            //text becuase the cell is not empty
-            string originalText = source.Text;
-            source.SetCellValue(0, 0, "");
-
-
-            int endOfDataColumn = GetNearestDataColumn(startCol, endCol).Item1;
-            headerDestination = worksheet.Cells[row, endOfDataColumn - 1];
-            dataDestination = worksheet.Cells[row, endOfDataColumn];
-
-
-            if(!SafeToCopyTextTo(headerDestination) || !SafeToCopyTextTo(dataDestination))
-            {
-                return false;
-            }
-
-
-            //Now copy everything over
-            int indexOfDollarSign = originalText.IndexOf('$');
-            string header = originalText.Substring(0, indexOfDollarSign);
-            string data = originalText.Substring(indexOfDollarSign);
-
-
-            headerDestination.SetCellValue(0, 0, header);
-            source.CopyStyles(headerDestination);
-
-            dataDestination.SetCellValue(0, 0, data);
-
-            return true;
         }
 
 
