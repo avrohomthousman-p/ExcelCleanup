@@ -90,8 +90,8 @@ namespace CompatableExcelCleaner
 
 
             //reports that mostly work but have small issues
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 0), new String[] { "Total Expense", "Total Income" });//numbers dont add up
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillthrough", 1), new String[] { "Total Expense", "Total Income" });// numbers dont add up
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 0), new String[] { "Total Expense", "Total Income" });//numbers dont add up
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 1), new String[] { "Total Expense", "Total Income" });// numbers dont add up
             formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //ISSUE: numbers dont add up
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" }); //ISSUE: last row skipped
             formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] {
@@ -167,7 +167,7 @@ namespace CompatableExcelCleaner
             {
                 case "TrialBalance":
                 case "TrialBalanceVariance":
-                case "ProfitAndLossStatementDrillthrough":
+                case "ProfitAndLossStatementDrillThrough":
                 case "BalanceSheetDrillthrough":
                 case "CashFlow":
                 case "InvoiceDetail":
@@ -286,7 +286,7 @@ namespace CompatableExcelCleaner
                 case "ProfitAndLossStatementByPeriod":
                 case "LedgerReport":
                 case "RentRollAll":
-                case "ProfitAndLossStatementDrillthrough": 
+                case "ProfitAndLossStatementDrillThrough": 
                 case "RentRollActivity_New":
                 case "TrialBalance":
                 case "ReportCashReceiptsSummary":
