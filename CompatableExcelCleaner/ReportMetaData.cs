@@ -1,4 +1,5 @@
-﻿using ExcelDataCleanup;
+﻿using CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators;
+using ExcelDataCleanup;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -84,7 +85,7 @@ namespace CompatableExcelCleaner
                 "Equity=Total Equity", "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities",
                 "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets"
             });
-
+            formulaGenerationArguments.Add(new Worksheet("ChargesCreditsReport", 0), new String[] { "Total: \\$(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });
 
 
 
@@ -105,7 +106,6 @@ namespace CompatableExcelCleaner
             //reports that cannot be processed by any existing system
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("ChargesCreditReport", 0), new String[] { "Total: $(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
@@ -249,6 +249,10 @@ namespace CompatableExcelCleaner
                     }
 
 
+                case "ChargesCreditsReport":
+                    return new ChargesCreditReportFormulas();
+
+
 
                 case "AgedPayables":
                 case "AgedReceivables":
@@ -292,7 +296,6 @@ namespace CompatableExcelCleaner
 
 
                 //These reports dont fit into any existing system
-                case "ChargesCreditReport":
                 case "ReportCashReceipts":
                 case "VendorInvoiceReportWithJournalAccounts":
                 case "AgedAccountsReceivable":
