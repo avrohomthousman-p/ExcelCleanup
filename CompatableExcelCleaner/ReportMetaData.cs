@@ -104,12 +104,14 @@ namespace CompatableExcelCleaner
 
             //reports that cannot be processed by any existing system
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentHistoryReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ChargesCreditReport", 0), new String[] { "Total: $(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("RentRollActivityCompSummary", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("SubsidyRentRollReport", 0), new String[] { });
 
 
 
@@ -138,16 +140,10 @@ namespace CompatableExcelCleaner
 
 
             //reports I have questions about
-            formulaGenerationArguments.Add(new Worksheet("ReportTenantSummary", 0), new String[] { });//No idea what I should be adding up
-            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("VendorPropertyReport", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("SubsidyRentRollReport", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("PropBankAccountReport", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("PayablesAuditTrail", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("CCTransactionsReport", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityCompSummary", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollBalanceHistory", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("PreprintedLeasesReport", 0), new String[] { });
+            
+            
+            
+
             
 
 
@@ -299,24 +295,19 @@ namespace CompatableExcelCleaner
                 case "ChargesCreditReport":
                 case "ReportCashReceipts":
                 case "VendorInvoiceReportWithJournalAccounts":
-                case "RentHistoryReport":
                 case "AgedAccountsReceivable":
                 case "BalanceSheetPropBreakdown":
                 case "PaymentsHistory":
+                case "RentRollHistory":
+                case "RentRollActivityCompSummary":
+                case "SubsidyRentRollReport":
 
 
 
                 //Reports I have questions about
-                case "ReportTenantSummary":
-                case "RentRollHistory":
-                case "VendorPropertyReport":
-                case "SubsidyRentRollReport":
-                case "PropBankAccountReport":
-                case "PayablesAuditTrail":
-                case "CCTransactionsReport":
-                case "RentRollActivityCompSummary":
-                case "RentRollBalanceHistory":
-                case "PreprintedLeasesReport":
+
+
+
 
 
 
