@@ -228,7 +228,7 @@ namespace CompatableExcelCleaner
                     switch (worksheetNum)
                     {
                         case 0:
-                            return new DataColumnFormulaGenerator();
+                            return new PeriodicFormulaGenerator();
                         default:
                             return new FullTableFormulaGenerator();
                     }

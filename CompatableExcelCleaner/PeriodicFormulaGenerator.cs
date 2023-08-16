@@ -9,21 +9,33 @@ using System.Threading.Tasks;
 namespace CompatableExcelCleaner
 {
 
+    public delegate bool IsSummaryCell(ExcelRange cell);
+
+
     /// <summary>
     /// Adds formulas to the end of "sections" found inside data columns of the worksheet. A section is defined as
-    /// a series of data cells seperated from the rest of the data cells by at least 
-    /// one empty cell on the top and a bottom border on bottom. The titles of each data column that need formulas 
-    /// should be passed in via the headers string array.
+    /// a series of data cells seperated from the rest of the data cells by at least one empty cell on the top and
+    /// a bottom border on bottom. The titles of each data column that need formulas should be passed in via the 
+    /// headers string array.
     /// </summary>
-    internal class DataColumnFormulaGenerator : IFormulaGenerator
+    internal class PeriodicFormulaGenerator : IFormulaGenerator
     {
 
         private IsDataCell isDataCell = new IsDataCell(FormulaManager.IsDollarValue); //default implementation
+        private IsSummaryCell isSummaryCell = new IsSummaryCell(
+            (cell => FormulaManager.IsDollarValue(cell) && cell.Style.Font.Bold)); //defualt implementation
+
+
 
 
         public void SetDataCellDefenition(IsDataCell isDataCell)
         {
             this.isDataCell = isDataCell;
+        }
+
+        public void SetSummaryCellDefenition(IsSummaryCell summaryCellDef)
+        {
+            this.isSummaryCell = summaryCellDef;
         }
 
 
@@ -32,6 +44,12 @@ namespace CompatableExcelCleaner
         {
             foreach (string header in headers)
             {
+                //Ensure that the header was intended for this class and not the DistantRowsFormulaGenerator class
+                if (FormulaManager.IsNonContiguousFormulaRange(header))
+                {
+                    continue;
+                }
+
                 InsertFormulaForHeader(worksheet, header);
             }
         }
@@ -131,14 +149,8 @@ namespace CompatableExcelCleaner
             {
                 cell = worksheet.Cells[row, col];
 
-                if (IsFirstCellAfterFormulaRange(cell))
+                if (isSummaryCell(cell))
                 {
-                    /*
-                     * NOTE: the code here is built specifically to work for the first worksheet in the report
-                     * "OutstandingBalanceReport". In the event that this system works for another report as well,
-                     * this code may require modification.
-                     */
-
 
                     //Add a formula
                     cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, start, row - 1, col);
@@ -153,7 +165,7 @@ namespace CompatableExcelCleaner
                 }
                 else
                 {
-                    //this is a data cell in the midle of the formula range, so keep moving
+                    //this is a data cell in the middle of the formula range, so keep moving
                     row++;
                 }
             }
@@ -165,11 +177,12 @@ namespace CompatableExcelCleaner
 
         /// <summary>
         /// Checks if the specified cell is the first cell to come after the formula range. In this implemenatation, a cell is 
-        /// the last in the range if it contains a top border.
+        /// the last in the range if it contains a top border. This is just a utility method that can be used passed to the method
+        /// SetSummaryCellDefenition.
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is the last cell in the formula range, and false otherwise</returns>
-        private bool IsFirstCellAfterFormulaRange(ExcelRange cell)
+        public bool HasTopBorder(ExcelRange cell)
         {
             var border = cell.Style.Border;
 
