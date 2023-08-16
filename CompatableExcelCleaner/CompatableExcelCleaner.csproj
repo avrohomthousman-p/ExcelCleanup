@@ -60,21 +60,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractMergeCleaner.cs" />
-    <Compile Include="BackupMergeCleaner.cs" />
-    <Compile Include="PeriodicFormulaGenerator.cs" />
-    <Compile Include="SummaryRowFormulaGenerator.cs" />
+    <Compile Include="GeneralCleaning\AbstractMergeCleaner.cs" />
+    <Compile Include="GeneralCleaning\BackupMergeCleaner.cs" />
+    <Compile Include="FormulaGeneration\PeriodicFormulaGenerator.cs" />
+    <Compile Include="FormulaGeneration\SummaryRowFormulaGenerator.cs" />
     <Compile Include="ExcelIterator.cs" />
     <Compile Include="ReportMetaData.cs" />
-    <Compile Include="FileCleaner.cs" />
-    <Compile Include="FormulaManager.cs" />
-    <Compile Include="FullTableFormulaGenerator.cs" />
-    <Compile Include="IFormulaGenerator.cs" />
-    <Compile Include="IMergeCleaner.cs" />
-    <Compile Include="MergeType.cs" />
-    <Compile Include="PrimaryMergeCleaner.cs" />
+    <Compile Include="GeneralCleaning\FileCleaner.cs" />
+    <Compile Include="FormulaGeneration\FormulaManager.cs" />
+    <Compile Include="FormulaGeneration\FullTableFormulaGenerator.cs" />
+    <Compile Include="FormulaGeneration\IFormulaGenerator.cs" />
+    <Compile Include="GeneralCleaning\IMergeCleaner.cs" />
+    <Compile Include="GeneralCleaning\MergeType.cs" />
+    <Compile Include="GeneralCleaning\PrimaryMergeCleaner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RowSegmentFormulaGenerator.cs" />
+    <Compile Include="FormulaGeneration\RowSegmentFormulaGenerator.cs" />
     <Compile Include="Worksheet.cs" />
   </ItemGroup>
   <ItemGroup>
