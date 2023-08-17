@@ -436,7 +436,7 @@ namespace ExcelDataCleanup
                 destination = worksheet.Cells[row, endOfDataColumn];
 
                 //if we cant move the data there becuase its in use
-                if (SafeToCopyTextTo(destination)) 
+                if (!SafeToCopyTextTo(destination)) 
                 {
                     destination = worksheet.Cells[row, endCol];
                 }
