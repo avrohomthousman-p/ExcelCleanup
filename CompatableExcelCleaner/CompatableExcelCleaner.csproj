@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FormulaGeneration\ReportSpecificGenerators\ChargesCreditReportFormulas.cs" />
+    <Compile Include="FormulaGeneration\SummaryColumnGenerator.cs" />
     <Compile Include="GeneralCleaning\AbstractMergeCleaner.cs" />
     <Compile Include="GeneralCleaning\BackupMergeCleaner.cs" />
     <Compile Include="FormulaGeneration\ReportSpecificGenerators\PeriodicFormulaGenerator.cs" />

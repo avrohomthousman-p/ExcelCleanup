@@ -1,4 +1,5 @@
-﻿using CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators;
+﻿using CompatableExcelCleaner.FormulaGeneration;
+using CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators;
 using ExcelDataCleanup;
 using System;
 using System.Collections.Generic;
@@ -86,6 +87,9 @@ namespace CompatableExcelCleaner
                 "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets"
             });
             formulaGenerationArguments.Add(new Worksheet("ChargesCreditsReport", 0), new String[] { "Total: \\$(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });
+            formulaGenerationArguments.Add(new Worksheet("SubsidyRentRollReport", 0), new String[] {
+                "Current Tenant \\sPortion of the Rent,Current  Subsidy Portion of the Rent=>Current Monthly \\sContract Rent" });
+
 
 
 
@@ -111,7 +115,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityCompSummary", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("SubsidyRentRollReport", 0), new String[] { });
+            
 
 
 
@@ -253,6 +257,10 @@ namespace CompatableExcelCleaner
                     return new ChargesCreditReportFormulas();
 
 
+                case "SubsidyRentRollReport":
+                    return new SummaryColumnGenerator();
+
+
 
                 case "AgedPayables":
                 case "AgedReceivables":
@@ -303,7 +311,7 @@ namespace CompatableExcelCleaner
                 case "PaymentsHistory":
                 case "RentRollHistory":
                 case "RentRollActivityCompSummary":
-                case "SubsidyRentRollReport":
+                
 
 
 
