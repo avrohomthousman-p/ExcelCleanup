@@ -19,15 +19,18 @@ namespace CompatableExcelCleaner
     /// other systems becuase their cells are not near each other. This class should be used in addition to whatever other
     /// formula generator is appropriate for the report being cleaned.
     /// </summary>
-    internal class SummaryRowFormulaGenerator
+    internal class SummaryRowFormulaGenerator : IFormulaGenerator
     {
+
+        private IsDataCell dataCellDef = new IsDataCell(cell => FormulaManager.IsDollarValue(cell));
+
 
         /// <summary>
         /// Adds all formulas to the worksheet as specified by the metadata in the headers array
         /// </summary>
         /// <param name="worksheet">the worksheet in need of formulas</param>
         /// <param name="headers">headers to look for to tell us which cells to add up</param>
-        public static void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
+        public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
             foreach(string header in headers)
             {
@@ -55,7 +58,7 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet being given formulas</param>
         /// <param name="formulaHeader">the text that should be found near the cell requiring a formula</param>
         /// <param name="dataCells">headers pointing to cells that should be included in the formula</param>
-        private static void FillInFormulas(ExcelWorksheet worksheet, string formulaHeader, string[] dataCells)
+        private void FillInFormulas(ExcelWorksheet worksheet, string formulaHeader, string[] dataCells)
         {
             ExcelIterator iter = new ExcelIterator(worksheet);
 
@@ -76,7 +79,7 @@ namespace CompatableExcelCleaner
             {
 
                 //if this isnt a data cell, skip it (dont put a formula here)
-                if(FormulaManager.IsEmptyCell(cell) || !FormulaManager.IsDollarValue(cell))
+                if(!dataCellDef(cell))
                 {
                     continue;
                 }
@@ -109,7 +112,7 @@ namespace CompatableExcelCleaner
         /// a list of row numbers of the cells that should be part of the formula, and booleans that are true
         /// if that row should be subtracted instead of added
         /// </returns>
-        private static List<Tuple<int, bool>> GetRowsToIncludeInFormula(ExcelWorksheet worksheet, string[] headers, int rowOfFormula)
+        private List<Tuple<int, bool>> GetRowsToIncludeInFormula(ExcelWorksheet worksheet, string[] headers, int rowOfFormula)
         {
 
             List<Tuple<string, bool>> headerAndIsSubtraction = ConvertArray(headers);
@@ -129,7 +132,7 @@ namespace CompatableExcelCleaner
                 }
 
                 //if the cell has a dollar value or is empty, it isnt a header, so we can skip it
-                if(FormulaManager.IsEmptyCell(cell) || FormulaManager.IsDollarValue(cell))
+                if(FormulaManager.IsEmptyCell(cell) || dataCellDef(cell))
                 {
                     continue;
                 }
@@ -162,7 +165,7 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="headers">the headers that are to be included in the formula being created</param>
         /// <returns>a list of each header and a bool isSubtraction (true if this row should be subtracted in the formula)</returns>
-        private static List<Tuple<string, bool>> ConvertArray(string[] headers)
+        private List<Tuple<string, bool>> ConvertArray(string[] headers)
         {
             return headers.Select(                                      
                     (text => {
@@ -185,7 +188,7 @@ namespace CompatableExcelCleaner
         /// and booleans stating if they should be subtracted</param>
         /// <param name="column">the column the formula is in</param>
         /// <returns>the formula that needs to be added to the cell as a string</returns>
-        private static string BuildFormula(ExcelWorksheet worksheet, List<Tuple<int, bool>> rowData, int column)
+        private string BuildFormula(ExcelWorksheet worksheet, List<Tuple<int, bool>> rowData, int column)
         {
             StringBuilder formula = new StringBuilder("SUM(");
 
@@ -208,6 +211,13 @@ namespace CompatableExcelCleaner
             formula.Append(")");
 
             return formula.ToString();
+        }
+
+
+
+        public void SetDataCellDefenition(IsDataCell isDataCell)
+        {
+            this.dataCellDef = isDataCell;
         }
 
 

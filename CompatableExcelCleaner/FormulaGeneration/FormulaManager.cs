@@ -57,7 +57,8 @@ namespace CompatableExcelCleaner
 
 
                     //Add formulas for rows that are not contiguous if needed
-                    SummaryRowFormulaGenerator.InsertFormulas(worksheet, headers);
+                    SummaryRowFormulaGenerator summaryGenerator = new SummaryRowFormulaGenerator();
+                    summaryGenerator.InsertFormulas(worksheet, headers);
                 }
 
 
