@@ -89,6 +89,8 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ChargesCreditsReport", 0), new String[] { "Total: \\$(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });
             formulaGenerationArguments.Add(new Worksheet("SubsidyRentRollReport", 0), new String[] {
                 "Current Tenant \\sPortion of the Rent,Current  Subsidy Portion of the Rent=>Current Monthly \\sContract Rent" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollActivityCompSummary", 0), new String[] {
+                "-Opening A/R,Closing A/R=>A/R [+][(]-[)]" });
 
 
 
@@ -114,7 +116,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityCompSummary", 0), new String[] { });
+            
             
 
 
@@ -253,12 +255,18 @@ namespace CompatableExcelCleaner
                     }
 
 
+
+
                 case "ChargesCreditsReport":
                     return new ChargesCreditReportFormulas();
 
 
+
+
+                case "RentRollActivityCompSummary":
                 case "SubsidyRentRollReport":
                     return new SummaryColumnGenerator();
+
 
 
 
@@ -310,7 +318,7 @@ namespace CompatableExcelCleaner
                 case "BalanceSheetPropBreakdown":
                 case "PaymentsHistory":
                 case "RentRollHistory":
-                case "RentRollActivityCompSummary":
+                
                 
 
 
