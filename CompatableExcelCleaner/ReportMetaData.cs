@@ -116,8 +116,9 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
-            
-            
+            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 1), new String[] { });
+
+
 
 
 
@@ -241,6 +242,17 @@ namespace CompatableExcelCleaner
 
 
 
+                case "RentRollHistory":
+                    switch (worksheetNum)
+                    {
+                        case 0:
+                            return new RentRollHistorySheet1();
+                        default:
+                            return null; //FIXME: need an implementation for sheet 2
+                    }
+
+
+
                 case "VacancyLoss":
                     switch (worksheetNum)
                     {
@@ -317,7 +329,7 @@ namespace CompatableExcelCleaner
                 case "AgedAccountsReceivable":
                 case "BalanceSheetPropBreakdown":
                 case "PaymentsHistory":
-                case "RentRollHistory":
+                
                 
                 
 
