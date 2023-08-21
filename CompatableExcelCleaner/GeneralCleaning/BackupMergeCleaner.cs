@@ -539,12 +539,13 @@ namespace ExcelDataCleanup
         private bool ColumnIsSafeToDelete(ExcelWorksheet worksheet, int column)
         {
 
-            for (int row = topTableRow; row < worksheet.Dimension.Rows; row++)
+            for (int row = topTableRow; row < worksheet.Dimension.End.Row; row++)
             {
                 string cellText = worksheet.Cells[row, column].Text;
 
                 if (cellText != null && cellText.Length > 0)
                 {
+                    Console.WriteLine("Cell text = " + cellText);
                     return false;
                 }
             }
