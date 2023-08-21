@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 {
+
+    /// <summary>
+    /// Implementation of IFormulaGenerator that adds a final column and final row with formulas for the totals
+    /// of the full worksheet.
+    /// </summary>
     internal class RentRollHistorySheet1 : IFormulaGenerator
     {
         private IsDataCell dataCellDef = new IsDataCell(cell => FormulaManager.IsDollarValue(cell));
@@ -24,7 +29,14 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
             AddSummaryColumn(worksheet, headerRow);
 
-            //TODO: call antother formula generator to replace our sample data with formulas
+
+            //now call other formula generators to replace our sample data with formulas
+            IFormulaGenerator generator = new FullTableSummaryColumn();
+            generator.InsertFormulas(worksheet, new string[] { "Total:" });
+
+
+            generator = new FullTableFormulaGenerator();
+            generator.InsertFormulas(worksheet, new string[] { "Total:" });
         }
 
 

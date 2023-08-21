@@ -98,7 +98,7 @@ namespace CompatableExcelCleaner
         /// <param name="col">the column of the header</param>
         private void FillInFormulas(ExcelWorksheet worksheet, int row, int col)
         {
-            iter.SetCurrentLocation(row, col+1);
+            iter.SetCurrentLocation(row, col);
 
             foreach (ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_RIGHT))
             {
