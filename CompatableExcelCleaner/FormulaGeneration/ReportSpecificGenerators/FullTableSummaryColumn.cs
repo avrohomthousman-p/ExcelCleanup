@@ -50,7 +50,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
 
         /// <summary>
-        /// Gives each cell in the specifeid column a formula if needed
+        /// Gives each cell in the specified column a formula if needed
         /// </summary>
         /// <param name="worksheet">the worksheet in need of formulas</param>
         /// <param name="row">the row number of the header of the column getting formulas</param>
@@ -59,7 +59,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         {
             ExcelIterator iter = new ExcelIterator(worksheet, row + 1, col);
 
-            var summaryCells = iter.GetCells(ExcelIterator.SHIFT_DOWN, cell => !dataCellDef(cell));//SAFE TO MAKE CHANGE HERE
+            var summaryCells = iter.GetCells(ExcelIterator.SHIFT_DOWN, cell => !dataCellDef(cell));
 
             foreach (ExcelRange cell in summaryCells)
             {
@@ -83,18 +83,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         {
             ExcelIterator iter = new ExcelIterator(worksheet, row, startCol);
             var lastCell = iter.GetCells(ExcelIterator.SHIFT_LEFT, cell => outsideFormula(cell)).Last();
-
-            //SAFE TO MAKE CHANGE
-            //The iterator returns the cell that made the predicate true, and is outside the formula range.
-            //Therefore  we need to ensure that if thats what happened, we return the cell before it
-            if (outsideFormula(lastCell))
-            {
-                return lastCell.End.Column + 1;
-            }
-            else
-            {
-                return lastCell.End.Column;
-            }
+            return lastCell.End.Column;
         }
 
 

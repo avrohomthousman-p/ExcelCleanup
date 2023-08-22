@@ -313,7 +313,6 @@ namespace CompatableExcelCleaner
 
                 if (stopIf.Invoke(cell))
                 {
-                    yield return cell;
                     break;
                 }
 
@@ -325,12 +324,9 @@ namespace CompatableExcelCleaner
             }
 
 
-            //Undo final increment so that the iterator points to the last cell before we went out of bounds
-            if (OutOfBounds())
-            {
-                row -= shift.Item1;
-                col -= shift.Item2;
-            }
+            //Undo final increment so that the iterator points to the last cell before we stopped
+            row -= shift.Item1;
+            col -= shift.Item2;
         }
 
 

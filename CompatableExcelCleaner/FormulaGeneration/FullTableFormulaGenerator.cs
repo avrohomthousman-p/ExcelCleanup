@@ -133,15 +133,13 @@ namespace CompatableExcelCleaner
             ExcelIterator iterateOverFormulaRange = new ExcelIterator(iter);
 
             Tuple<int, int> cellAboveRange = iterateOverFormulaRange
-                .GetCellCoordinates(ExcelIterator.SHIFT_UP, stopIf:new Predicate<ExcelRange>(beyondFormulaRange))
+                .GetCellCoordinates(ExcelIterator.SHIFT_UP, stopIf: new Predicate<ExcelRange>(beyondFormulaRange))
                 .Last();
 
 
-            //SAFE TO MAKE CHANGE
-            return cellAboveRange.Item1 + 1; //The row below that cell
+            return cellAboveRange.Item1;
+
         }
-
-
 
 
 
