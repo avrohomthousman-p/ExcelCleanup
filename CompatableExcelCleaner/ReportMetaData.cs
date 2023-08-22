@@ -116,7 +116,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 1), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 1), new String[] { "Residential: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", "Total: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d" });
 
 
 
