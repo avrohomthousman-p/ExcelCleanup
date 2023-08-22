@@ -91,6 +91,9 @@ namespace CompatableExcelCleaner
                 "Current Tenant \\sPortion of the Rent,Current  Subsidy Portion of the Rent=>Current Monthly \\sContract Rent" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityCompSummary", 0), new String[] {
                 "-Opening A/R,Closing A/R=>A/R [+][(]-[)]" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 1), new String[] 
+                { "Residential: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", "Total: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d" });
 
 
 
@@ -115,8 +118,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 1), new String[] { "Residential: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", "Total: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d" });
+            
 
 
 

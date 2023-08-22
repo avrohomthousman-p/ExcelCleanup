@@ -143,7 +143,7 @@ namespace CompatableExcelCleaner
                     }
                 }
 
-
+                
                 col = 1;
             }
 

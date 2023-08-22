@@ -37,16 +37,20 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
             int moneySectionTop = rowRange.Item1;
             int moneySectionBottom = rowRange.Item2;
 
-            rowRange = FindOccupancySection(worksheet, moneySectionBottom - 1);
+            rowRange = FindOccupancySection(worksheet, moneySectionBottom + 1);
             int occupancySectionTop = rowRange.Item1;
             int occupancySectionBottom = rowRange.Item2;
 
 
-            FormattingCleanup(worksheet);
+            RemoveEmptySections(worksheet, moneySectionTop, moneySectionBottom);
+            RemoveEmptySections(worksheet, occupancySectionTop, occupancySectionBottom);
+
+            ResizeColumns(worksheet);
+
 
             AddMonetarySummary(worksheet, moneySectionTop, headers);
 
-            AddOccupancySummaries(worksheet, occupancySectionTop, occupancySectionBottom);
+            AddOccupancySummaries(worksheet, occupancySectionTop);
         }
 
 
@@ -189,22 +193,100 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         /// </summary>
         /// <param name="worksheet">the worksheet in need of formulas</param>
         /// <param name="startRow">the first row that is part of the occupancy section</param>
-        /// <param name="endRow">the last row that is part of the occupancy section</param>
-        private void AddOccupancySummaries(ExcelWorksheet worksheet, int startRow, int endRow)
+        private void AddOccupancySummaries(ExcelWorksheet worksheet, int startRow)
         {
-            //TODO
+            //find the first data cell
+            ExcelIterator iter = new ExcelIterator(worksheet, startRow, 1);
+            iter.GetFirstMatchingCell(cell => cell.Text == "Occupancy %");
+
+            iter.SetCurrentLocation(iter.GetCurrentRow(), iter.GetCurrentCol() + 1); //skip the cell with the header itself
+
+
+            //add formulas to each section
+            ExcelRange occupied, vacant, vacantNumber, occupiedNumber;
+            var coordinates = iter.GetCellCoordinates(ExcelIterator.SHIFT_RIGHT, 
+                cell => !dataCellDef(cell) && !FormulaManager.IsEmptyCell(cell));
+
+            foreach(Tuple<int, int> coords in coordinates)
+            {
+                vacant = worksheet.Cells[coords.Item1 + 1, coords.Item2];
+                occupied = worksheet.Cells[coords.Item1, coords.Item2];
+                vacantNumber = worksheet.Cells[coords.Item1 - 1, coords.Item2];
+                occupiedNumber = worksheet.Cells[coords.Item1 - 2, coords.Item2];
+
+                if (FormulaManager.IsEmptyCell(vacant))
+                {
+                    continue;
+                }
+
+
+
+
+                string total = $"SUM({occupiedNumber.Address}:{vacantNumber.Address})";
+
+                vacant.Formula = vacantNumber.Address + " / " + total;
+                vacant.Style.Locked = true;
+
+                occupied.Formula = occupiedNumber.Address + " / " + total;
+                occupied.Style.Locked = true;
+            }
         }
 
 
 
 
         /// <summary>
-        /// The RentRollHistory report has some formatting issues that should be fixed
+        /// The RentRollHistory report has some sections that are empty should be deleted
         /// </summary>
         /// <param name="worksheet">the worksheet in need of formulas</param>
-        private void FormattingCleanup(ExcelWorksheet worksheet)
+        private void RemoveEmptySections(ExcelWorksheet worksheet, int startRow, int endRow)
         {
-            //TODO
+            ExcelRange allCells, sampleCell;
+            int column = LastNonEmptyColumn(worksheet, startRow);
+            while (column > 0)
+            {
+                sampleCell = worksheet.Cells[startRow + 1, column]; //for checking if there is text
+                allCells = worksheet.Cells[startRow, column, endRow, column]; //the cells that must be deleted if empty
+
+                if (FormulaManager.IsEmptyCell(sampleCell))
+                {
+                    allCells.Delete(eShiftTypeDelete.Left);
+                    column++;
+                }
+
+
+                column--;
+            }
+
+        }
+
+
+
+        /// <summary>
+        /// Finds the last (leftmost) non-empty cell in the specified row, and returns the column its in
+        /// </summary>
+        /// <param name="worksheet">the worksheet being given formulas</param>
+        /// <param name="row">the row we should check on</param>
+        /// <returns>the column number of the leftmost column containing a non-empty cell</returns>
+        private int LastNonEmptyColumn(ExcelWorksheet worksheet, int row)
+        {
+            ExcelIterator iter = new ExcelIterator(worksheet, row, worksheet.Dimension.End.Column);
+            iter.SkipEmptyCells(ExcelIterator.SHIFT_LEFT);
+            return iter.GetCurrentCol();
+        }
+
+
+
+        /// <summary>
+        /// Resizes all columns in the worksheet
+        /// </summary>
+        /// <param name="worksheet">the worksheet in need of resizing</param>
+        private void ResizeColumns(ExcelWorksheet worksheet)
+        {
+            for(int i = 1; i <= worksheet.Dimension.End.Column; i++)
+            {
+                worksheet.Column(i).Width = 11;
+            }
         }
 
 

@@ -94,7 +94,7 @@ namespace CompatableExcelCleaner
         /// <returns>true if the cell contains a percentage, and false otherwise</returns>
         internal static bool IsPercentage(ExcelRange cell)
         {
-            return TextMatches(cell.Text, "1?\\d\\d\\(.\\d\\d)?%");
+            return TextMatches(cell.Text, "1?\\d\\d(\\.\\d\\d)?%");
         }
 
 
