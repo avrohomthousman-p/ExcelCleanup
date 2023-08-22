@@ -86,6 +86,19 @@ namespace CompatableExcelCleaner
 
 
 
+
+        /// <summary>
+        /// Checks if the specified cell contains a percentage in it
+        /// </summary>
+        /// <param name="cell">the cell being checked</param>
+        /// <returns>true if the cell contains a percentage, and false otherwise</returns>
+        internal static bool IsPercentage(ExcelRange cell)
+        {
+            return TextMatches(cell.Text, "1?\\d\\d\\(.\\d\\d)?%");
+        }
+
+
+
         /// <summary>
         /// Checks if a cell contains a dollar value. This is used as a default implementation for IsDataCell in 
         /// formula managers. Formula managers can be set to use a different defenition for a data cell 
@@ -97,6 +110,20 @@ namespace CompatableExcelCleaner
         {
             return cell.Text.StartsWith("$") || (cell.Text.StartsWith("($") && cell.Text.EndsWith(")"));
         }
+
+
+
+
+        /// <summary>
+        /// Checks if the contents of a cell is a integer
+        /// </summary>
+        /// <param name="cell">the cell being checked</param>
+        /// <returns>true if the cell contains an intger (and nothing else) and false otherwise/returns>
+        internal static bool IsIntegerValue(ExcelRange cell)
+        {
+            return TextMatches(cell.Text, "-?[1-9]\\d*");
+        }
+
 
 
 

@@ -59,7 +59,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         {
             ExcelIterator iter = new ExcelIterator(worksheet, row + 1, col);
 
-            var summaryCells = iter.GetCells(ExcelIterator.SHIFT_DOWN, cell => !dataCellDef(cell));
+            var summaryCells = iter.GetCells(ExcelIterator.SHIFT_DOWN, cell => !dataCellDef(cell));//SAFE TO MAKE CHANGE HERE
 
             foreach (ExcelRange cell in summaryCells)
             {
@@ -84,7 +84,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
             ExcelIterator iter = new ExcelIterator(worksheet, row, startCol);
             var lastCell = iter.GetCells(ExcelIterator.SHIFT_LEFT, cell => outsideFormula(cell)).Last();
 
-
+            //SAFE TO MAKE CHANGE
             //The iterator returns the cell that made the predicate true, and is outside the formula range.
             //Therefore  we need to ensure that if thats what happened, we return the cell before it
             if (outsideFormula(lastCell))

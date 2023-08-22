@@ -186,6 +186,7 @@ namespace CompatableExcelCleaner
 
 
                 case "ReportOutstandingBalance":
+                case "RentRollHistory":
                     switch (worksheetNumber)
                     {
                         case 1:
@@ -247,8 +248,10 @@ namespace CompatableExcelCleaner
                     {
                         case 0:
                             return new RentRollHistorySheet1();
+                        case 1:
+                            return new RentRollHistorySheet2();
                         default:
-                            return null; //FIXME: need an implementation for sheet 2
+                            return null;
                     }
 
 

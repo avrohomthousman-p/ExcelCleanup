@@ -115,7 +115,7 @@ namespace CompatableExcelCleaner
             Predicate<ExcelRange> matchesEndHeader = (cell => FormulaManager.TextMatches(cell.Text, targetText));
 
             Tuple<int, int> endCell = iter.GetCellCoordinates(ExcelIterator.SHIFT_DOWN, stopIf:matchesEndHeader).Last();
-
+            //SAFE TO MAKE CHANGE
             return endCell.Item1;
         }
 

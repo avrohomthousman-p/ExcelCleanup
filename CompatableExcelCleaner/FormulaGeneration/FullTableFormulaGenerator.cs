@@ -137,7 +137,7 @@ namespace CompatableExcelCleaner
                 .Last();
 
 
-
+            //SAFE TO MAKE CHANGE
             return cellAboveRange.Item1 + 1; //The row below that cell
         }
 
