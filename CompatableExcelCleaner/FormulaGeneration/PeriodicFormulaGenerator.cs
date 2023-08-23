@@ -100,7 +100,7 @@ namespace CompatableExcelCleaner
                 {
                     cell = worksheet.Cells[row, col];
 
-                    if (cell.Text == columnHeader)
+                    if (FormulaManager.TextMatches(cell.Text, columnHeader))
                     {
                         return new Tuple<int, int>(row, col);
                     }
@@ -158,7 +158,7 @@ namespace CompatableExcelCleaner
 
                     return;
                 }
-                else if (FormulaManager.IsEmptyCell(cell) || !this.isDataCell(cell))
+                else if (!this.isDataCell(cell))
                 {
                     //This isnt an actual formula range
                     return;

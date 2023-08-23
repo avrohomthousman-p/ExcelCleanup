@@ -52,7 +52,7 @@ namespace CompatableExcelCleaner
                 "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", 
                 "Net Income~Net Operating Income,-Total Expense" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 1), new String[] { "Total For International City:" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 1), new String[] { "Total For ([A-Z][a-z]+)( [A-Z][a-z]+)*:" });
             formulaGenerationArguments.Add(new Worksheet("TrialBalance", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] {
@@ -94,6 +94,8 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 1), new String[] 
                 { "Residential: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", "Total: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d" });
+            formulaGenerationArguments.Add(new Worksheet("JournalLedger", 0), new String[] { "Total" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { "Beg\\s+Balance", "Charges", "Adjustments", "Payments", "End Balance", "Change" });
 
 
 
@@ -125,16 +127,13 @@ namespace CompatableExcelCleaner
 
 
             //Reports I dont have
-            formulaGenerationArguments.Add(new Worksheet("MarketRentReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("TrialBalanceVariance", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("JournalLedger", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysis", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByJob", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("Budget", 0), new String[] { });
@@ -245,6 +244,13 @@ namespace CompatableExcelCleaner
 
 
 
+                case "RentRollActivityItemized_New":
+                    PeriodicFormulaGenerator gen = new PeriodicFormulaGenerator();
+                    gen.SetDataCellDefenition(cell => FormulaManager.IsEmptyCell(cell) || FormulaManager.IsDollarValue(cell));
+                    return gen;
+
+
+
                 case "RentRollHistory":
                     switch (worksheetNum)
                     {
@@ -323,6 +329,7 @@ namespace CompatableExcelCleaner
                 case "RentRollActivity_New":
                 case "TrialBalance":
                 case "ReportCashReceiptsSummary":
+                case "JournalLedger":
                     return new FullTableFormulaGenerator();
 
 
@@ -349,16 +356,13 @@ namespace CompatableExcelCleaner
 
 
                 //Reports I dont have
-                case "MarketRentReport":
                 case "ReportPayablesRegister":
                 case "UnitInvoiceReport":
                 case "VendorInvoiceReport":
-                case "RentRollActivityItemized_New":
                 case "ProfitAndLossExtendedVariance":
                 case "RentRollActivity":
                 case "RentRollAllItemized":
                 case "TrialBalanceVariance":
-                case "JournalLedger":
                 case "CollectionsAnalysis":
                 case "ProfitAndLossStatementByJob":
                 case "Budget":
