@@ -18,8 +18,8 @@ namespace CompatableExcelCleaner
     {
 
         private ExcelIterator iter;
-        private IsBeyondFormulaRange beyondFormulaRange;
-        private IsDataCell isDataCell;
+        protected IsBeyondFormulaRange beyondFormulaRange;
+        protected IsDataCell isDataCell;
 
 
 
@@ -96,7 +96,7 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet currently being given formulas</param>
         /// <param name="row">the row of the header</param>
         /// <param name="col">the column of the header</param>
-        private void FillInFormulas(ExcelWorksheet worksheet, int row, int col)
+        protected virtual void FillInFormulas(ExcelWorksheet worksheet, int row, int col)
         {
             iter.SetCurrentLocation(row, col);
 
@@ -128,7 +128,7 @@ namespace CompatableExcelCleaner
         /// <param name="row">the row number of the bottom cell in the range</param>
         /// <param name="col">the column number of the bottom cell in the range</param>
         /// <returns>the row number of the top most cell thats still part of the formula range</returns>
-        private int FindTopRowOfFormulaRange(ExcelWorksheet worksheet, int row, int col)
+        protected virtual int FindTopRowOfFormulaRange(ExcelWorksheet worksheet, int row, int col)
         {
             ExcelIterator iterateOverFormulaRange = new ExcelIterator(iter);
 
@@ -155,7 +155,7 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is empty or if it contains text that isnt data, or false otherwise</returns>
-        public bool IsEmptyOrNonDataCell(ExcelRange cell)
+        public virtual bool IsEmptyOrNonDataCell(ExcelRange cell)
         {
             return FormulaManager.IsEmptyCell(cell) || !isDataCell(cell);
         }
@@ -170,7 +170,7 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell contains text that isnt data (and isnt empty), or false otherwise</returns>
-        public bool IsNonDataCell(ExcelRange cell)
+        public virtual bool IsNonDataCell(ExcelRange cell)
         {
             return !FormulaManager.IsEmptyCell(cell) && !isDataCell(cell);
         }

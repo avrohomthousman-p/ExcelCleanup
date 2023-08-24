@@ -95,7 +95,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 1), new String[] 
                 { "Residential: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", "Total: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d" });
             formulaGenerationArguments.Add(new Worksheet("JournalLedger", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { "Beg\\s+Balance", "Charges", "Adjustments", "Payments", "End Balance", "Change" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { "1Beg\\s+Balance", "1Charges", "1Adjustments", "1Payments", "1End Balance", "1Change", "2Total:" });
 
 
 
@@ -245,9 +245,12 @@ namespace CompatableExcelCleaner
 
 
                 case "RentRollActivityItemized_New":
-                    PeriodicFormulaGenerator gen = new PeriodicFormulaGenerator();
-                    gen.SetDataCellDefenition(cell => FormulaManager.IsEmptyCell(cell) || FormulaManager.IsDollarValue(cell));
-                    return gen;
+                    PeriodicFormulaGenerator mainFormulas = new PeriodicFormulaGenerator();
+                    mainFormulas.SetDataCellDefenition(cell => FormulaManager.IsEmptyCell(cell) || FormulaManager.IsDollarValue(cell));
+
+                    SumOtherSums otherFormulas = new SumOtherSums();
+
+                    return new MultiFormulaGenerator(mainFormulas, otherFormulas);
 
 
 

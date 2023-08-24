@@ -32,7 +32,7 @@ namespace CompatableExcelCleaner.FormulaGeneration
         {
             //Seperate arguments for the first and second formula generator and remove the leading digit
             string[] argumentsForFirst = headers.Where(text => text.StartsWith("1")).Select(text => text.Substring(1)).ToArray();
-            string[] argumentsForSecond = headers.Where(text => text.StartsWith("1")).Select(text => text.Substring(1)).ToArray();
+            string[] argumentsForSecond = headers.Where(text => text.StartsWith("2")).Select(text => text.Substring(1)).ToArray();
 
             firstGenerator.InsertFormulas(worksheet, argumentsForFirst);
             secondGenerator.InsertFormulas(worksheet, argumentsForSecond);
