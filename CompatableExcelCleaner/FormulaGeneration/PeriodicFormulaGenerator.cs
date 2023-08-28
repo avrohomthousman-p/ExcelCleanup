@@ -14,9 +14,10 @@ namespace CompatableExcelCleaner
 
     /// <summary>
     /// Adds formulas to the end of "sections" found inside data columns of the worksheet. A section is defined as
-    /// a series of data cells seperated from the rest of the data cells by at least one empty cell on the top and
-    /// a bottom border on bottom. The titles of each data column that need formulas should be passed in via the 
-    /// headers string array.
+    /// a series of data cells that all corrispond to a single "key" which appears on the top left of that section.
+    /// The first string in the list of arguments for this class should follow this pattern: r=[insert regex] 
+    /// Where the regex is used to find the key for each section. After that, the titles of each data column 
+    /// that need formulas should be passed in as well.
     /// </summary>
     internal class PeriodicFormulaGenerator : IFormulaGenerator
     {
@@ -33,6 +34,8 @@ namespace CompatableExcelCleaner
             this.isDataCell = isDataCell;
         }
 
+
+
         public void SetSummaryCellDefenition(IsSummaryCell summaryCellDef)
         {
             this.isSummaryCell = summaryCellDef;
@@ -42,15 +45,24 @@ namespace CompatableExcelCleaner
 
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
-            foreach (string header in headers)
+            if (!headers[0].StartsWith("r="))
+            {
+                throw new ArgumentException("The argument to this formula generator must specify a regex that matches the key cell of each section");
+            }
+
+
+
+            string keyRegex = headers[0].Substring(2);
+
+            for (int i = 1; i < headers.Length; i++)
             {
                 //Ensure that the header was intended for this class and not the DistantRowsFormulaGenerator class
-                if (FormulaManager.IsNonContiguousFormulaRange(header))
+                if (FormulaManager.IsNonContiguousFormulaRange(headers[i]))
                 {
                     continue;
                 }
 
-                InsertFormulaForHeader(worksheet, header);
+                InsertFormulaForHeader(worksheet, keyRegex, headers[i]);
             }
         }
 
@@ -61,23 +73,20 @@ namespace CompatableExcelCleaner
         /// Adds all formulas to cells marked with the specified header
         /// </summary>
         /// <param name="worksheet">the worksheet being given formulas</param>
+        /// <param name="key">a regex defining what the "key" for a data section should look like</param>
         /// <param name="targetHeader">the text the header should have</param>
-        private void InsertFormulaForHeader(ExcelWorksheet worksheet, string targetHeader)
+        private void InsertFormulaForHeader(ExcelWorksheet worksheet, string key, string targetHeader)
         {
             var coordinates = FindStartOfDataColumn(worksheet, targetHeader);
             int row = coordinates.Item1 + 1; //start by the row after the column header
-            int col = coordinates.Item2;
+            int dataCol = coordinates.Item2;
 
-            
             for(; row <= worksheet.Dimension.End.Row; row++)
             {
 
-                SkipEmptyCells(worksheet, ref row, col);
+                FindNextKey(worksheet, key, ref row);
 
-
-                //Then keep moving untill you reach the end of the formula range
-                //if you hit an empty cell, continue outer loop
-                ProcessFormulaRange(worksheet, ref row, col);
+                ProcessFormulaRange(worksheet, ref row, dataCol);
                 
             }
         }
@@ -113,20 +122,26 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Advances the row variable to reference the first non empty cell from itself or below
+        /// Finds the next cell, below the specified row, that contains a key (meaning it might require a formula of its own).
+        /// After this function completes, the row variable will either be pointing to the next cell with a key, or the last row
+        /// plus 1, if there is no next key.
         /// </summary>
         /// <param name="worksheet">the worksheet in need of formulas</param>
-        /// <param name="row">the first row in the column to check</param>
-        /// <param name="col">the column we are scanning</param>
-        private void SkipEmptyCells(ExcelWorksheet worksheet, ref int row, int col)
+        /// <param name="key">the pattern that a key must match</param>
+        /// <param name="row">the row to start searching on</param>
+        private void FindNextKey(ExcelWorksheet worksheet, string key, ref int row)
         {
-            ExcelRange cell = worksheet.Cells[row, col];
+            ExcelRange cell;
 
-            while (FormulaManager.IsEmptyCell(cell) && row+1 <= worksheet.Dimension.End.Row)
+            for(; row <= worksheet.Dimension.End.Row; row++)
             {
-                row++;
-                cell = worksheet.Cells[row, col];
-            } 
+                cell = worksheet.Cells[row, 1];
+
+                if(FormulaManager.TextMatches(cell.Text, key))
+                {
+                    return;
+                }
+            }
         }
 
 
@@ -136,40 +151,84 @@ namespace CompatableExcelCleaner
         /// Finds the bounds of the formula range and does the actual insertion of the formula
         /// </summary>
         /// <param name="worksheet">the worksheet in need of formulas</param>
-        /// <param name="row">the row we should start from</param>
-        /// <param name="col">the column we should look in</param>
-        private void ProcessFormulaRange(ExcelWorksheet worksheet, ref int row, int col)
+        /// <param name="row">the row number of the key for the section we are processing</param>
+        /// <param name="dataCol">the column we should look for summary cells in</param>
+        private void ProcessFormulaRange(ExcelWorksheet worksheet, ref int row, int dataCol)
         {
 
             int start = row; //the formula range starts here, at the first non-empty cell
 
-            ExcelRange cell;
 
-            while (row <= worksheet.Dimension.End.Row)
+
+            row++; //the first cell has the key so it isnt empty, and causes the skip to end immideatly
+            SkipEmptyCells(worksheet, ref row, 1);
+
+
+
+            //SkipEmptyCells leaves the row variable referencing the first non empty cell found, which
+            // is at the start of the next section. We want it at the last cell of this section.
+            row--; 
+
+
+
+            //Ensure there is a summary cell (some sections dont have one)
+            int summaryRow = FindSummaryCellRow(worksheet, row, start, dataCol);
+            if (summaryRow == -1)
             {
-                cell = worksheet.Cells[row, col];
+                return; //no summary cell
+            }
 
+
+
+            //Insert formulas
+            ExcelRange summaryCell = worksheet.Cells[summaryRow, dataCol];
+            Console.WriteLine("adding formula to " + summaryCell.Address);
+            summaryCell.Formula = FormulaManager.GenerateFormula(worksheet, start, summaryRow - 1, dataCol);
+            summaryCell.Style.Locked = true;
+        }
+
+
+
+        /// <summary>
+        /// Advances the row variable to reference the first non empty cell from itself or below
+        /// </summary>
+        /// <param name="worksheet">the worksheet in need of formulas</param>
+        /// <param name="row">the first row in the column to check</param>
+        /// <param name="col">the column we are scanning</param>
+        private void SkipEmptyCells(ExcelWorksheet worksheet, ref int row, int col)
+        {
+            ExcelRange cell = worksheet.Cells[row, col];
+
+            while (FormulaManager.IsEmptyCell(cell) && row + 1 <= worksheet.Dimension.End.Row)
+            {
+                row++;
+                cell = worksheet.Cells[row, col];
+            }
+        }
+
+
+
+        /// <summary>
+        /// Finds the lowest summary cell between the specified bottom and top row and in the specified column
+        /// </summary>
+        /// <param name="worksheet">the worksheet in need of formulas</param>
+        /// <param name="bottomRow">the row we should start chacking at</param>
+        /// <param name="topRow">the upper row limit that the formula range cannot go past</param>
+        /// <param name="col">the column to look in</param>
+        /// <returns>the row number of the summary cell found, or -1 if there is no summary cell</returns>
+        private int FindSummaryCellRow(ExcelWorksheet worksheet, int bottomRow, int topRow, int col)
+        {
+            ExcelIterator iter = new ExcelIterator(worksheet, bottomRow, col);
+            foreach (ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_UP, cell => cell.Start.Row < topRow))
+            {
                 if (isSummaryCell(cell))
                 {
-
-                    //Add a formula
-                    cell.FormulaR1C1 = FormulaManager.GenerateFormula(worksheet, start, row - 1, col);
-                    cell.Style.Locked = true;
-
-                    return;
-                }
-                else if (!this.isDataCell(cell))
-                {
-                    //This isnt an actual formula range
-                    return;
-                }
-                else
-                {
-                    //this is a data cell in the middle of the formula range, so keep moving
-                    row++;
+                    return cell.Start.Row;
                 }
             }
 
+
+            return -1; //no summary cell found
         }
 
 

@@ -81,7 +81,7 @@ namespace CompatableExcelCleaner
         /// <returns>true if the cell has no text and false otherwise</returns>
         internal static bool IsEmptyCell(ExcelRange cell)
         {
-            return cell.Text == null || cell.Text.Length == 0;
+            return (cell.Text == null || cell.Text.Length == 0);
         }
 
 

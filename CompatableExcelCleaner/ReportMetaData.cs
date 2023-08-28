@@ -95,7 +95,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 1), new String[] 
                 { "Residential: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", "Total: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d" });
             formulaGenerationArguments.Add(new Worksheet("JournalLedger", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { "1Beg\\s+Balance", "1Charges", "1Adjustments", "1Payments", "1End Balance", "1Change", "2Total:" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { "1r=(\\d{4})|([A-Z]\\d\\d)", "1Beg\\s+Balance", "1Charges", "1Adjustments", "1Payments", "1End Balance", "1Change", "2Total:" });
 
 
 
@@ -104,7 +104,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 0), new String[] { "Total Expense", "Total Income" });//numbers dont add up
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 1), new String[] { "Total Expense", "Total Income" });// numbers dont add up
             formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //ISSUE: numbers dont add up
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "Balance" }); //ISSUE: last row skipped
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "r=[A-Z0-9]+", "Balance" }); //ISSUE: last row skipped
             formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] {
                 "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", "Garage=Total Garage",
                 "Elevators=Total Elevators", "Clubhouse=Total Clubhouse",
