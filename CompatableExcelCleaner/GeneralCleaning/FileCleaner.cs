@@ -114,7 +114,7 @@ namespace ExcelDataCleanup
 
 
             string reportName = GetReportName(filepath);
-            byte[] output = OpenXLSX(ConvertFileToBytes(filepath), reportName);
+            byte[] output = OpenXLSX(ConvertFileToBytes(filepath), reportName, true);
             SaveByteArrayAsFile(output, filepath.Replace(".xlsx", "_fixed.xlsx"));
             Console.WriteLine("Press Enter to exit");
             Console.Read();
@@ -198,8 +198,9 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="sourceFile">the excel file in byte form</param>
         /// <param name="reportName">the file name of the original excel file</param>
+        /// <param name="addFormulas">should be true if you also want formulas added to the report</param>
         /// <return>the excel file in byte form</return>
-        public static byte[] OpenXLSX(byte[] sourceFile, string reportName)
+        public static byte[] OpenXLSX(byte[] sourceFile, string reportName, bool addFormulas=false)
         {
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -225,8 +226,18 @@ namespace ExcelDataCleanup
                     CleanWorksheet(worksheet, reportName);
                 }
 
-                byte[] results = FormulaManager.AddFormulas(package.GetAsByteArray(), reportName);
-                //byte[] results = package.GetAsByteArray();
+
+                byte[] results;
+                if (addFormulas)
+                {
+                    results = FormulaManager.AddFormulas(package.GetAsByteArray(), reportName);
+                }
+                else
+                {
+                    results = package.GetAsByteArray();
+                }
+                
+                
 
                 Console.WriteLine("Workbook Cleanup complete");
 
