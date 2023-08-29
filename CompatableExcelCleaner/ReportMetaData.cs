@@ -96,6 +96,13 @@ namespace CompatableExcelCleaner
                 { "Residential: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", "Total: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d" });
             formulaGenerationArguments.Add(new Worksheet("JournalLedger", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { "1r=(\\d{4})|([A-Z]\\d\\d)", "1Beg\\s+Balance", "1Charges", "1Adjustments", "1Payments", "1End Balance", "1Change", "2Total:" });
+            formulaGenerationArguments.Add(new Worksheet("ReportAccountBalances", 0), new String[] { "Total" });
+            formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] 
+                { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
+                 "Current Liabilities=Total Current Liabilities", "Long Term Liability=Total Long Term Liability", 
+                    "Equity=Total Equity", "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets",
+                  "Total Liabilities~Total Current Liabilities,Total Long Term Liability", 
+                "Total Liabilities And Equity~Total Equity,Total Liabilities"});
 
 
 
@@ -118,7 +125,6 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
             
 
@@ -137,7 +143,6 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysis", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByJob", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("Budget", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("ReportAccountBalances", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollCommercialItemized", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityTotals", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportEscalateCharges", 0), new String[] { });
@@ -229,6 +234,7 @@ namespace CompatableExcelCleaner
                 case "ProfitAndLossComp":
                 case "PayablesAccountReport":
                 case "ProfitAndLossBudget":
+                case "BalanceSheetPropBreakdown":
                     return new RowSegmentFormulaGenerator();
 
 
@@ -323,7 +329,8 @@ namespace CompatableExcelCleaner
 
 
 
-                
+
+                case "ReportAccountBalances":
                 case "ReportTenantBal":
                 case "ProfitAndLossStatementByPeriod":
                 case "LedgerReport":
@@ -342,11 +349,11 @@ namespace CompatableExcelCleaner
                 case "ReportCashReceipts":
                 case "VendorInvoiceReportWithJournalAccounts":
                 case "AgedAccountsReceivable":
-                case "BalanceSheetPropBreakdown":
                 case "PaymentsHistory":
-                
-                
-                
+                case "RentRollAllItemized": //all but worksheet 3 are fine
+
+
+
 
 
 
@@ -364,12 +371,10 @@ namespace CompatableExcelCleaner
                 case "VendorInvoiceReport":
                 case "ProfitAndLossExtendedVariance":
                 case "RentRollActivity":
-                case "RentRollAllItemized":
                 case "TrialBalanceVariance":
                 case "CollectionsAnalysis":
                 case "ProfitAndLossStatementByJob":
                 case "Budget":
-                case "ReportAccountBalances":
                 case "RentRollCommercialItemized":
                 case "RentRollActivityTotals":
                 case "ReportEscalateCharges":

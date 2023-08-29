@@ -64,6 +64,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BankReconcilliation_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\ChargesCreditsReport_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BalanceSheetPropBreakdown_7192023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BalanceSheetComp_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\AgedReceivables_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\AgedPayables_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BalanceSheetComp_7232023.xlsx
@@ -95,6 +96,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\missing-reports\JournalLedger_8222023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\missing-reports\RentRollActivity_New_8222023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\missing-reports\RentRollActivityItemized_New_8222023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\missing-reports\ReportAccountBalances_8222023.xlsx
 
 
 
