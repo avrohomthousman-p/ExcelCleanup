@@ -59,21 +59,44 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ChargesCreditsReport_7182023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\ProfitAndLossBudget_7182023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CreditCardStatement_7182023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-3\CollectionsAnalysisSummary_7182023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\AgedAccountsReceivable_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BankReconcilliation_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\ChargesCreditsReport_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BalanceSheetPropBreakdown_7192023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\BalanceSheetComp_7192023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\AgedReceivables_7192023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-4\AgedPayables_7192023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BalanceSheetComp_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\AgedAccountsReceivable_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BalanceSheetDrillthrough_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\AdjustmentReport_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollAll_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\InvoiceDetail_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\LedgerReport_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportTenantBal_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollAll_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BankReconcilliation_7232023.xlsx
-                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollActivity_New_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollActivityCompSummary_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollHistory_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportOutstandingBalance_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ReportCashReceiptsSummary_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ProfitAndLossStatementByPeriod_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PayablesAccountReport_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PendingWebPayments_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ProfitAndLossBudget_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ProfitAndLossComp_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ChargesCreditsReport_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollPortfolio_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\PreprintedLeasesReport_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\ReportTenantSummary_7252023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\TenantDirectory_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\VacancyLoss_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\SubsidyRentRollReport_7252023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-6\VendorInvoiceReportWithJournalAccounts_7252023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\missing-reports\JournalLedger_8222023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\missing-reports\RentRollActivity_New_8222023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\missing-reports\RentRollActivityItemized_New_8222023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\missing-reports\ReportAccountBalances_8222023.xlsx
 
 
 
@@ -93,7 +116,7 @@ namespace ExcelDataCleanup
 
 
             string reportName = GetReportName(filepath);
-            byte[] output = OpenXLSX(ConvertFileToBytes(filepath), reportName);
+            byte[] output = OpenXLSX(ConvertFileToBytes(filepath), reportName, true);
             SaveByteArrayAsFile(output, filepath.Replace(".xlsx", "_fixed.xlsx"));
             Console.WriteLine("Press Enter to exit");
             Console.Read();
@@ -177,8 +200,9 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="sourceFile">the excel file in byte form</param>
         /// <param name="reportName">the file name of the original excel file</param>
+        /// <param name="addFormulas">should be true if you also want formulas added to the report</param>
         /// <return>the excel file in byte form</return>
-        public static byte[] OpenXLSX(byte[] sourceFile, string reportName)
+        public static byte[] OpenXLSX(byte[] sourceFile, string reportName, bool addFormulas=false)
         {
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -201,15 +225,26 @@ namespace ExcelDataCleanup
                         continue;
                     }
 
-
                     CleanWorksheet(worksheet, reportName);
                 }
 
 
+                byte[] results;
+                if (addFormulas)
+                {
+                    results = FormulaManager.AddFormulas(package.GetAsByteArray(), reportName);
+                }
+                else
+                {
+                    results = package.GetAsByteArray();
+                }
+                
+                
+
                 Console.WriteLine("Workbook Cleanup complete");
 
 
-                return package.GetAsByteArray();
+                return results;
 
             }
         }
@@ -362,7 +397,7 @@ namespace ExcelDataCleanup
         private static void RemoveAllMerges(ExcelWorksheet worksheet, string reportName)
         {
 
-            IMergeCleaner mergeCleaner = CleanupSystemFactories.ChoosesCleanupSystem(reportName, worksheet.Index);
+            IMergeCleaner mergeCleaner = ReportMetaData.ChoosesCleanupSystem(reportName, worksheet.Index);
 
             try
             {
@@ -527,18 +562,18 @@ namespace ExcelDataCleanup
                         continue;                                 //skip the formatting at the end of this if statement
 
                     }
-                    else if (cell.Text.StartsWith("$"))
+                    else if (cell.Text.StartsWith("$") || (cell.Text.StartsWith("($") && cell.Text.EndsWith(")")))
                     {
 
-                        cell.Value = Double.Parse(StripNonDigits(cell.Text));
-                        cell.Style.Numberformat.Format = "$#,##0.00";
+                        bool isNegative = cell.Text.StartsWith("(");
 
-                    }
-                    else if (cell.Text.StartsWith("($") && cell.Text.EndsWith(")"))
-                    {
-
+                        cell.Style.Numberformat.Format = "$#,##0.00;($#,##0.00)";
                         cell.Value = Double.Parse(StripNonDigits(cell.Text));
-                        cell.Style.Numberformat.Format = "($#,##0.00)";
+
+                        if (isNegative)
+                        {
+                            cell.Value = (double)cell.Value * -1;
+                        }
 
                     }
                     else if (IsDateWith2DigitYear(cell.Text))
