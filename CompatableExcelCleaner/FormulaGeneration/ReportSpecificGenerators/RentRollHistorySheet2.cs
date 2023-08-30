@@ -42,12 +42,6 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
             int occupancySectionBottom = rowRange.Item2;
 
 
-            RemoveEmptySections(worksheet, moneySectionTop, moneySectionBottom);
-            RemoveEmptySections(worksheet, occupancySectionTop, occupancySectionBottom);
-
-            ResizeColumns(worksheet);
-
-
             AddMonetarySummary(worksheet, moneySectionTop, headers);
 
             AddOccupancySummaries(worksheet, occupancySectionTop);
@@ -231,64 +225,6 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
                 occupied.Style.Locked = true;
             }
         }
-
-
-
-
-        /// <summary>
-        /// The RentRollHistory report has some sections that are empty should be deleted
-        /// </summary>
-        /// <param name="worksheet">the worksheet in need of formulas</param>
-        private void RemoveEmptySections(ExcelWorksheet worksheet, int startRow, int endRow)
-        {
-            ExcelRange allCells, sampleCell;
-            int column = LastNonEmptyColumn(worksheet, startRow);
-            while (column > 0)
-            {
-                sampleCell = worksheet.Cells[startRow + 1, column]; //for checking if there is text
-                allCells = worksheet.Cells[startRow, column, endRow, column]; //the cells that must be deleted if empty
-
-                if (FormulaManager.IsEmptyCell(sampleCell))
-                {
-                    allCells.Delete(eShiftTypeDelete.Left);
-                    column++;
-                }
-
-
-                column--;
-            }
-
-        }
-
-
-
-        /// <summary>
-        /// Finds the last (leftmost) non-empty cell in the specified row, and returns the column its in
-        /// </summary>
-        /// <param name="worksheet">the worksheet being given formulas</param>
-        /// <param name="row">the row we should check on</param>
-        /// <returns>the column number of the leftmost column containing a non-empty cell</returns>
-        private int LastNonEmptyColumn(ExcelWorksheet worksheet, int row)
-        {
-            ExcelIterator iter = new ExcelIterator(worksheet, row, worksheet.Dimension.End.Column);
-            iter.SkipEmptyCells(ExcelIterator.SHIFT_LEFT);
-            return iter.GetCurrentCol();
-        }
-
-
-
-        /// <summary>
-        /// Resizes all columns in the worksheet
-        /// </summary>
-        /// <param name="worksheet">the worksheet in need of resizing</param>
-        private void ResizeColumns(ExcelWorksheet worksheet)
-        {
-            for(int i = 1; i <= worksheet.Dimension.End.Column; i++)
-            {
-                worksheet.Column(i).Width = 11;
-            }
-        }
-
 
 
 
