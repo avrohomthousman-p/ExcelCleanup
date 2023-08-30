@@ -123,9 +123,9 @@ namespace CompatableExcelCleaner
 
             //reports that cannot be processed by any existing system
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });//is it ok if I make the totals bold?
+            formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//the original has incorrect totals
+            formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { }); //I need to confirm what should be added up
             
 
 
@@ -340,15 +340,15 @@ namespace CompatableExcelCleaner
                 case "TrialBalance":
                 case "ReportCashReceiptsSummary":
                 case "JournalLedger":
+                case "AgedAccountsReceivable":
                     return new FullTableFormulaGenerator();
 
 
 
 
                 //These reports dont fit into any existing system
-                case "ReportCashReceipts":
-                case "VendorInvoiceReportWithJournalAccounts":
-                case "AgedAccountsReceivable":
+                case "ReportCashReceipts": //needs to use a modification of the periodic formula generator
+                case "VendorInvoiceReportWithJournalAccounts": //needs some of its minor headers broken into 2 cells
                 case "PaymentsHistory":
                 case "RentRollAllItemized": //all but worksheet 3 are fine
 
