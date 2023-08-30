@@ -43,7 +43,7 @@ namespace CompatableExcelCleaner
 
 
 
-        public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
+        public virtual void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
             if (!headers[0].StartsWith("r="))
             {

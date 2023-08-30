@@ -65,6 +65,7 @@
     <Compile Include="FormulaGeneration\ReportSpecificGenerators\FullTableSummaryColumn.cs" />
     <Compile Include="FormulaGeneration\ReportSpecificGenerators\RentRollHistorySheet1.cs" />
     <Compile Include="FormulaGeneration\ReportSpecificGenerators\RentRollHistorySheet2.cs" />
+    <Compile Include="FormulaGeneration\ReportSpecificGenerators\VendorInvoiceReportFormulas.cs" />
     <Compile Include="FormulaGeneration\SummaryColumnGenerator.cs" />
     <Compile Include="FormulaGeneration\SumOtherSums.cs" />
     <Compile Include="GeneralCleaning\AbstractMergeCleaner.cs" />
