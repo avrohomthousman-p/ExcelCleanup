@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 
 namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 {
-
+    /// <summary>
+    /// Implementation of IFormulaGenerator that is specifically designed to clean the report 
+    /// VendorInvoiceReportWithJournelAccounts. It should be passed an array of headers each corrisponding
+    /// to the headers above the summary cells before the report data.
+    /// </summary>
     internal class VendorInvoiceReportFormulas : IFormulaGenerator
     {
 
@@ -29,7 +33,11 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
             firstDataRow = FindFirstDataRow(worksheet);
 
             AddFormulasForInvoiceTotals(worksheet);
-            //TODO: numerous other formulas are also needed
+
+            foreach(string header in headers)
+            {
+                AddSummaryFormulas(worksheet, header);
+            }
         }
 
 
@@ -105,7 +113,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
                     if(summaryCell != null)
                     {
-                        summaryCell.Formula = BuildFormula(worksheet, summaryCell.Start.Row, summaryCell.Start.Column + 1);
+                        summaryCell.Formula = BuildSectionFormula(worksheet, summaryCell.Start.Row, summaryCell.Start.Column + 1);
                         summaryCell.Style.Locked = true;
                         summaryCell.Style.Numberformat.Format = "$#,##0.00;($#,##0.00)";
                         Console.WriteLine("Cell " + cell.Address + " has been given this formula: " + cell.Formula);
@@ -167,7 +175,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         /// <param name="row">the row number of the summary cell</param>
         /// <param name="col">the column number of the formula cell</param>
         /// <returns>the formula that should be added to the formula cell</returns>
-        private string BuildFormula(ExcelWorksheet worksheet, int row, int col)
+        private string BuildSectionFormula(ExcelWorksheet worksheet, int row, int col)
         {
             col -= 2; //not entirely sure why, but this is nessecary
             row--; //we want to start above the summary cell (first data cell)
@@ -192,6 +200,67 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
             return "SUM(" + cell.Address + ")";
         }
+
+
+
+        /// <summary>
+        /// Adds summary formulas to the worksheet
+        /// </summary>
+        /// <param name="worksheet">the worksheet in need of formulas</param>
+        /// <param name="header">the header we are looking for</param>
+        private void AddSummaryFormulas(ExcelWorksheet worksheet, string header)
+        {
+            ExcelIterator iter = new ExcelIterator(worksheet);
+            ExcelRange topCell = iter.GetFirstMatchingCell(c => FormulaManager.TextMatches(c.Text, header));
+            int col = topCell.Start.Column;
+
+            ExcelRange topSummaryCell = worksheet.Cells[topCell.End.Row + 1, col];
+            ExcelRange bottomSummaryCell = worksheet.Cells[worksheet.Dimension.End.Row, col];
+
+            string formula = BuildSummaryFormula(worksheet, col);
+
+            topSummaryCell.Formula = formula;
+            topSummaryCell.Style.Locked = true;
+
+            bottomSummaryCell.Formula = formula;
+            bottomSummaryCell.Style.Locked = true;
+
+        }
+
+
+
+        /// <summary>
+        /// Builds a formula for the summary cells in the report
+        /// </summary>
+        /// <param name="worksheet">the worksheet in need of formulas</param>
+        /// <param name="col">the column number the formula should cover</param>
+        /// <returns>a string containing the excel formula needed</returns>
+        private string BuildSummaryFormula(ExcelWorksheet worksheet, int col)
+        {
+            ExcelIterator iter = new ExcelIterator(worksheet, firstDataRow, col);
+            StringBuilder formula = new StringBuilder("SUM(");
+            foreach (ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_DOWN))
+            {
+                //skip the last row
+                if (iter.GetCurrentRow() == worksheet.Dimension.End.Row - 1)
+                {
+                    break;
+                }
+
+                if (!FormulaManager.CellHasFormula(cell) && (FormulaManager.IsDollarValue(cell) || FormulaManager.IsEmptyCell(cell)))
+                {
+                    formula.Append(cell.Address);
+                    formula.Append(",");
+                }
+            }
+
+
+            formula.Remove(formula.Length - 1, 1);
+            formula.Append(")");
+
+            return formula.ToString();
+        }
+
     }
 
 }

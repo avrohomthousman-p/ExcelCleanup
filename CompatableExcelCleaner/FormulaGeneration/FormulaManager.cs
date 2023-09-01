@@ -128,6 +128,19 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
+        /// Checks if the specified cell has a formula in it
+        /// </summary>
+        /// <param name="cell">the cell being checked</param>
+        /// <returns>true if the cell has a formula in it and false otherwise</returns>
+        internal static bool CellHasFormula(ExcelRange cell)
+        {
+            return cell.Formula != null && cell.Formula.Length > 0;
+        }
+
+
+
+
+        /// <summary>
         /// Generates the formula for the cells in the given range. Note: the range should only include the 
         /// cells that are to be included in the formula. Not the that cell that will contain the formula itself
         /// or any cells above the range.

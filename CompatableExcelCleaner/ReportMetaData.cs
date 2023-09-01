@@ -103,6 +103,13 @@ namespace CompatableExcelCleaner
                     "Equity=Total Equity", "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets",
                   "Total Liabilities~Total Current Liabilities,Total Long Term Liability", 
                 "Total Liabilities And Equity~Total Equity,Total Liabilities"});
+            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 0), new String[] { "Amount Owed", "Amount Paid", "Balance" });
+            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 1), new String[] { "Amount Owed", "Amount Paid", "Balance" });
+            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 2), new String[] { "Amount Owed", "Amount Paid", "Balance" });
+            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 3), new String[] { "Amount Owed", "Amount Paid", "Balance" });
+            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 4), new String[] { "Amount Owed", "Amount Paid", "Balance" });
+            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 5), new String[] { "Total:" });
+
 
 
 
@@ -122,12 +129,6 @@ namespace CompatableExcelCleaner
 
 
             //reports that cannot be processed by any existing system
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 1), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 2), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 3), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 4), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 5), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });//is it ok if I make the totals bold?
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//the original has incorrect totals
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { }); //I need to confirm what should be added up
