@@ -132,7 +132,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });//is it ok if I make the totals bold?
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//the original has incorrect totals
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { }); //I need to confirm what should be added up
-            
+            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { });//only the last worksheet is an issue
 
 
 
@@ -141,7 +141,6 @@ namespace CompatableExcelCleaner
             //Reports I dont have
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });
@@ -367,6 +366,7 @@ namespace CompatableExcelCleaner
                 case "ReportCashReceipts": //needs to use a modification of the periodic formula generator
                 case "PaymentsHistory":
                 case "RentRollAllItemized": //all but worksheet 3 are fine
+                //Also AgedAccountsReceivable (its original totals are incorrect)
 
 
 
