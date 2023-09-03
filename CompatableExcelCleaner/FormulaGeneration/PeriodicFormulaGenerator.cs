@@ -29,14 +29,14 @@ namespace CompatableExcelCleaner
 
 
 
-        public void SetDataCellDefenition(IsDataCell isDataCell)
+        public virtual void SetDataCellDefenition(IsDataCell isDataCell)
         {
             this.isDataCell = isDataCell;
         }
 
 
 
-        public void SetSummaryCellDefenition(IsSummaryCell summaryCellDef)
+        public virtual void SetSummaryCellDefenition(IsSummaryCell summaryCellDef)
         {
             this.isSummaryCell = summaryCellDef;
         }
@@ -75,7 +75,7 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet being given formulas</param>
         /// <param name="key">a regex defining what the "key" for a data section should look like</param>
         /// <param name="targetHeader">the text the header should have</param>
-        private void InsertFormulaForHeader(ExcelWorksheet worksheet, string key, string targetHeader)
+        protected virtual void InsertFormulaForHeader(ExcelWorksheet worksheet, string key, string targetHeader)
         {
             var coordinates = FindStartOfDataColumn(worksheet, targetHeader);
             int row = coordinates.Item1 + 1; //start by the row after the column header
@@ -99,7 +99,7 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet getting formulas</param>
         /// <param name="columnHeader">the text that signaling that this is the cell we want</param>
         /// <returns>a tuple with the row and column of the cell containing the specifed text, or null if its not found</returns>
-        private Tuple<int, int> FindStartOfDataColumn(ExcelWorksheet worksheet, string columnHeader)
+        protected virtual Tuple<int, int> FindStartOfDataColumn(ExcelWorksheet worksheet, string columnHeader)
         {
             ExcelRange cell;
 
@@ -129,7 +129,7 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet in need of formulas</param>
         /// <param name="key">the pattern that a key must match</param>
         /// <param name="row">the row to start searching on</param>
-        private void FindNextKey(ExcelWorksheet worksheet, string key, ref int row)
+        protected virtual void FindNextKey(ExcelWorksheet worksheet, string key, ref int row)
         {
             ExcelRange cell;
 
@@ -148,17 +148,20 @@ namespace CompatableExcelCleaner
 
 
         /// <summary>
-        /// Finds the bounds of the formula range and does the actual insertion of the formula
+        /// Finds the bounds of the formula range and does the actual insertion of the formula. After
+        /// this method completes, the row variable should reference the last row in the section that was just 
+        /// given formulas.
         /// </summary>
         /// <param name="worksheet">the worksheet in need of formulas</param>
         /// <param name="row">the row number of the key for the section we are processing</param>
         /// <param name="dataCol">the column we should look for summary cells in</param>
-        private void ProcessFormulaRange(ExcelWorksheet worksheet, ref int row, int dataCol)
+        protected virtual void ProcessFormulaRange(ExcelWorksheet worksheet, ref int row, int dataCol)
         {
 
             int start = row; //the formula range starts here, at the first non-empty cell
 
 
+            //Now find the bottom of the formula range
 
             row++; //the first cell has the key so it isnt empty, and causes the skip to end immideatly
             SkipEmptyCells(worksheet, ref row, 1);
@@ -195,7 +198,7 @@ namespace CompatableExcelCleaner
         /// <param name="worksheet">the worksheet in need of formulas</param>
         /// <param name="row">the first row in the column to check</param>
         /// <param name="col">the column we are scanning</param>
-        private void SkipEmptyCells(ExcelWorksheet worksheet, ref int row, int col)
+        protected void SkipEmptyCells(ExcelWorksheet worksheet, ref int row, int col)
         {
             ExcelRange cell = worksheet.Cells[row, col];
 
@@ -216,7 +219,7 @@ namespace CompatableExcelCleaner
         /// <param name="topRow">the upper row limit that the formula range cannot go past</param>
         /// <param name="col">the column to look in</param>
         /// <returns>the row number of the summary cell found, or -1 if there is no summary cell</returns>
-        private int FindSummaryCellRow(ExcelWorksheet worksheet, int bottomRow, int topRow, int col)
+        protected virtual int FindSummaryCellRow(ExcelWorksheet worksheet, int bottomRow, int topRow, int col)
         {
             ExcelIterator iter = new ExcelIterator(worksheet, bottomRow, col);
             foreach (ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_UP, cell => cell.Start.Row < topRow))
@@ -241,7 +244,7 @@ namespace CompatableExcelCleaner
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell is the last cell in the formula range, and false otherwise</returns>
-        public bool HasTopBorder(ExcelRange cell)
+        protected bool HasTopBorder(ExcelRange cell)
         {
             var border = cell.Style.Border;
 
