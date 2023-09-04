@@ -109,6 +109,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 3), new String[] { "Amount Owed", "Amount Paid", "Balance" });
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 4), new String[] { "Amount Owed", "Amount Paid", "Balance" });
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 5), new String[] { "Total:" });
+            formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { "r=[A-Z]\\d{4}", "Charge Total", "Amount" });
 
 
 
@@ -129,7 +130,6 @@ namespace CompatableExcelCleaner
 
 
             //reports that cannot be processed by any existing system
-            formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { });//is it ok if I make the totals bold?
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//the original has incorrect totals
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { }); //I need to confirm what should be added up
             formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { });//only the last worksheet is an issue
@@ -304,6 +304,10 @@ namespace CompatableExcelCleaner
 
 
 
+                case "ReportCashReceipts":
+                    return new ReportCashRecipts();
+
+
 
                 case "ChargesCreditsReport":
                     return new ChargesCreditReportFormulas();
@@ -363,7 +367,6 @@ namespace CompatableExcelCleaner
 
 
                 //These reports dont fit into any existing system
-                case "ReportCashReceipts": //needs to use a modification of the periodic formula generator
                 case "PaymentsHistory":
                 case "RentRollAllItemized": //all but worksheet 3 are fine
                 //Also AgedAccountsReceivable (its original totals are incorrect)

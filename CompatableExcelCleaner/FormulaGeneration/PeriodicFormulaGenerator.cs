@@ -162,15 +162,7 @@ namespace CompatableExcelCleaner
 
 
             //Now find the bottom of the formula range
-
-            row++; //the first cell has the key so it isnt empty, and causes the skip to end immideatly
-            SkipEmptyCells(worksheet, ref row, 1);
-
-
-
-            //SkipEmptyCells leaves the row variable referencing the first non empty cell found, which
-            // is at the start of the next section. We want it at the last cell of this section.
-            row--; 
+            AdvanceToLastRow(worksheet, ref row); 
 
 
 
@@ -207,6 +199,24 @@ namespace CompatableExcelCleaner
                 row++;
                 cell = worksheet.Cells[row, col];
             }
+        }
+
+
+
+        /// <summary>
+        /// Moves the row pointer to the last (bottommost) cell in the section.
+        /// </summary>
+        /// <param name="worksheet">the worksheet in need of formulas</param>
+        /// <param name="row">the first row of the section</param>
+        protected void AdvanceToLastRow(ExcelWorksheet worksheet, ref int row)
+        {
+            row++; //the first cell has the key so it isnt empty, and would cause the skip to end immideatly
+            SkipEmptyCells(worksheet, ref row, 1);
+
+
+            //SkipEmptyCells leaves the row variable referencing the first non empty cell found, which
+            //is at the start of the next section. We want it at the last cell of this section.
+            row--;
         }
 
 
