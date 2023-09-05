@@ -136,8 +136,8 @@ namespace CompatableExcelCleaner
 
 
             //reports I'm working on now
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" }); //missing final summary
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 1), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" }); //missing final summary
+            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 1), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:", "3sheet0", "3sheet1" }); //missing final summary
             formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 2), new String[] { }); //TODO: havnt started this one yet
 
 
@@ -299,6 +299,8 @@ namespace CompatableExcelCleaner
                     {
                         case 2:
                             return null; //FIXME: need a system for this
+                        case 1:
+                            return new MultiFormulaGenerator(new PeriodicFormulaGenerator(), new SumOtherSums(), new FormulaBetweenSheets());
                         default:
                             return new MultiFormulaGenerator(new PeriodicFormulaGenerator(), new SumOtherSums());
                     }
