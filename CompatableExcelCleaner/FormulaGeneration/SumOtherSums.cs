@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CompatableExcelCleaner.FormulaGeneration
 {
     /// <summary>
-    /// Functions the same way as the full table formula generator except that it adds all formula cells in the
+    /// Functions the same way as the full table formula generator except that it adds all non-formula cells in the
     /// column instead of all cells.
     /// </summary>
     internal class SumOtherSums : FullTableFormulaGenerator

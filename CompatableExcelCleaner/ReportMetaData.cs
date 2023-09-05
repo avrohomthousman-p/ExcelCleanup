@@ -132,8 +132,13 @@ namespace CompatableExcelCleaner
             //reports that cannot be processed by any existing system
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//the original has incorrect totals
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { }); //I need to confirm what should be added up
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { });//only the last worksheet is an issue
 
+
+
+            //reports I'm working on now
+            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" }); //missing final summary
+            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 1), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" }); //missing final summary
+            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 2), new String[] { });
 
 
 
@@ -289,6 +294,17 @@ namespace CompatableExcelCleaner
 
 
 
+                case "RentRollAllItemized":
+                    switch (worksheetNum)
+                    {
+                        case 2:
+                            return null; //FIXME: need a system for this
+                        default:
+                            return new MultiFormulaGenerator(new PeriodicFormulaGenerator(), new SumOtherSums());
+                    }
+
+
+
                 case "VacancyLoss":
                     switch (worksheetNum)
                     {
@@ -368,7 +384,6 @@ namespace CompatableExcelCleaner
 
                 //These reports dont fit into any existing system
                 case "PaymentsHistory":
-                case "RentRollAllItemized": //all but worksheet 3 are fine
                 //Also AgedAccountsReceivable (its original totals are incorrect)
 
 
