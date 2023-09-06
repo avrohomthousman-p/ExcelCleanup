@@ -127,7 +127,6 @@ namespace CompatableExcelCleaner.FormulaGeneration
                 row = FindNextDataRow(worksheet);
             }
 
-            Console.WriteLine($"worksheet {worksheet.Index + 1} row {row}");
             int summaryCellsFound = 0;
             ExcelIterator iter = new ExcelIterator(worksheet, row, 1);
             foreach(ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_RIGHT))

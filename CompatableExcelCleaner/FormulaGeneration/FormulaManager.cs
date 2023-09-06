@@ -118,10 +118,23 @@ namespace CompatableExcelCleaner
         /// Checks if the contents of a cell is a integer
         /// </summary>
         /// <param name="cell">the cell being checked</param>
-        /// <returns>true if the cell contains an intger (and nothing else) and false otherwise/returns>
+        /// <returns>true if the cell contains an integer (and nothing else) and false otherwise</returns>
         internal static bool IsIntegerValue(ExcelRange cell)
         {
-            return TextMatches(cell.Text, "-?[1-9]\\d*");
+            return TextMatches(cell.Text, "0|(-?[1-9]\\d*)");
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if the contents of a cell is a integer whose digits are seperated by commas (e.g. 1,000)
+        /// </summary>
+        /// <param name="cell">the cell being checked</param>
+        /// <returns>true if the cell contains an integer (and nothing else) and false otherwise</returns>
+        internal static bool IsIntegerWithCommas(ExcelRange cell)
+        {
+            return TextMatches(cell.Text, "0|(-?[1-9]\\d{0,2}(,\\d{3})*)");
         }
 
 

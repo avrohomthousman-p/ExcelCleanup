@@ -104,6 +104,7 @@ namespace CompatableExcelCleaner
             {
                 if (FormulaManager.IsEmptyCell(cell) || !isDataCell(cell))
                 {
+                    //Console.WriteLine($"cell {cell.Address} was skipped");
                     continue;
                 }
 

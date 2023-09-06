@@ -110,6 +110,9 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 4), new String[] { "Amount Owed", "Amount Paid", "Balance" });
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 5), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { "r=[A-Z]\\d{4}", "Charge Total", "Amount" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 1), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:", "3sheet0", "3sheet1" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 2), new String[] { "1Total:", "2Subtotals=Total:" });
 
 
 
@@ -133,12 +136,6 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//the original has incorrect totals
             formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { }); //I need to confirm what should be added up
 
-
-
-            //reports I'm working on now
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 1), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:", "3sheet0", "3sheet1" }); //missing final summary
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 2), new String[] { }); //TODO: havnt started this one yet
 
 
 
@@ -298,7 +295,22 @@ namespace CompatableExcelCleaner
                     switch (worksheetNum)
                     {
                         case 2:
-                            return null; //FIXME: need a system for this
+                            FullTableFormulaGenerator first = new FullTableFormulaGenerator();
+                            RowSegmentFormulaGenerator second = new RowSegmentFormulaGenerator();
+                            IsDataCell dataCellDef = new IsDataCell(cell => 
+                                    FormulaManager.IsDollarValue(cell) 
+                                    || FormulaManager.IsIntegerWithCommas(cell) 
+                                    || FormulaManager.IsPercentage(cell)
+                                    || FormulaManager.CellHasFormula(cell));
+
+
+                            first.SetDefenitionForBeyondFormulaRange(first.IsNonDataCell);
+
+                            MultiFormulaGenerator generator = new MultiFormulaGenerator(first, second);
+                            generator.SetDataCellDefenition(dataCellDef);
+                            return generator;
+
+
                         case 1:
                             return new MultiFormulaGenerator(new PeriodicFormulaGenerator(), new SumOtherSums(), new FormulaBetweenSheets());
                         default:
