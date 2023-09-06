@@ -96,15 +96,22 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         /// <param name="headers">the text marking the cells that have the formulas for the monetary section</param>
         private void AddMonetarySummary(ExcelWorksheet worksheet, int startRow, string[] headers)
         {
+            //We can use the FullTableFormulaGenerator to set up the formulas at the bottom of the money section
+            IFormulaGenerator forMoneySection = new FullTableFormulaGenerator();
+            forMoneySection.InsertFormulas(worksheet, new string[] { "Grand Total:" });
+
+
+            //Now we need a total of all those sums to be added at the bottom of the worksheet (at the headers passed in)
             ExcelIterator iter = new ExcelIterator(worksheet, startRow, 1);
-            ExcelRange startCell = iter.GetFirstMatchingCell(cell => FormulaManager.IsDollarValue(cell));
+            ExcelRange startCell = iter.GetFirstMatchingCell(cell => cell.Text == "Grand Total:");
+            iter.SetCurrentLocation(iter.GetCurrentRow(), iter.GetCurrentCol() + 1); //skip the "Grand Total:" header cell
             ExcelRange endCell = iter.GetCells(ExcelIterator.SHIFT_RIGHT,
-                cell => !FormulaManager.IsDollarValue(cell) && !FormulaManager.IsEmptyCell(cell)).Last();
+                cell => !FormulaManager.CellHasFormula(cell)).Last();
 
             string formula = "SUM(" + startCell.Address + ":" + endCell.Address + ")";
 
 
-            //find each summary cell and add formula to it
+            //find each summary major cell (the ones at the bottom of the report) and add formula to it
             foreach(string header in headers)
             {
                 AddFormulaToHeader(worksheet, header, formula);
