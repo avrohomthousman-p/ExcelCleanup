@@ -588,6 +588,14 @@ namespace ExcelDataCleanup
                         cell.SetCellValue(0, 0, fourDigitYear);
                         continue;
                     }
+                    else if (IsPercentage(cell.Text))
+                    {
+                        cell.Style.Numberformat.Format = "#0\\.00%";
+
+                        string textWithoutPercentSign = cell.Text.Substring(0, cell.Text.Length - 1);
+                        double percentAsNumber = Double.Parse(textWithoutPercentSign);
+                        cell.SetCellValue(0, 0, percentAsNumber);
+                    }
                     else
                     {
                         continue; //If this data cannot be coverted to a number, skip the formatting below
@@ -647,6 +655,19 @@ namespace ExcelDataCleanup
         {
             Regex reg = new Regex("^\\d\\d/\\d\\d/\\d\\d$");
             return reg.IsMatch(text);
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if the specified text is a percentage
+        /// </summary>
+        /// <param name="text">the text being checked</param>
+        /// <returns>true if the text is a percentage stored in text, or false otherwise</returns>
+        private static bool IsPercentage(string text)
+        {
+            return Regex.IsMatch(text, "(100([.]00)?%)|([.]\\d\\d%)|(\\d{1,2}([.]\\d\\d)?%)");
         }
 
 
