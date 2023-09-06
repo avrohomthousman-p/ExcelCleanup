@@ -134,7 +134,6 @@ namespace CompatableExcelCleaner
 
             //reports that cannot be processed by any existing system
             formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//the original has incorrect totals
-            formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { }); //I need to confirm what should be added up
 
 
 
@@ -159,17 +158,11 @@ namespace CompatableExcelCleaner
 
 
 
-            //reports I have questions about
-            
-            
-            
 
-            
+            //this report is missing the necessary columns to be able to correctly calculate the formuls
+            //untill that changes, this report will not be given formulas
+            formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
 
-
-
-            //reports I have not checked yet
-            
         }
 
 
@@ -397,15 +390,7 @@ namespace CompatableExcelCleaner
 
 
                 //These reports dont fit into any existing system
-                case "PaymentsHistory":
-                //Also AgedAccountsReceivable (its original totals are incorrect)
-
-
-
-
-
-
-                //Reports I have questions about
+                //AgedAccountsReceivable (its original totals are incorrect)
 
 
 
@@ -432,8 +417,8 @@ namespace CompatableExcelCleaner
 
 
 
-                //Reports I have not yet checked
-
+                //This report cannot get formulas because it does not include some necessary data
+                case "PaymentsHistory":
 
 
 
