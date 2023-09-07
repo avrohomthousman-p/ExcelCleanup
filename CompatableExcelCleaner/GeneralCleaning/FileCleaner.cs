@@ -71,6 +71,7 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\AgedAccountsReceivable_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\BalanceSheetDrillthrough_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\AdjustmentReport_7232023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\ProfitAndLossStatementDrillThrough_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\RentRollAll_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\InvoiceDetail_7232023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\system-reports-5\LedgerReport_7232023.xlsx
@@ -574,7 +575,7 @@ namespace ExcelDataCleanup
                         bool isNegative = cell.Text.StartsWith("(");
 
                         cell.Style.Numberformat.Format = "$#,##0.00;($#,##0.00)";
-                        cell.Value = Double.Parse(StripNonDigits(cell.Text));
+                        cell.Value = Double.Parse(CleanDollarValue(cell.Text));
 
                         if (isNegative)
                         {
@@ -590,10 +591,18 @@ namespace ExcelDataCleanup
                     }
                     else if (IsPercentage(cell.Text))
                     {
-                        cell.Style.Numberformat.Format = "#0\\.00%";
+                        cell.Style.Numberformat.Format = "#0\\.00%;(#0\\.00%)";
 
-                        string textWithoutPercentSign = cell.Text.Substring(0, cell.Text.Length - 1);
-                        double percentAsNumber = Double.Parse(textWithoutPercentSign);
+                        bool isNegative = cell.Text.StartsWith("(");
+
+                        string cleanedText = CleanPercentage(cell.Text);
+                        double percentAsNumber = Double.Parse(cleanedText);
+
+                        if (isNegative)
+                        {
+                            percentAsNumber *= -1;
+                        }
+
                         cell.SetCellValue(0, 0, percentAsNumber);
                     }
                     else
@@ -623,24 +632,37 @@ namespace ExcelDataCleanup
         /// </summary>
         /// <param name="text">the text that should be cleaned</param>
         /// <returns>cleaned text that should be safe to parse to a double</returns>
-        private static string StripNonDigits(String text)
+        private static string CleanDollarValue(String text)
         {
-            string replacementText;
+            string replacementText = RemoveParenthesis(text);
 
-            if (text.StartsWith("("))
-            {
-                replacementText = text.Substring(2, text.Length - 3);   //remove $, starting, and ending parenthesis
-            }
-            else
-            {
-                replacementText = text.Substring(1);                    //remove $ only
-            }
+
+            replacementText = replacementText.Substring(1);             //Remove $
 
 
             replacementText = replacementText.Replace(",", "");         //remove all commas
 
 
             return replacementText;
+        }
+
+
+
+        /// <summary>
+        /// Removes any parenthesis surrounding the text
+        /// </summary>
+        /// <param name="text">the text needing cleaning</param>
+        /// <returns>the same text without the parenthesis</returns>
+        private static string RemoveParenthesis(string text)
+        {
+            if(text.StartsWith("(") && text.EndsWith(")"))
+            {
+                return text.Substring(1, text.Length - 2);
+            }
+            else
+            {
+                return text;
+            }
         }
 
 
@@ -668,6 +690,22 @@ namespace ExcelDataCleanup
         private static bool IsPercentage(string text)
         {
             return Regex.IsMatch(text, "(100([.]00)?%)|([.]\\d\\d%)|(\\d{1,2}([.]\\d\\d)?%)");
+        }
+
+
+
+        /// <summary>
+        /// Removes all non digit characters from text so it can be converted into a double.
+        /// </summary>
+        /// <param name="text">the text that needs to be cleaned</param>
+        /// <returns>a string that can be safely converted to a double</returns>
+        private static string CleanPercentage(string text)
+        {
+            string cleanedText = RemoveParenthesis(text);
+
+            cleanedText = cleanedText.Substring(0, cleanedText.Length - 1); //remove % sign
+
+            return cleanedText;
         }
 
 
