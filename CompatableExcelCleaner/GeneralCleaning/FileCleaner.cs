@@ -380,15 +380,9 @@ namespace ExcelDataCleanup
         {
             if (cell.Hyperlink != null)
             {
-                //worksheet.Cells[cell.EntireColumn.ToString()].Merge = false;
-                //cell.Hyperlink.ReferenceAddress("");
-
                 Console.WriteLine("Row=" + row.ToString() + " Col=" + col.ToString() + " Hyperlink=" + cell.Hyperlink);
-                //  Uri uval = new Uri(cell.Text, UriKind.Relative);
-                // cell.Hyperlink;
                 var val = cell.Value;
                 cell.Hyperlink = null;
-                ////cell.Hyperlink = new Uri(cell.ToString(), UriKind.Absolute);
                 cell.Value = val;
             }
         }
@@ -441,86 +435,6 @@ namespace ExcelDataCleanup
                 {
                     currentRow.OutlineLevel = 0;
                 }
-            }
-        }
-
-
-
-
-        /// <summary>
-        /// Finds the next bunch of rows that have been grouped together
-        /// </summary>
-        /// <param name="worksheet">the worksheet currently being removed</param>
-        /// <param name="rowNumber">the row we should start at</param>
-        /// <returns>the row number of the first row of the next bunch of grouped rows, or -1 if there are no 
-        /// more grouped rows</returns>
-        private static int FindStartOfNextGroup(ExcelWorksheet worksheet, int rowNumber)
-        {
-            for (int i = rowNumber; i <= worksheet.Dimension.Rows; i++)
-            {
-                if(worksheet.Row(i).OutlineLevel > 0)
-                {
-                    return i;
-                }
-            }
-
-
-            return -1;
-        }
-
-
-
-
-        //CURRENTLY UNUSED
-        /// <summary>
-        /// Given the first row that is part of a Group of rows, finds the row number of the last 
-        /// row that is still part of the group.
-        /// </summary>
-        /// <param name="worksheet">the worksheet currently being cleaned</param>
-        /// <param name="startingRow">the first row in the group</param>
-        /// <returns>the index of the last row of the group</returns>
-        private static int FindEndOfGroup(ExcelWorksheet worksheet, int startingRow)
-        {
-
-            int outlineLevel = worksheet.Row(startingRow).OutlineLevel;
-
-            for(int i = startingRow + 1; i <= worksheet.Dimension.Rows; i++)
-            {
-                var row = worksheet.Row(i);
-
-                if(row.OutlineLevel != outlineLevel)
-                {
-                    return i - 1;
-                }
-            }
-
-            return worksheet.Dimension.Columns;
-        }
-
-
-
-
-        /// <summary>
-        /// Deletes all the rows that are after the specified row, but still part of its row group
-        /// </summary>
-        /// <param name="worksheet">the worksheet currently being cleaned</param>
-        /// <param name="startingRow">the first row of the group, which will not be deleted</param>
-        private static void ClearGroup(ExcelWorksheet worksheet, int startingRow)
-        {
-
-            var row = worksheet.Row(startingRow);
-            int outlineLevel = row.OutlineLevel;
-
-            while (row.OutlineLevel == outlineLevel)
-            {
-                worksheet.DeleteRow(startingRow);
-
-                if(startingRow > worksheet.Dimension.Rows)
-                {
-                    break;
-                }
-
-                row = worksheet.Row(startingRow);
             }
         }
 
@@ -717,24 +631,93 @@ namespace ExcelDataCleanup
         /// <param name="reportName">the report that is being cleaned</param>
         private static void DoAdditionalCleanup(ExcelWorksheet worksheet, string reportName)
         {
+            if(reportName == "RentRollHistory")
+            {
+                RepairRentRollHistory(worksheet);
+            }
+
+
+            if(ReportMetaData.NeedsSummaryCellsMoved(reportName, worksheet.Index))
+            {
+                MoveOutOfPlaceSummaryCells(worksheet);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Moves all data cells in the last (rightmost) column over one cell to the left.
+        /// This addresses a bug that leaves them one cell too far to the right.
+        /// </summary>
+        /// <param name="worksheet">the worksheet being cleaned</param>
+        private static void MoveOutOfPlaceSummaryCells(ExcelWorksheet worksheet)
+        {
+            int col = worksheet.Dimension.End.Column;
+            ExcelRange source, dest;
+            
+            for(int row = 1; row <= worksheet.Dimension.End.Row; row++)
+            {
+                source = worksheet.Cells[row, col];
+                dest = worksheet.Cells[row, col - 1];
+                if (CellShouldBeMoved(source, dest))
+                {
+                    source.CopyStyles(dest);
+                    dest.Value = source.Value;
+                    source.Value = "";
+                }
+                
+            }
+        }
+
+
+
+        /// <summary>
+        /// Checks if it is safe to transfer the data from the specified source cell to the specified destination.
+        /// </summary>
+        /// <param name="source">the source of the data</param>
+        /// <param name="destination">the cell the data will be moved to</param>
+        /// <returns>true if it is safe to do the transfer or false otherwise</returns>
+        private static bool CellShouldBeMoved(ExcelRange source, ExcelRange destination)
+        {
+            if(!source.Text.StartsWith("$") && !source.Text.StartsWith("($"))
+            {
+                return false;
+            }
+
+            Console.WriteLine("Other cell says " + destination.Text);
+            return destination.Text == null || destination.Text.Length == 0;
+        }
+
+
+
+        
+        /// <summary>
+        /// Does all cleanup that is specific to the rent roll history report (which has some serious formatting problems)
+        /// </summary>
+        /// <param name="worksheet">the worksheet currently being cleaned</param>
+        private static void RepairRentRollHistory(ExcelWorksheet worksheet)
+        {
             int sheetNum = worksheet.Index;
 
-            if(reportName == "RentRollHistory" && sheetNum == 1)
+            if (sheetNum != 1)
             {
-                Tuple<int, int> rowRange = FindMoneySection(worksheet);
-                int moneySectionTop = rowRange.Item1;
-                int moneySectionBottom = rowRange.Item2;
-
-                rowRange = FindOccupancySection(worksheet, moneySectionBottom + 1);
-                int occupancySectionTop = rowRange.Item1;
-                int occupancySectionBottom = rowRange.Item2;
-
-
-                RemoveEmptySections(worksheet, moneySectionTop, moneySectionBottom);
-                RemoveEmptySections(worksheet, occupancySectionTop, occupancySectionBottom);
-
-                ResizeColumnsToDefault(worksheet);
+                return;
             }
+
+
+            Tuple<int, int> rowRange = FindMoneySection(worksheet);
+            int moneySectionTop = rowRange.Item1;
+            int moneySectionBottom = rowRange.Item2;
+
+            rowRange = FindOccupancySection(worksheet, moneySectionBottom + 1);
+            int occupancySectionTop = rowRange.Item1;
+            int occupancySectionBottom = rowRange.Item2;
+
+
+            RemoveEmptySections(worksheet, moneySectionTop, moneySectionBottom);
+            RemoveEmptySections(worksheet, occupancySectionTop, occupancySectionBottom);
+
+            ResizeColumnsToDefault(worksheet);
         }
 
 

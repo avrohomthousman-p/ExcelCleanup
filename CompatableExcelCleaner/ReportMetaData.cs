@@ -214,6 +214,31 @@ namespace CompatableExcelCleaner
 
 
 
+        /// <summary>
+        /// Checks if the specified worksheet needs to have its summary cells shifted one cell to the left.
+        /// Due to a bug in the report generator, some reports have their summary cells one cell too far
+        /// to the right.
+        /// </summary>
+        /// <param name="reportName">the name of the report the worksheet is from</param>
+        /// <param name="worksheetIndex">the zero based index of the worksheet</param>
+        /// <returns>true if the worksheets needs its summary cells moved, and false otherwise</returns>
+        internal static bool NeedsSummaryCellsMoved(string reportName, int worksheetIndex)
+        {
+            switch (reportName)
+            {
+                //TODO: add the other reports with this issue
+                //case "":
+                case "ProfitAndLossBudget":
+                    return true;
+
+
+                default:
+                    return false;
+            }
+        }
+
+
+
 
         /// <summary>
         /// Factory method for choosing the implementation of the IFormulaGenerator interface that should be used to add formulas
