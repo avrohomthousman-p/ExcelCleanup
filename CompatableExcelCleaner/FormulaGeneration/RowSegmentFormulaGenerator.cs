@@ -52,7 +52,6 @@ namespace CompatableExcelCleaner
 
                 foreach (var item in ranges)                // for each instance of that header
                 {
-                    Console.WriteLine($"segment from row {item.Item1} to {item.Item2}");
                     FillInFormulas(worksheet, item.Item1, item.Item2, item.Item3);
                 }
             }

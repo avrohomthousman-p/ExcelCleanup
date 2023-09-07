@@ -54,7 +54,6 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 1), new String[] { "Total For ([A-Z][a-z]+)( [A-Z][a-z]+)*:" });
             formulaGenerationArguments.Add(new Worksheet("TrialBalance", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] {
                         "Total Tenant Receivables:", "Total Other Receivables:",
                         $"Total For {anyMonth} {anyYear}:~Total Tenant Receivables:,Total Other Receivables:",
@@ -64,18 +63,18 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("AgedPayables", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:", "Balance:~Total Open Charges:,Total Future Charges:,Total Unallocated Payments:" });
             formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysisSummary", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 1), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 2), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 3), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 4), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 5), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 6), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 7), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 8), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 9), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 10), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 11), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-TotalExpenses" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 1), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 2), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 3), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 4), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 5), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 6), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 7), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 8), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 9), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 10), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 11), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
             formulaGenerationArguments.Add(new Worksheet("RentRollPortfolio", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("VacancyLoss", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("VacancyLoss", 1), new String[] { "Total" });
@@ -113,22 +112,27 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" });
             formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 1), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:", "3sheet0", "3sheet1" });
             formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 2), new String[] { "1Total:", "2Subtotals=Total:" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 0), new String[] {
+                "Expense=Total Expense", "Income=Total Income", "Net Operating Income~-Total Expense,Total Income",
+                "Net Income~Net Operating Income,-Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 1), new String[] {
+                "Expense=Total Expense", "Income=Total Income", "Net Operating Income~-Total Expense,Total Income",
+                "Net Income~Net Operating Income,-Total Expense" });
+
 
 
 
 
 
             //reports that mostly work but have small issues
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 0), new String[] { "Total Expense", "Total Income" });//numbers dont add up
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 1), new String[] { "Total Expense", "Total Income" });// numbers dont add up
-            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //ISSUE: numbers dont add up
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "r=[A-Z0-9]+", "Balance" }); //ISSUE: last row skipped
+            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //Should there be a vertical summary?
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" }); //ISSUE: last row skipped
             formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] {
                 "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", "Garage=Total Garage",
                 "Elevators=Total Elevators", "Clubhouse=Total Clubhouse",
                 "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse",
                 "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });//not sure if this one needs horizontal summaries
-
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" }); //last formula is too long
 
 
 
@@ -235,6 +239,7 @@ namespace CompatableExcelCleaner
                 case "PayablesAccountReport":
                 case "ProfitAndLossBudget":
                 case "BalanceSheetPropBreakdown":
+                case "ProfitAndLossStatementDrillThrough":
                     return new RowSegmentFormulaGenerator();
 
 
@@ -243,7 +248,7 @@ namespace CompatableExcelCleaner
                     switch (worksheetNum)
                     {
                         case 0:
-                            return new PeriodicFormulaGenerator();
+                            return new MultiFormulaGenerator(new PeriodicFormulaGenerator(), new FinalRowOfOutstandingBal());
                         default:
                             return new FullTableFormulaGenerator();
                     }
@@ -377,8 +382,7 @@ namespace CompatableExcelCleaner
                 case "ReportTenantBal":
                 case "ProfitAndLossStatementByPeriod":
                 case "LedgerReport":
-                case "RentRollAll":
-                case "ProfitAndLossStatementDrillThrough": 
+                case "RentRollAll": 
                 case "RentRollActivity_New":
                 case "TrialBalance":
                 case "ReportCashReceiptsSummary":

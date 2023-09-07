@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using OfficeOpenXml.FormulaParsing;
+using CompatableExcelCleaner.FormulaGeneration;
 
 namespace CompatableExcelCleaner
 {
@@ -26,13 +28,15 @@ namespace CompatableExcelCleaner
             using (ExcelPackage package = new ExcelPackage(new MemoryStream(sourceFile)))
             {
 
+                //SetupUserDefinedFunctions(package);
+
+
                 string[] headers;
                 ExcelWorksheet worksheet;
 
                 for (int i = 0; i < package.Workbook.Worksheets.Count; i++)
                 {
                     worksheet = package.Workbook.Worksheets[i];
-
 
 
                     //If the worksheet is empty, Dimension will be null
@@ -65,6 +69,25 @@ namespace CompatableExcelCleaner
                 return package.GetAsByteArray();
             }
 
+        }
+
+
+
+
+        /// <summary>
+        /// Makes the systmes user defined functions availible to the excel file
+        /// </summary>
+        /// <param name="package">the package that needs the user defined functions</param>
+        public static void SetupUserDefinedFunctions(ExcelPackage package)
+        {
+            var parser = package.Workbook.FormulaParserManager;
+            parser.AddOrReplaceFunction("AddAllNonFormulaCells", new AddAllNonFormulaCells());
+
+            /* Add more user defined functions here */
+
+
+            //test code
+            //package.Workbook.Worksheets[0].Cells[4, 4].Formula = "AddAllNonFormulaCells(B10:B20)";
         }
 
 
