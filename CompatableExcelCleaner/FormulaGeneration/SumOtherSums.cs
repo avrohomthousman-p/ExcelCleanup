@@ -49,7 +49,7 @@ namespace CompatableExcelCleaner.FormulaGeneration
         /// </summary>
         /// <param name="cell">the cell being checked</param>
         /// <returns>true if the cell has no formulas and no text, or false if it has either one.</returns>
-        private bool HasNoTextOrFormulas(ExcelRange cell)
+        protected bool HasNoTextOrFormulas(ExcelRange cell)
         {
             return FormulaManager.IsEmptyCell(cell) && (cell.Formula == null || cell.Formula.Length == 0);
         }
@@ -67,21 +67,56 @@ namespace CompatableExcelCleaner.FormulaGeneration
         {
             StringBuilder result = new StringBuilder("SUM(");
 
+            int top;
+            int bottom = headerRow - 1;
             ExcelIterator iter = new ExcelIterator(worksheet, headerRow - 1, headerCol);
             foreach(ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_UP, cell => this.beyondFormulaRange(cell)))
             {
+                /*
                 //if it doesnt have a formula and isnt empty
-                if((cell.Formula == null || cell.Formula.Length == 0) && !FormulaManager.IsEmptyCell(cell))
+                if(!FormulaManager.CellHasFormula(cell) && !FormulaManager.IsEmptyCell(cell))
                 {
                     result.Append(cell.Address);
                     result.Append(",");
                 }
+                */
+                if (FormulaManager.CellHasFormula(cell))
+                {
+                    top = cell.Start.Row + 1;
+
+                    //remember that smaller row numbers are higher up.
+                    //this if statement ensures that we skip all sections that are only 1 row in height
+                    if(top < bottom)
+                    {
+                        ExcelRange range = worksheet.Cells[top, headerCol, bottom, headerCol];
+                        result.Append(range.Address);
+                        result.Append(",");
+                    }
+                    
+
+                    bottom = cell.Start.Row - 1;
+                }
             }
 
 
-            result.Remove(result.Length - 1, 1);
-            result.Append(")");
+            //After the loop terminates, the last segment still need to be added
+            top = iter.GetCurrentRow();
 
+            if (top < bottom)
+            {
+                ExcelRange range = worksheet.Cells[top, headerCol, bottom, headerCol];
+                result.Append(range.Address);
+            }
+            else
+            {
+                result.Remove(result.Length - 1, 1);
+            }
+
+
+
+
+            result.Append(")");
+            Console.WriteLine("formula length = " + result.Length);
             return result.ToString();
         }
     }

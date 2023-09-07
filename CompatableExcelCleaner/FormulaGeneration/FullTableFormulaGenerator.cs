@@ -59,7 +59,8 @@ namespace CompatableExcelCleaner
 
 
 
-        public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
+        /// <inheritdoc/>
+        public virtual void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
             iter = new ExcelIterator(worksheet);
 
