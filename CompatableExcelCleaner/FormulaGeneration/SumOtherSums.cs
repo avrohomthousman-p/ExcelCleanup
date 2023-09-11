@@ -72,14 +72,7 @@ namespace CompatableExcelCleaner.FormulaGeneration
             ExcelIterator iter = new ExcelIterator(worksheet, headerRow - 1, headerCol);
             foreach(ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_UP, cell => this.beyondFormulaRange(cell)))
             {
-                /*
-                //if it doesnt have a formula and isnt empty
-                if(!FormulaManager.CellHasFormula(cell) && !FormulaManager.IsEmptyCell(cell))
-                {
-                    result.Append(cell.Address);
-                    result.Append(",");
-                }
-                */
+
                 if (FormulaManager.CellHasFormula(cell))
                 {
                     top = cell.Start.Row + 1;

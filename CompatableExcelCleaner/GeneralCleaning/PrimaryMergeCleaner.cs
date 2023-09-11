@@ -657,6 +657,14 @@ namespace ExcelDataCleanup
 
 
 
+        /// <inheritdoc/>
+        protected override void AdditionalCleanup(ExcelWorksheet worksheet)
+        {
+            MoveMajorHeadersLeft(worksheet, firstRowOfTable);
+        }
+
+
+
 
         /// <inheritdoc/>
         protected override bool IsDataCell(ExcelRange cell)

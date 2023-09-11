@@ -20,6 +20,8 @@ namespace ExcelDataCleanup
             ResizeCells(worksheet);
 
             DeleteColumns(worksheet);
+
+            AdditionalCleanup(worksheet);
         }
 
 
@@ -59,6 +61,12 @@ namespace ExcelDataCleanup
 
 
 
+        /// <summary>
+        /// Does all aditional cleanup that is needed for the specified report
+        /// </summary>
+        /// <param name="worksheet">the worksheet being cleaned</param>
+        /// <param name="reportName">the report being cleaned</param>
+        protected abstract void AdditionalCleanup(ExcelWorksheet worksheet);
 
 
 
@@ -231,6 +239,53 @@ namespace ExcelDataCleanup
 
                 cells.CopyStyles(currentCell);
             }
+        }
+
+
+
+        /// <summary>
+        /// Ensures that any major header that ends up in column 2 or 3, gets moved to column 1 (if possible)
+        /// </summary>
+        /// <param name="worksheet">the worksheet that is being cleaned</param>
+        /// <param name="firstDataRow">the row that marks the beginning of the data section. All cells above it are major headers</param>
+        protected virtual void MoveMajorHeadersLeft(ExcelWorksheet worksheet, int firstDataRow)
+        {
+            int lastColumnBeingMoved = Math.Min(3, worksheet.Dimension.End.Column);
+
+            for (int col = 2; col <= lastColumnBeingMoved; col++)
+            {
+                for(int row = 1; row < firstDataRow; row++)
+                {
+                    MoveHeaderIfNeeded(worksheet, row, col);
+                }
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Moves the header found at the specified coordinates to the first column of the worksheet if possible 
+        /// </summary>
+        /// <param name="worksheet">the worksheet being cleaned</param>
+        /// <param name="row">the row number of the header cell</param>
+        /// <param name="col">the column number of the header cell</param>
+        /// <returns>true if the header was moved sucsessfully, and false otherwise</returns>
+        protected virtual bool MoveHeaderIfNeeded(ExcelWorksheet worksheet, int row, int col)
+        {
+            ExcelRange source = worksheet.Cells[row, col];
+            ExcelRange dest = worksheet.Cells[row, 1];
+
+            if (!IsEmptyCell(dest))
+            {
+                return false;
+            }
+
+
+            source.CopyStyles(dest);
+            dest.Value = source.Value;
+            source.Value = null;
+            return true;
         }
     }
 }
