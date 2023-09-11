@@ -664,7 +664,7 @@ namespace ExcelDataCleanup
                 {
                     source.CopyStyles(dest);
                     dest.Value = source.Value;
-                    source.Value = "";
+                    source.Value = null;
                 }
                 
             }

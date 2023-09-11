@@ -36,6 +36,7 @@ namespace CompatableExcelCleaner.FormulaGeneration
 
 
                 cell.Formula = BuildFormula(worksheet, iter.GetCurrentRow(), iter.GetCurrentCol());
+                cell.Formula = "Kwende";
                 cell.Style.Locked = true;
 
                 Console.WriteLine("Cell " + cell.Address + " has been given this formula: " + cell.Formula);
@@ -109,7 +110,6 @@ namespace CompatableExcelCleaner.FormulaGeneration
 
 
             result.Append(")");
-            Console.WriteLine("formula length = " + result.Length);
             return result.ToString();
         }
     }

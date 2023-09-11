@@ -127,12 +127,13 @@ namespace CompatableExcelCleaner
             //reports that mostly work but have small issues
             formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //Should there be a vertical summary?
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" }); //ISSUE: last row skipped
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" }); //this one works, but I want to keep it near the other worksheet
             formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] {
                 "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", "Garage=Total Garage",
                 "Elevators=Total Elevators", "Clubhouse=Total Clubhouse",
                 "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse",
                 "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });//not sure if this one needs horizontal summaries
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" }); //last formula is too long
+            
 
 
 
@@ -227,7 +228,7 @@ namespace CompatableExcelCleaner
             switch (reportName)
             {
                 //TODO: add the other reports with this issue
-                //case "":
+                case "ReportOutstandingBalance":
                 case "ProfitAndLossBudget":
                     return true;
 
@@ -273,7 +274,7 @@ namespace CompatableExcelCleaner
                     switch (worksheetNum)
                     {
                         case 0:
-                            return new MultiFormulaGenerator(new PeriodicFormulaGenerator(), new FinalRowOfOutstandingBal());
+                            return new MultiFormulaGenerator(new PeriodicFormulaGenerator(), new SumOtherSums());
                         default:
                             return new FullTableFormulaGenerator();
                     }
