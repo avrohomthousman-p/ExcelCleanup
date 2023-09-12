@@ -98,7 +98,7 @@ namespace CompatableExcelCleaner
         {
             foreach (ExcelRange cell in GetCells(shift, row, col))
             {
-                yield return new Tuple<int, int>(row, col);
+                yield return new Tuple<int, int>(cell.Start.Row, cell.Start.Column);
             }
         }
 
@@ -119,7 +119,7 @@ namespace CompatableExcelCleaner
         {
             foreach (ExcelRange cell in GetCells(shift, stopIf, row, col))
             {
-                yield return new Tuple<int, int>(row, col);
+                yield return new Tuple<int, int>(cell.Start.Row, cell.Start.Column);
             }
         }
 
