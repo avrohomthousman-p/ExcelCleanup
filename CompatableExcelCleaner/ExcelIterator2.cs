@@ -140,6 +140,8 @@ namespace CompatableExcelCleaner
                 {
                     yield return worksheet.Cells[row, col];
                 }
+
+                col = 1;
             }
         }
 
@@ -184,6 +186,8 @@ namespace CompatableExcelCleaner
                 {
                     yield return new Tuple<int, int>(row, col);
                 }
+
+                col = 1;
             }
         }
 
