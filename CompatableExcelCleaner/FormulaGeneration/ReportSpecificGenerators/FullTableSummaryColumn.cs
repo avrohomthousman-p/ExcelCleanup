@@ -25,6 +25,8 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
+            ExcelIterator2.worksheet = worksheet;
+
             foreach(string header in headers)
             {
                 Tuple<int, int> headerCellCoords = FindHeaderCell(worksheet, header);
@@ -43,8 +45,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         /// <returns>the row and column (as a tuple) of the header cell at the top of the formula column</returns>
         private Tuple<int, int> FindHeaderCell(ExcelWorksheet worksheet, string header)
         {
-            ExcelIterator iter = new ExcelIterator(worksheet);
-            return iter.FindAllMatchingCoordinates(cell => FormulaManager.TextMatches(cell.Text, header)).First();
+            return ExcelIterator2.GetAllMatchingCoordinates(cell => FormulaManager.TextMatches(cell.Text, header)).First();
         }
 
 
@@ -57,9 +58,8 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         /// <param name="col">the column getting formulas</param>
         private void AddFormulas(ExcelWorksheet worksheet, int row, int col)
         {
-            ExcelIterator iter = new ExcelIterator(worksheet, row + 1, col);
 
-            var summaryCells = iter.GetCells(ExcelIterator.SHIFT_DOWN, cell => !dataCellDef(cell));
+            var summaryCells = ExcelIterator2.GetCells(ExcelIterator2.SHIFT_DOWN, cell => !dataCellDef(cell), row + 1, col);
 
             foreach (ExcelRange cell in summaryCells)
             {
@@ -81,8 +81,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         /// <returns>the column number of the leftmost column in the formula</returns>
         private int GetFormulaStartColumn(ExcelWorksheet worksheet, int row, int startCol)
         {
-            ExcelIterator iter = new ExcelIterator(worksheet, row, startCol);
-            var lastCell = iter.GetCells(ExcelIterator.SHIFT_LEFT, cell => outsideFormula(cell)).Last();
+            var lastCell = ExcelIterator2.GetCells(ExcelIterator2.SHIFT_LEFT, cell => outsideFormula(cell), row, startCol).Last();
             return lastCell.End.Column;
         }
 

@@ -23,6 +23,8 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
+            ExcelIterator2.worksheet = worksheet;
+
             int headerRow = FindHeaderRow(worksheet);
 
             AddSummaryRow(worksheet, headerRow);
@@ -97,9 +99,9 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
             //Fill cells with sample data
             ExcelRange cell;
-            ExcelIterator iter = new ExcelIterator(worksheet, headerRow, 3);
-            foreach(Tuple<int, int> coords in iter.GetCellCoordinates(ExcelIterator.SHIFT_RIGHT))
+            foreach(Tuple<int, int> coords in ExcelIterator2.GetCellCoordinates(ExcelIterator2.SHIFT_RIGHT, headerRow, 3))
             {
+                
                 cell = worksheet.Cells[coords.Item1, coords.Item2];
                 if (!FormulaManager.IsEmptyCell(cell)) //if this is a data cell
                 {
@@ -145,8 +147,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
 
             //fill column with default values
-            ExcelIterator iter = new ExcelIterator(worksheet, headerRow + 1, lastColumn);
-            foreach(ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_DOWN))
+            foreach(ExcelRange cell in ExcelIterator2.GetCells(ExcelIterator.SHIFT_DOWN, headerRow + 1, lastColumn))
             {
                 cell.SetCellValue(0, 0, 0.0);
             }
