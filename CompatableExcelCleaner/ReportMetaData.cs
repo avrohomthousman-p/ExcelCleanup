@@ -31,7 +31,7 @@ namespace CompatableExcelCleaner
         static ReportMetaData()
         {
 
-            //Fill our dictionary with all the reports and all the data we need to give them formulas
+            //Fill our dictionary with all the reports and all the data we need to give them for formula generation
 
 
 
