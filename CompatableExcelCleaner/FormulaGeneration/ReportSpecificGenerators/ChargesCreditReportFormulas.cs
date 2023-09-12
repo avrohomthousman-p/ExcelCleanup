@@ -22,12 +22,11 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
             //stores the headers needed for the actual Formula Generator
             List<string> modifiedHeaders = new List<string>();
-            ExcelIterator iter = new ExcelIterator(worksheet);
+            ExcelIterator2.worksheet = worksheet;
 
             foreach(string header in headers)
             {
-                iter.SetCurrentLocation(1, 1);
-                var matchingCells = iter.FindAllMatchingCells(cell => FormulaManager.TextMatches(cell.Text, header));
+                var matchingCells = ExcelIterator2.GetAllMatchingCells(cell => FormulaManager.TextMatches(cell.Text, header));
 
                 foreach (ExcelRange cell in matchingCells)
                 {
