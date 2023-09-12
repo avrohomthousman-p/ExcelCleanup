@@ -225,7 +225,7 @@ namespace CompatableExcelCleaner
         /// <param name="row">Optional Argument: the row where iteration should start</param>
         /// <param name="col">Optional Argument: the column where iteration should start</param>
         /// <returns>each cell the iterator passed through</returns>
-        public static IEnumerable<ExcelRange> FindAllCellsReverse(int row = 1, int col = 1)
+        public static IEnumerable<ExcelRange> GetAllCellsInTableReverse(int row = 1, int col = 1)
         {
             for (; row > 0; row--)
             {
@@ -269,6 +269,24 @@ namespace CompatableExcelCleaner
 
 
                 col = 1;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Iterates and finds all cells in the table that match the specified predicate.
+        /// </summary>
+        /// <param name="isDesiredCell">a predicate that returns true if this is the cell that you are looking for</param>
+        /// <param name="row">Optional Argument: the row where iteration should start</param>
+        /// <param name="col">Optional Argument: the column where iteration should start</param>
+        /// <returns>all cells found that match the predicate in the form of (row, col) tuples</returns>
+
+        public static IEnumerable<Tuple<int, int>> GetAllMatchingCoordinates(Predicate<ExcelRange> isDesiredCell, int row = 1, int col = 1)
+        {
+            foreach (ExcelRange cell in GetAllMatchingCells(isDesiredCell, row, col))
+            {
+                yield return new Tuple<int, int>(cell.Start.Row, cell.Start.Column);
             }
         }
 
