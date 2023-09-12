@@ -28,7 +28,7 @@ namespace CompatableExcelCleaner
             using (ExcelPackage package = new ExcelPackage(new MemoryStream(sourceFile)))
             {
 
-                //SetupUserDefinedFunctions(package);
+                SetupUserDefinedFunctions(package);
 
 
                 string[] headers;
@@ -81,13 +81,13 @@ namespace CompatableExcelCleaner
         public static void SetupUserDefinedFunctions(ExcelPackage package)
         {
             var parser = package.Workbook.FormulaParserManager;
-            parser.AddOrReplaceFunction("AddAllNonFormulaCells", new AddAllNonFormulaCells());
+            parser.AddOrReplaceFunction("addAllNonFormulaCells", new AddAllNonFormulaCells());
 
             /* Add more user defined functions here */
 
 
             //test code
-            //package.Workbook.Worksheets[0].Cells[4, 4].Formula = "AddAllNonFormulaCells(B10:B20)";
+            //package.Workbook.Worksheets[0].Cells[4, 4].Formula = "addAllNonFormulaCells(B10:B20)";
         }
 
 

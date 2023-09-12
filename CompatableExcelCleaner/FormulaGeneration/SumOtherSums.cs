@@ -35,8 +35,8 @@ namespace CompatableExcelCleaner.FormulaGeneration
                 }
 
 
-                cell.Formula = BuildFormula(worksheet, iter.GetCurrentRow(), iter.GetCurrentCol());
-                cell.Formula = "Kwende";
+                //cell.Formula = BuildFormula(worksheet, iter.GetCurrentRow(), iter.GetCurrentCol());
+                cell.CreateArrayFormula(BuildFormula(worksheet, iter.GetCurrentRow(), iter.GetCurrentCol()));
                 cell.Style.Locked = true;
 
                 Console.WriteLine("Cell " + cell.Address + " has been given this formula: " + cell.Formula);
@@ -66,51 +66,31 @@ namespace CompatableExcelCleaner.FormulaGeneration
         /// <returns>a formula to be inserted in the proper cell</returns>
         protected virtual string BuildFormula(ExcelWorksheet worksheet, int headerRow, int headerCol)
         {
-            StringBuilder result = new StringBuilder("SUM(");
+            int rangeTop = GetTopCellInRange(worksheet, headerRow, headerCol);
+            ExcelRange range = worksheet.Cells[rangeTop, headerCol, headerRow - 1, headerCol];
 
-            int top;
-            int bottom = headerRow - 1;
+
+            //The _xlfn fixes a bug in excel
+            return "SUM(IF(_xlfn.ISFORMULA(" + range.Address + "), 0, " + range.Address + "))";
+        }
+
+
+
+
+        /// <summary>
+        /// Finds the topmost cell that should be included in the formula range
+        /// </summary>
+        /// <param name="worksheet">the worksheet in need of formulas</param>
+        /// <param name="headerRow">the row number of the formula header (the cell under the last cell in formula range)</param>
+        /// <param name="headerCol">the column number of the formula header (the cell under the last cell in formula range)</param>
+        /// <returns>the row number of the top of the formula range</returns>
+        protected virtual int GetTopCellInRange(ExcelWorksheet worksheet, int headerRow, int headerCol)
+        {
             ExcelIterator iter = new ExcelIterator(worksheet, headerRow - 1, headerCol);
-            foreach(ExcelRange cell in iter.GetCells(ExcelIterator.SHIFT_UP, cell => this.beyondFormulaRange(cell)))
-            {
 
-                if (FormulaManager.CellHasFormula(cell))
-                {
-                    top = cell.Start.Row + 1;
+            var cells = iter.GetCellCoordinates(ExcelIterator.SHIFT_UP, cell => base.beyondFormulaRange(cell));
 
-                    //remember that smaller row numbers are higher up.
-                    //this if statement ensures that we skip all sections that are only 1 row in height
-                    if(top < bottom)
-                    {
-                        ExcelRange range = worksheet.Cells[top, headerCol, bottom, headerCol];
-                        result.Append(range.Address);
-                        result.Append(",");
-                    }
-                    
-
-                    bottom = cell.Start.Row - 1;
-                }
-            }
-
-
-            //After the loop terminates, the last segment still need to be added
-            top = iter.GetCurrentRow();
-
-            if (top < bottom)
-            {
-                ExcelRange range = worksheet.Cells[top, headerCol, bottom, headerCol];
-                result.Append(range.Address);
-            }
-            else
-            {
-                result.Remove(result.Length - 1, 1);
-            }
-
-
-
-
-            result.Append(")");
-            return result.ToString();
+            return cells.Last().Item1;
         }
     }
 }
