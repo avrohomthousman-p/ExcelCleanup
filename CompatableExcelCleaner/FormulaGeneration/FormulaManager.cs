@@ -28,9 +28,6 @@ namespace CompatableExcelCleaner
             using (ExcelPackage package = new ExcelPackage(new MemoryStream(sourceFile)))
             {
 
-                SetupUserDefinedFunctions(package);
-
-
                 string[] headers;
                 ExcelWorksheet worksheet;
 
@@ -69,25 +66,6 @@ namespace CompatableExcelCleaner
                 return package.GetAsByteArray();
             }
 
-        }
-
-
-
-
-        /// <summary>
-        /// Makes the systmes user defined functions availible to the excel file
-        /// </summary>
-        /// <param name="package">the package that needs the user defined functions</param>
-        public static void SetupUserDefinedFunctions(ExcelPackage package)
-        {
-            var parser = package.Workbook.FormulaParserManager;
-            parser.AddOrReplaceFunction("addAllNonFormulaCells", new AddAllNonFormulaCells());
-
-            /* Add more user defined functions here */
-
-
-            //test code
-            //package.Workbook.Worksheets[0].Cells[4, 4].Formula = "addAllNonFormulaCells(B10:B20)";
         }
 
 

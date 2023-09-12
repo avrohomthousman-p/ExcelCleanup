@@ -123,6 +123,8 @@ namespace CompatableExcelCleaner
                 "Elevators=Total Elevators", "Clubhouse=Total Clubhouse",
                 "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse",
                 "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" });
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
 
 
 
@@ -131,8 +133,7 @@ namespace CompatableExcelCleaner
 
             //reports that mostly work but have small issues
             formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //Should there be a vertical summary?
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" }); //ISSUE: last row skipped
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" }); //this one works, but I want to keep it near the other worksheet
+            
             
             
 
