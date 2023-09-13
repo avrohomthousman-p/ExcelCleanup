@@ -60,7 +60,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExcelIterator2.cs" />
     <Compile Include="FormulaGeneration\FormulaBetweenSheets.cs" />
     <Compile Include="FormulaGeneration\MultiFormulaGenerator.cs" />
     <Compile Include="FormulaGeneration\ReportSpecificGenerators\ChargesCreditReportFormulas.cs" />
