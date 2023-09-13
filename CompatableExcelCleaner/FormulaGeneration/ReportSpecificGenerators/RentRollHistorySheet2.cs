@@ -102,13 +102,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
 
             //Now we need a total of all those sums to be added at the bottom of the worksheet (at the headers passed in)
-            ExcelIterator iter = new ExcelIterator(worksheet, startRow, 1);
-            ExcelRange startCell = iter.GetFirstMatchingCell(cell => cell.Text == "Grand Total:");
-            iter.SetCurrentLocation(iter.GetCurrentRow(), iter.GetCurrentCol() + 1); //skip the "Grand Total:" header cell
-            ExcelRange endCell = iter.GetCells(ExcelIterator.SHIFT_RIGHT,
-                cell => !FormulaManager.CellHasFormula(cell)).Last();
-
-            string formula = "SUM(" + startCell.Address + ":" + endCell.Address + ")";
+            string formula = BuildFormulaForMoneySection(worksheet, startRow);
 
 
             //find each summary major cell (the ones at the bottom of the report) and add formula to it
@@ -116,6 +110,25 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
             {
                 AddFormulaToHeader(worksheet, header, formula);
             }
+        }
+
+
+
+        /// <summary>
+        /// Builds a formula that sums up all the totals in the money section.
+        /// </summary>
+        /// <param name="worksheet">the worksheet in need of formulas</param>
+        /// <param name="sectionStartRow">the row number where the money section starts</param>
+        /// <returns>a formula that sums up all data in the money section</returns>
+        private string BuildFormulaForMoneySection(ExcelWorksheet worksheet, int sectionStartRow)
+        {
+            ExcelIterator iter = new ExcelIterator(worksheet, sectionStartRow, 1);
+            ExcelRange startCell = iter.GetFirstMatchingCell(cell => cell.Text == "Grand Total:");
+            iter.SetCurrentLocation(iter.GetCurrentRow(), iter.GetCurrentCol() + 1); //skip the "Grand Total:" header cell
+            ExcelRange endCell = iter.GetCells(ExcelIterator.SHIFT_RIGHT,
+                cell => !FormulaManager.CellHasFormula(cell)).Last();
+
+            return "SUM(" + startCell.Address + ":" + endCell.Address + ")";
         }
 
 
