@@ -32,6 +32,8 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
+            ExcelIterator2.worksheet = worksheet;
+
 
             Tuple<int, int> rowRange = FindMoneySection(worksheet);
             int moneySectionTop = rowRange.Item1;
@@ -56,6 +58,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         /// <returns>a tuple with the start and end rows of the money section</returns>
         private Tuple<int, int> FindMoneySection(ExcelWorksheet worksheet)
         {
+            /*
             ExcelIterator iter = new ExcelIterator(worksheet);
 
             int start = iter.GetFirstMatchingCell(isMonth).Start.Row;
@@ -63,6 +66,16 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
             int end = iter.GetCellCoordinates(ExcelIterator.SHIFT_DOWN, cell => FormulaManager.IsEmptyCell(cell)).Last().Item1;
 
             return new Tuple<int, int>(start, end);
+            */
+            ///*
+            Tuple<int, int> start = ExcelIterator2.GetAllMatchingCoordinates(isMonth).First();
+
+
+            int end = ExcelIterator2.GetCellCoordinates(ExcelIterator.SHIFT_DOWN, cell => FormulaManager.IsEmptyCell(cell),
+                            start.Item1, start.Item2).Last().Item1;
+
+            return new Tuple<int, int>(start.Item1, end);
+            //*/
         }
 
 
@@ -76,6 +89,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         /// <returns>a tuple with the start and end rows of the occupancy section</returns>
         private Tuple<int, int> FindOccupancySection(ExcelWorksheet worksheet, int startSearchAtRow)
         {
+            /*
             ExcelIterator iter = new ExcelIterator(worksheet, startSearchAtRow, 1);
 
             int start = iter.GetFirstMatchingCell(isMonth).Start.Row;
@@ -83,6 +97,17 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
             int end = iter.GetCellCoordinates(ExcelIterator.SHIFT_DOWN, cell => FormulaManager.IsEmptyCell(cell)).Last().Item1;
             
             return new Tuple<int, int>(start, end);
+            */
+
+
+            Tuple<int, int> start = ExcelIterator2.GetAllMatchingCoordinates(isMonth, startSearchAtRow, 1).First();
+
+
+            int end = ExcelIterator2.GetCellCoordinates(ExcelIterator2.SHIFT_DOWN, cell => FormulaManager.IsEmptyCell(cell),
+                start.Item1, start.Item2).Last().Item1;
+
+
+            return new Tuple<int, int>(start.Item1, end);
         }
 
 
@@ -102,11 +127,18 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
 
             //Now we need a total of all those sums to be added at the bottom of the worksheet (at the headers passed in)
+            /*
             ExcelIterator iter = new ExcelIterator(worksheet, startRow, 1);
             ExcelRange startCell = iter.GetFirstMatchingCell(cell => cell.Text == "Grand Total:");
             iter.SetCurrentLocation(iter.GetCurrentRow(), iter.GetCurrentCol() + 1); //skip the "Grand Total:" header cell
             ExcelRange endCell = iter.GetCells(ExcelIterator.SHIFT_RIGHT,
                 cell => !FormulaManager.CellHasFormula(cell)).Last();
+            */
+            ExcelRange startCell = ExcelIterator2.GetAllMatchingCells(cell => cell.Text == "Grand Total:").First();
+
+            
+            ExcelRange endCell = ExcelIterator2.GetCells(ExcelIterator.SHIFT_RIGHT, cell => !FormulaManager.CellHasFormula(cell), 
+                                startCell.Start.Row, startCell.Start.Column + 1).Last(); //we need to skip the "Grand Total:" header cell
 
             string formula = "SUM(" + startCell.Address + ":" + endCell.Address + ")";
 
@@ -129,9 +161,8 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         /// <param name="formula">the formula to be inserted</param>
         private void AddFormulaToHeader(ExcelWorksheet worksheet, string header, string formula)
         {
-            ExcelIterator iter = new ExcelIterator(worksheet);
 
-            var headerCells = iter.FindAllMatchingCells(cell => FormulaManager.TextMatches(cell.Text, header));
+            var headerCells = ExcelIterator2.GetAllMatchingCells(cell => FormulaManager.TextMatches(cell.Text, header));
             foreach(ExcelRange cell in headerCells)
             {
                 ExcelRange formulaDestination = SplitHeaderCell(worksheet, cell);
