@@ -9,8 +9,8 @@ namespace CompatableExcelCleaner.FormulaGeneration
 {
     /// <summary>
     /// Implementation of IFormulaGenerator interface that calls two other formula generators to do the work. 
-    /// This is a convienent tool that lets you add formuls in two (or three) different ways without making a new class 
-    /// for it. When passing headers to this class, all headers intended for the first formula generator should
+    /// This is a convienent tool that lets you add formuls in two (or three) different ways without making a new 
+    /// implementation for it. When passing headers to this class, all headers intended for the first formula generator should
     /// start with a 1, and those intended for the second should start with a 2, and so on for the third (which is optional).
     /// </summary>
     internal class MultiFormulaGenerator : IFormulaGenerator

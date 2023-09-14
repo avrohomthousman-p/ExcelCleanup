@@ -17,7 +17,12 @@ namespace CompatableExcelCleaner.FormulaGeneration
     /// <summary>
     /// Implementation of IFormulaGenerator that makes every data cell in a column into the sum of the corrisponding
     /// data cells in other columns. The column headers should be passed to this class in this format: 
-    /// col1,col2,col3=>summaryCol. Note: only 1 column is required on the left side.
+    /// 
+    /// col1,col2,col3=>summaryCol. 
+    /// 
+    /// Where coln and summaryCol should be regexes that match to the headers of the column needed.
+    /// 
+    /// Note: only 1 column is required on the left side, more than one is optional.
     /// </summary>
     internal class SummaryColumnGenerator : IFormulaGenerator
     {

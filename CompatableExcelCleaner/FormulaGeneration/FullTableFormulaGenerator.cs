@@ -6,13 +6,14 @@ using System.Linq;
 namespace CompatableExcelCleaner
 {
 
+    //Used to tell the Formula Generator when to stop adding cells to a formula range
     public delegate bool IsBeyondFormulaRange(ExcelRange cell);
 
 
 
     /// <summary>
     /// Implementation of the IFormulaGenerator interface that searches for a row with the specifed header
-    /// and adds a formula that spans as far up as it can.
+    /// and adds a formula to each data cell in that row that spans as far up as it can.
     /// </summary>
     internal class FullTableFormulaGenerator : IFormulaGenerator
     {

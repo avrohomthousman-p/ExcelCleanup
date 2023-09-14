@@ -13,11 +13,13 @@ namespace CompatableExcelCleaner
 
 
     /// <summary>
-    /// Adds formulas to the end of "sections" found inside data columns of the worksheet. A section is defined as
-    /// a series of data cells that all corrispond to a single "key" which appears on the top left of that section.
+    /// Implementation of IFormulaGenerator that adds formulas to the bottom of "sections" found inside data columns
+    /// of the worksheet. A section is defined as a series of data cells that all corrispond to a single "key" which 
+    /// appears on the top left of that section. As an example of this, look at the report RentRollActivityItemized_New.
+    /// 
     /// The first string in the list of arguments for this class should follow this pattern: r=[insert regex] 
-    /// Where the regex is used to find the key for each section. After that, the titles of each data column 
-    /// that need formulas should be passed in as well.
+    /// Where the regex should match the keys for each section. After that argument, the titles of each data column 
+    /// that need formulas should be passed in as well (meaning, which columns need formulas at the end of each section).
     /// </summary>
     internal class PeriodicFormulaGenerator : IFormulaGenerator
     {

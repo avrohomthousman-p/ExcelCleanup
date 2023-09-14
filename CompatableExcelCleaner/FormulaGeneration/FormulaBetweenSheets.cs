@@ -8,9 +8,13 @@ using System.Threading.Tasks;
 namespace CompatableExcelCleaner.FormulaGeneration
 {
     /// <summary>
-    /// Implementation of IFormulaGenerator that builds formulas that sum up the totals at the bottom of multiple worksheets.
+    /// Implementation of IFormulaGenerator that builds formulas that sum up the totals from the bottom of multiple worksheets.
     /// The header argments for this class should simply be all the sheet numbers that are to be included in the sum, expressed 
     /// in the format "sheet[sheetNum]" with no brackets. The sheet numbers are zero based.
+    /// 
+    /// Note: the formula created by this implementation is always placed at the bottom of the current worksheet 
+    /// and always gets its data from the bottom row of other worksheets. This class does not provide an option
+    /// for changing where in a worksheet the data will come from.
     /// </summary>
     internal class FormulaBetweenSheets : IFormulaGenerator
     {

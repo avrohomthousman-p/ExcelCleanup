@@ -11,9 +11,10 @@ namespace CompatableExcelCleaner
     /// <summary>
     /// Generates formulas that add up cells from anywhere else in the worksheet. Header data should be passed
     /// to this class in this format: "headerOfFormulaCell~header1,header2,header3" where headerOfFormula cell
-    /// is the header before the cell that needs the formula and the other comma seperated headers are headers in front
-    /// of cells that should be included in the sum. If needed you can also specify subtraction by putting a minus sign
-    /// before the name of any of the headers.
+    /// is the header before  (to the left of) the cell that needs the formula and the other comma seperated 
+    /// headers are headers in front of (to the left of) cells that should be included in the sum. If needed,
+    /// you can also specify that a given header be subtracted instead of added by putting a minus sign before
+    /// the name of any of the headers.
     /// 
     /// Note: this class will NOT do all the formulas necessary on the worksheet, only the ones that cant be done by
     /// other systems becuase their cells are not near each other. This class should be used in addition to whatever other

@@ -45,19 +45,27 @@ namespace CompatableExcelCleaner
                     }
 
 
+                    //Get the formula generator object that will insert the formulas
                     IFormulaGenerator formulaGenerator = ReportMetaData.ChooseFormulaGenerator(reportName, i);
 
-                    if(formulaGenerator == null) //if this worksheet doesnt need formulas
+
+
+                    if(formulaGenerator == null)    //if this worksheet doesnt need formulas
                     {
-                        continue; //skip this worksheet
+                        continue;                   //skip this worksheet
                     }
 
+
+
+                    //get the arguments that are required for the formula generator
                     headers = ReportMetaData.GetFormulaGenerationArguments(reportName, i);
 
+
+                    //Actually add the formulas
                     formulaGenerator.InsertFormulas(worksheet, headers);
 
 
-                    //Add formulas for rows that are not contiguous if needed
+                    //Many reports require some additional formulas that will be added by the SummaryRowFormulaGenerator
                     SummaryRowFormulaGenerator summaryGenerator = new SummaryRowFormulaGenerator();
                     summaryGenerator.InsertFormulas(worksheet, headers);
                 }

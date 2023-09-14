@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 namespace CompatableExcelCleaner
 {
     /// <summary>
-    /// Implementation of IFormulaGenerator that looks for the specifed header followed by the other specified 
+    /// Implementation of IFormulaGenerator that looks for the specifed header followed by the other specified header
     /// (e.g. "Income" and "Total Income"), and treats the rows between those headers as a "formula range" that 
-    /// gets its own formula. Each header pair should be included in the string array passed to IsertFormulas
-    /// in this format:  [text of start header]=[text of end header]
+    /// gets its own formula. Each header pair should be included in the string array passed to InsertFormulas
+    /// in this format:  [text of start header]=[text of end header].
+    /// 
+    /// Note: for data cells to be considered part of the formula range they must be between the start header
+    /// and the end header IN TERMS OF ROW NUMBER ONLY. The column of the start and end header, as well as all columns 
+    /// to the right of that, will recieve summaries (assuming they contain data cells).
     /// </summary>
     internal class RowSegmentFormulaGenerator : IFormulaGenerator
     {
@@ -20,7 +24,7 @@ namespace CompatableExcelCleaner
         private IsDataCell isDataCell = new IsDataCell(FormulaManager.IsDollarValue);
 
 
-
+        /// <inheritdoc/>
         public void SetDataCellDefenition(IsDataCell altImplementation)
         {
             this.isDataCell = altImplementation;
@@ -28,6 +32,7 @@ namespace CompatableExcelCleaner
 
 
 
+        /// <inheritdoc/>
         public void InsertFormulas(ExcelWorksheet worksheet, string[] headers)
         {
             string startHeader, endHeader;

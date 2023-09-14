@@ -131,10 +131,10 @@ namespace ExcelDataCleanup
 
 
         /// <summary>
-        /// Determans what kind of report we are cleaning based on the name of the report
+        /// Extracts the report name from the file path given
         /// </summary>
         /// <param name="filename">the name of the report's file</param>
-        /// <returns>the name of the report type, or an empty string if it could not be determaned</returns>
+        /// <returns>the name of the report type</returns>
         private static string GetReportName(string filename)
         {
 
@@ -443,8 +443,8 @@ namespace ExcelDataCleanup
 
 
         /// <summary>
-        /// Checks all cells in the worksheet for numbers that are being stored as text, and replaces them with the actual number.
-        /// The purpose of this is to remove the excel warning that comes up when numbers are stored as text.
+        /// Checks all cells in the worksheet for data that is stored with bad formatting, and gives them proper formatting.
+        /// Examples include dollar values that are being stored as text.
         /// </summary>
         /// <param name="worksheet">the worksheet currently being cleaned</param>
         private static void CorrectCellDataTypes(ExcelWorksheet worksheet)
@@ -475,7 +475,9 @@ namespace ExcelDataCleanup
 
                     double unused;
 
-                    if (Double.TryParse(cell.Text, out unused))   //if it is not a dollar value, we want to keep it as a string
+                    // if it is a number but not a dollar value (like an ID), we want to store it as a number,
+                    // and not get an excel warning
+                    if (Double.TryParse(cell.Text, out unused))   
                     {
 
                         //Ignore the excel error that we have a number stored as a string
@@ -484,13 +486,15 @@ namespace ExcelDataCleanup
                         continue;                                 //skip the formatting at the end of this if statement
 
                     }
+                    // if it is a dollar value stored as a string, we want to convert it to a double and format it
+                    // with a dollar sign, commas, and 2 decimals
                     else if (cell.Text.StartsWith("$") || (cell.Text.StartsWith("($") && cell.Text.EndsWith(")")))
                     {
 
                         bool isNegative = cell.Text.StartsWith("(");
 
                         cell.Style.Numberformat.Format = "$#,##0.00;($#,##0.00)";
-                        cell.Value = Double.Parse(CleanDollarValue(cell.Text));
+                        cell.Value = Double.Parse(CleanDollarValue(cell.Text)); //remove all non-digits, and parse to double
 
                         if (isNegative)
                         {
@@ -498,12 +502,14 @@ namespace ExcelDataCleanup
                         }
 
                     }
+                    //Replaces all dates formmated as mm/dd/yy with format mm/dd/yyyy
                     else if (IsDateWith2DigitYear(cell.Text))
                     {
                         string fourDigitYear = cell.Text.Substring(0, 6) + "20" + cell.Text.Substring(6);
                         cell.SetCellValue(0, 0, fourDigitYear);
                         continue;
                     }
+                    //Percentages that are stored as text, should be stored as numbers with a % sign formatted in
                     else if (IsPercentage(cell.Text))
                     {
                         cell.Style.Numberformat.Format = "#0\\.00%;(#0\\.00%)";

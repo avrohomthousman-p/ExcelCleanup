@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 namespace CompatableExcelCleaner.FormulaGeneration
 {
     /// <summary>
-    /// Functions the same way as the full table formula generator except that it adds all non-formula cells in the
-    /// column instead of all cells.
+    /// Functions the same way as the full table formula generator except that it only adds the non-formula cells in the
+    /// column instead of adding all cells (formula or not).
     /// </summary>
     internal class SumOtherSums : FullTableFormulaGenerator
     {
@@ -22,7 +22,7 @@ namespace CompatableExcelCleaner.FormulaGeneration
 
 
 
-
+        /// <inheritdoc/>
         protected override void FillInFormulas(ExcelWorksheet worksheet, int row, int col)
         {
             ExcelIterator iter = new ExcelIterator(worksheet, row, col + 1);
