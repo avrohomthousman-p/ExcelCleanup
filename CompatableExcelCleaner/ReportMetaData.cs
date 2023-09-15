@@ -125,6 +125,7 @@ namespace CompatableExcelCleaner
                 "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" });
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
+            formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysis", 0), new String[] { "Total" });
 
 
 
@@ -153,7 +154,6 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("TrialBalanceVariance", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysis", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByJob", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("Budget", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollCommercialItemized", 0), new String[] { });
@@ -416,6 +416,7 @@ namespace CompatableExcelCleaner
                 case "ReportCashReceiptsSummary":
                 case "JournalLedger":
                 case "AgedAccountsReceivable":
+                case "CollectionsAnalysis":
                     return new FullTableFormulaGenerator();
 
 
@@ -437,7 +438,6 @@ namespace CompatableExcelCleaner
                 case "ProfitAndLossExtendedVariance":
                 case "RentRollActivity":
                 case "TrialBalanceVariance":
-                case "CollectionsAnalysis":
                 case "ProfitAndLossStatementByJob":
                 case "Budget":
                 case "RentRollCommercialItemized":
