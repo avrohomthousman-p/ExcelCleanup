@@ -102,6 +102,8 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\missing-reports\ReportAccountBalances_8222023.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\missing-reports\RentRollAll.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\missing-reports\RentRollAllItemized_8222023.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\missing-reports\Budget.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\missing-reports\CollectionsAnalysis.xlsx
 
 
 
@@ -486,9 +488,23 @@ namespace ExcelDataCleanup
                         continue;                                 //skip the formatting at the end of this if statement
 
                     }
-                    // if it is a dollar value stored as a string, we want to convert it to a double and format it
+                    // if it a dollar value WITHOUT cents and stored as a string,  we want to convert it to an int and
+                    // format it with a dollar sign and commas.
+                    else if (IsDollarValue(cell.Text) && cell.Text.IndexOf('.') < 0)
+                    {
+                        bool isNegative = cell.Text.StartsWith("(");
+
+                        cell.Style.Numberformat.Format = "$#,##0;($#,##0)";
+                        cell.Value = Int32.Parse(CleanDollarValue(cell.Text)); //remove all non-digits, and parse to double
+
+                        if (isNegative)
+                        {
+                            cell.Value = (int)cell.Value * -1;
+                        }
+                    }
+                    // if it is a dollar value WITH cents stored as a string, we want to convert it to a double and format it
                     // with a dollar sign, commas, and 2 decimals
-                    else if (cell.Text.StartsWith("$") || (cell.Text.StartsWith("($") && cell.Text.EndsWith(")")))
+                    else if (IsDollarValue(cell.Text))
                     {
 
                         bool isNegative = cell.Text.StartsWith("(");
@@ -542,6 +558,19 @@ namespace ExcelDataCleanup
                     }
                 }
             }
+        }
+
+
+
+
+        /// <summary>
+        /// Checks if the specified cell is a dollar value or not
+        /// </summary>
+        /// <param name="text">the text being checked</param>
+        /// <returns>true if the specified text is a dollar value and false otherwise</returns>
+        private static bool IsDollarValue(string text)
+        {
+            return text.StartsWith("$") || (text.StartsWith("($") && text.EndsWith(")"));
         }
 
 
@@ -610,7 +639,7 @@ namespace ExcelDataCleanup
         /// <returns>true if the text is a percentage stored in text, or false otherwise</returns>
         private static bool IsPercentage(string text)
         {
-            return Regex.IsMatch(text, "(100([.]00)?%)|([.]\\d\\d%)|(\\d{1,2}([.]\\d\\d)?%)");
+            return Regex.IsMatch(text, "^((100([.]00)?%)|([.]\\d\\d%)|(\\d{1,2}([.]\\d\\d)?%))$");
         }
 
 
