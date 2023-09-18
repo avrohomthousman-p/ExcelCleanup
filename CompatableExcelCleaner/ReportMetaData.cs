@@ -37,7 +37,8 @@ namespace CompatableExcelCleaner
 
             //reports that work fine (last time I checked)
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByPeriod", 0), new String[] { 
-                "Total Income", "Total Expense", "Net Operating Income~-Total Expense,Total Income",  "Net Income~Net Operating Income,-Total Expense"});
+                "Total Income", "Total Expense", "Net Operating Income~-Total Expense,Total Income",  
+                "Net Income~Net Operating Income,-Total Expense"});
             formulaGenerationArguments.Add(new Worksheet("RentRollAll", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("BalanceSheetDrillthrough", 0), new String[]
                     { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
@@ -52,7 +53,8 @@ namespace CompatableExcelCleaner
                 "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", 
                 "Net Income~Net Operating Income,-Total Expense" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 1), new String[] { "Total For ([A-Z][a-z]+)( [A-Z][a-z]+)*:" });
+            formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 1), new String[] 
+            { "Total For ([A-Z][a-z]+)( [A-Z][a-z]+)*:" });
             formulaGenerationArguments.Add(new Worksheet("TrialBalance", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] {
                         "Total Tenant Receivables:", "Total Other Receivables:",
@@ -85,7 +87,8 @@ namespace CompatableExcelCleaner
                 "Equity=Total Equity", "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities",
                 "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets"
             });
-            formulaGenerationArguments.Add(new Worksheet("ChargesCreditsReport", 0), new String[] { "Total: \\$(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });
+            formulaGenerationArguments.Add(new Worksheet("ChargesCreditsReport", 0), new String[] 
+            { "Total: \\$(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });
             formulaGenerationArguments.Add(new Worksheet("SubsidyRentRollReport", 0), new String[] {
                 "Current Tenant \\sPortion of the Rent,Current  Subsidy Portion of the Rent=>Current Monthly \\sContract Rent" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityCompSummary", 0), new String[] {
@@ -123,11 +126,15 @@ namespace CompatableExcelCleaner
                 "Elevators=Total Elevators", "Clubhouse=Total Clubhouse",
                 "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse",
                 "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" });
+            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] 
+            { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" });
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysis", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("InvoiceRecurringReport", 0), new String[] { "Total:" });
             formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { "Total:" });
+            formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { "Total" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByJob", 0), new String[] 
+            { "Income=Total Income", "Expense=Total Expense", "Net Income~Total Income,-Total Expense" });
 
 
 
@@ -150,12 +157,10 @@ namespace CompatableExcelCleaner
 
 
             //Reports I dont have
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense" });//mostly working
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("TrialBalanceVariance", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByJob", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("Budget", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollCommercialItemized", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityTotals", 0), new String[] { });
@@ -275,6 +280,14 @@ namespace CompatableExcelCleaner
 
 
 
+                case "ProfitAndLossStatementByJob":
+                    RowSegmentFormulaGenerator gen = new RowSegmentFormulaGenerator();
+                    gen.trimFormulaRange = false;
+                    return gen;
+
+
+
+
                 case "ReportOutstandingBalance":
                     switch (worksheetNum)
                     {
@@ -381,11 +394,13 @@ namespace CompatableExcelCleaner
 
 
 
+                case "ReportPayablesRegister":
                 case "AgedPayables":
                 case "AgedReceivables":
                     formulaGenerator = new FullTableFormulaGenerator();
                     formulaGenerator.SetDefenitionForBeyondFormulaRange(formulaGenerator.IsNonDataCell);
                     return formulaGenerator;
+
 
 
 
@@ -437,11 +452,9 @@ namespace CompatableExcelCleaner
 
 
                 //Reports I dont have
-                case "ReportPayablesRegister":
                 case "UnitInvoiceReport":
                 case "RentRollActivity":
                 case "TrialBalanceVariance":
-                case "ProfitAndLossStatementByJob":
                 case "Budget":
                 case "RentRollCommercialItemized":
                 case "RentRollActivityTotals":

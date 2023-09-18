@@ -1,6 +1,7 @@
 ﻿using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
@@ -22,6 +23,20 @@ namespace CompatableExcelCleaner
     {
 
         private IsDataCell isDataCell = new IsDataCell(FormulaManager.IsDollarValue);
+
+
+        private bool trimRange = true;
+        /// <summary>
+        /// controls whether or not the system skips the whitespace immideatly after the top header of each formula range
+        /// e.g. if we are summing up all cells from "Income" to "Total Income", this boolean decides if the formula 
+        /// should include the empty cells just below the "Income" row
+        /// </summary>
+        public bool trimFormulaRange 
+        { 
+            get { return trimRange; } 
+            set { trimRange = value; } 
+        }
+
 
 
         /// <inheritdoc/>
@@ -149,7 +164,10 @@ namespace CompatableExcelCleaner
 
                 if (this.isDataCell(cell))
                 {
-                    startRow += CountEmptyCellsOnTop(worksheet, startRow, endRow, col); //Skip the whitespace on top
+                    if (trimRange)
+                    {     
+                        startRow += CountEmptyCellsOnTop(worksheet, startRow, endRow, col); //Skip the whitespace on top
+                    }
                     cell.Formula = FormulaManager.GenerateFormula(worksheet, startRow, endRow - 1, col);
                     cell.Style.Locked = true;
                     Console.WriteLine("Cell " + cell.Address + " has been given this formula: " + cell.Formula);

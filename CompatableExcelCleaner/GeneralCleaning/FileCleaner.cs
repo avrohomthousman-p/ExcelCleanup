@@ -107,6 +107,8 @@ namespace ExcelDataCleanup
                 // C:\Users\avroh\Downloads\ExcelProject\missing-reports\InvoiceRecurringReport.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\missing-reports\ProfitAndLossExtendedVariance.xlsx
                 // C:\Users\avroh\Downloads\ExcelProject\missing-reports\VendorInvoiceReport.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\missing-reports\ReportPayablesRegister.xlsx
+                // C:\Users\avroh\Downloads\ExcelProject\missing-reports\ProfitAndLossStatementByJob.xlsx
 
 
 
