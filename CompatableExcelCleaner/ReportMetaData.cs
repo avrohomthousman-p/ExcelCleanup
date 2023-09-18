@@ -135,6 +135,10 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByJob", 0), new String[] 
             { "Income=Total Income", "Expense=Total Expense", "Net Income~Total Income,-Total Expense" });
+            formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { "Total:" });
+            formulaGenerationArguments.Add(new Worksheet("TrialBalanceVariance", 0), new String[] { "Asset=Total Asset",
+                "Liability=Total Liability", "Equity=Total Equity", "Income=Total Income", "Expense=Total Expense",
+                "Total:~Total Expense,Total Income,Total Equity,Total Liability,Total Asset" });
 
 
 
@@ -142,31 +146,25 @@ namespace CompatableExcelCleaner
 
 
             //reports that mostly work but have small issues
-            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //Should there be a vertical summary?
-            
-            
-            
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense" });//mostly working
+            formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//works, but the original has incorrect totals
 
 
 
-            //reports that cannot be processed by any existing system
-            formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//the original has incorrect totals
 
-
+            //reports I have questions about
+            formulaGenerationArguments.Add(new Worksheet("Budget", 0), new String[] { }); //issue with dollar signs
+            formulaGenerationArguments.Add(new Worksheet("RentRollCommercialItemized", 0), new String[] { });//minor totals don't add up
+            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //totals dont add up
 
 
 
             //Reports I dont have
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense" });//mostly working
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivity", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("TrialBalanceVariance", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("Budget", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollCommercialItemized", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityTotals", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportEscalateCharges", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized", 0), new String[] { });
-            
+            formulaGenerationArguments.Add(new Worksheet("RentRollActivity", 0), new String[] { });
+
 
 
 
@@ -280,6 +278,7 @@ namespace CompatableExcelCleaner
 
 
 
+                case "TrialBalanceVariance":
                 case "ProfitAndLossStatementByJob":
                     RowSegmentFormulaGenerator gen = new RowSegmentFormulaGenerator();
                     gen.trimFormulaRange = false;
@@ -437,6 +436,7 @@ namespace CompatableExcelCleaner
                 case "CollectionsAnalysis":
                 case "InvoiceRecurringReport":
                 case "VendorInvoiceReport":
+                case "UnitInvoiceReport":
                     return new FullTableFormulaGenerator();
 
 
@@ -452,9 +452,7 @@ namespace CompatableExcelCleaner
 
 
                 //Reports I dont have
-                case "UnitInvoiceReport":
                 case "RentRollActivity":
-                case "TrialBalanceVariance":
                 case "Budget":
                 case "RentRollCommercialItemized":
                 case "RentRollActivityTotals":
