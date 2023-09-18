@@ -126,6 +126,8 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" });
             formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
             formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysis", 0), new String[] { "Total" });
+            formulaGenerationArguments.Add(new Worksheet("InvoiceRecurringReport", 0), new String[] { "Total:" });
+            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { "Total:" });
 
 
 
@@ -148,9 +150,8 @@ namespace CompatableExcelCleaner
 
 
             //Reports I dont have
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { });
+            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense" });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivity", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("TrialBalanceVariance", 0), new String[] { });
@@ -160,7 +161,7 @@ namespace CompatableExcelCleaner
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityTotals", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("ReportEscalateCharges", 0), new String[] { });
             formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("InvoiceRecurringReport", 0), new String[] { });
+            
 
 
 
@@ -194,6 +195,7 @@ namespace CompatableExcelCleaner
                 case "ReportTenantSummary":
                 case "UnitInfoReport":
                 case "ReportCashReceiptsSummary":
+                case "ProfitAndLossExtendedVariance":
                     return new BackupMergeCleaner();
 
 
@@ -268,6 +270,7 @@ namespace CompatableExcelCleaner
                 case "ProfitAndLossBudget":
                 case "BalanceSheetPropBreakdown":
                 case "ProfitAndLossStatementDrillThrough":
+                case "ProfitAndLossExtendedVariance":
                     return new RowSegmentFormulaGenerator();
 
 
@@ -417,6 +420,8 @@ namespace CompatableExcelCleaner
                 case "JournalLedger":
                 case "AgedAccountsReceivable":
                 case "CollectionsAnalysis":
+                case "InvoiceRecurringReport":
+                case "VendorInvoiceReport":
                     return new FullTableFormulaGenerator();
 
 
@@ -434,8 +439,6 @@ namespace CompatableExcelCleaner
                 //Reports I dont have
                 case "ReportPayablesRegister":
                 case "UnitInvoiceReport":
-                case "VendorInvoiceReport":
-                case "ProfitAndLossExtendedVariance":
                 case "RentRollActivity":
                 case "TrialBalanceVariance":
                 case "ProfitAndLossStatementByJob":
@@ -444,7 +447,7 @@ namespace CompatableExcelCleaner
                 case "RentRollActivityTotals":
                 case "ReportEscalateCharges":
                 case "RentRollActivityItemized":
-                case "InvoiceRecurringReport":
+                
 
 
 
