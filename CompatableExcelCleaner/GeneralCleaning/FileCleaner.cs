@@ -495,6 +495,12 @@ namespace ExcelDataCleanup
                         continue;                                 //skip the formatting at the end of this if statement
 
                     }
+                    // Some reports put just a dollar sign instead of a dollar amount of 0
+                    else if(cell.Text == "$")
+                    {
+                        cell.Style.Numberformat.Format = "$#,##0.00;($#,##0.00)";
+                        cell.Value = 0.0;
+                    }
                     // if it a dollar value WITHOUT cents and stored as a string,  we want to convert it to an int and
                     // format it with a dollar sign and commas.
                     else if (IsDollarValue(cell.Text) && cell.Text.IndexOf('.') < 0)
