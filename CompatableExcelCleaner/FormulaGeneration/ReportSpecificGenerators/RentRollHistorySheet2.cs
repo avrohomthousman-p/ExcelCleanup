@@ -124,7 +124,7 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
         {
             ExcelIterator iter = new ExcelIterator(worksheet, sectionStartRow, 1);
             ExcelRange startCell = iter.GetFirstMatchingCell(cell => cell.Text == "Grand Total:");
-            iter.SetCurrentLocation(iter.GetCurrentRow(), iter.GetCurrentCol() + 1); //skip the "Grand Total:" header cell
+            iter.SetCurrentLocation(iter.GetCurrentRow(), iter.GetCurrentCol() + 2); //skip the "Grand Total:" header cell and empty cell after it
             ExcelRange endCell = iter.GetCells(ExcelIterator.SHIFT_RIGHT,
                 cell => !FormulaManager.CellHasFormula(cell)).Last();
 

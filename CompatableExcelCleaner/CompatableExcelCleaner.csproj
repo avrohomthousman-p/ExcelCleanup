@@ -75,6 +75,7 @@
     <Compile Include="FormulaGeneration\PeriodicFormulaGenerator.cs" />
     <Compile Include="FormulaGeneration\SummaryRowFormulaGenerator.cs" />
     <Compile Include="ExcelIterator.cs" />
+    <Compile Include="GeneralCleaning\ReAlignDataCells.cs" />
     <Compile Include="ReportMetaData.cs" />
     <Compile Include="GeneralCleaning\FileCleaner.cs" />
     <Compile Include="FormulaGeneration\FormulaManager.cs" />

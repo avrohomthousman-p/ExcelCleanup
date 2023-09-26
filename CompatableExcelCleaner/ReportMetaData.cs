@@ -1,5 +1,6 @@
 ﻿using CompatableExcelCleaner.FormulaGeneration;
 using CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators;
+using CompatableExcelCleaner.GeneralCleaning;
 using ExcelDataCleanup;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace CompatableExcelCleaner
     {
 
         private static readonly string anyMonth = "(January|February|March|April|May|June|July|August|September|October|November|December)";
-        private static readonly string anyDate = "\\d{2}/\\d{2}/\\d{4}";
+        private static readonly string anyDate = "\\d{1,2}/\\d{1,2}/\\d{4}";
         private static readonly string anyYear = "[12]\\d\\d\\d";
 
 
@@ -48,7 +49,6 @@ namespace CompatableExcelCleaner
 
 
                 case "ReportOutstandingBalance":
-                case "RentRollHistory":
                     switch (worksheetNumber)
                     {
                         case 1:
@@ -56,6 +56,22 @@ namespace CompatableExcelCleaner
                         default:
                             return new PrimaryMergeCleaner();
                     }
+
+
+
+                case "RentRollHistory":
+                    switch (worksheetNumber)
+                    {
+                        case 1:
+                            return new ReAlignDataCells("Vacancy %");
+                        default:
+                            return new PrimaryMergeCleaner();
+                    }
+
+
+
+                case "Budget":
+                    return new ReAlignDataCells();
 
 
 
@@ -292,16 +308,17 @@ namespace CompatableExcelCleaner
 
 
 
+                //Reports Im working on
+                case "Budget":
+                case "RentRollCommercialItemized":
 
 
 
                 //Reports I dont have
-                case "RentRollActivity":
-                case "Budget":
-                case "RentRollCommercialItemized":
                 case "RentRollActivityTotals":
                 case "ReportEscalateCharges":
                 case "RentRollActivityItemized":
+                case "RentRollActivity":
                 
 
 

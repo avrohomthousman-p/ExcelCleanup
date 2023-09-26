@@ -23,11 +23,10 @@ namespace ExcelDataCleanup
         private static readonly int NUM_FULL_COLUMNS_REQUIRED = 3;
 
 
-        private int firstRowOfTable = -1;
+        protected int firstRowOfTable = -1;
 
 
-        //private bool[] isDataColumn;
-        private HashSet<Tuple<int, int>> mergeRangesOfDataCells;
+        protected HashSet<Tuple<int, int>> mergeRangesOfDataCells;
 
 
         private Dictionary<int, double> originalColumnWidths = new Dictionary<int, double>();
@@ -555,7 +554,7 @@ namespace ExcelDataCleanup
 
             //We don't want to delete any columns before the first data column becuase that might 
             //mess up the whitespace around minor headers
-            int firstDataColumn = FindFirstDataColumn(worksheet);
+            int firstDataColumn = FindFirstDataColumn(worksheet) + 1;
 
 
             for (int col = worksheet.Dimension.Columns; col > firstDataColumn; col--)
@@ -584,7 +583,7 @@ namespace ExcelDataCleanup
                 ExcelRange cell = worksheet.Cells[firstRowOfTable, col];
                 if (!IsEmptyCell(cell))
                 {
-                    return col + 1;
+                    return col;
                 }
             }
 
