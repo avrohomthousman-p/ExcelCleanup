@@ -3,6 +3,7 @@ using CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators;
 using ExcelDataCleanup;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace CompatableExcelCleaner
@@ -18,163 +19,6 @@ namespace CompatableExcelCleaner
         private static readonly string anyMonth = "(January|February|March|April|May|June|July|August|September|October|November|December)";
         private static readonly string anyDate = "\\d{2}/\\d{2}/\\d{4}";
         private static readonly string anyYear = "[12]\\d\\d\\d";
-
-
-        // Stores the arguments needed to generate formulas for each report and worksheet. If a report/worksheet
-        // is not in the dictionary, that means it doesnt need any formulas
-        private static readonly Dictionary<Worksheet, string[]> formulaGenerationArguments = new Dictionary<Worksheet, string[]>();
-
-
-
-
-
-        static ReportMetaData()
-        {
-
-            //Fill our dictionary with all the reports and all the data we need to give them for formula generation
-
-
-
-            //reports that work fine (last time I checked)
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByPeriod", 0), new String[] { 
-                "Total Income", "Total Expense", "Net Operating Income~-Total Expense,Total Income",  
-                "Net Income~Net Operating Income,-Total Expense"});
-            formulaGenerationArguments.Add(new Worksheet("RentRollAll", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("BalanceSheetDrillthrough", 0), new String[]
-                    { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
-                        "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
-                        "Long Term Liability=Total Long Term Liability", "Equity=Total Equity",
-                        "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities",
-                        "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets",
-                        "Total Liabilities And Equity~Total Equity,Total Liabilities"
-                    });
-            formulaGenerationArguments.Add(new Worksheet("AgedReceivables", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossComp", 0), new String[] { 
-                "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", 
-                "Net Income~Net Operating Income,-Total Expense" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivity_New", 1), new String[] 
-            { "Total For ([A-Z][a-z]+)( [A-Z][a-z]+)*:" });
-            formulaGenerationArguments.Add(new Worksheet("TrialBalance", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 0), new String[] {
-                        "Total Tenant Receivables:", "Total Other Receivables:",
-                        $"Total For {anyMonth} {anyYear}:~Total Tenant Receivables:,Total Other Receivables:",
-                        $"Total For Commons at White Marsh:~Total For {anyMonth} {anyYear}:"});
-
-            formulaGenerationArguments.Add(new Worksheet("ReportCashReceiptsSummary", 1), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("AgedPayables", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("ReportTenantBal", 0), new String[] { "Total Open Charges:", "Balance:~Total Open Charges:,Total Future Charges:,Total Unallocated Payments:" });
-            formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysisSummary", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 1), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 2), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 3), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 4), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 5), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 6), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 7), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 8), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 9), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 10), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossBudget", 11), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense", "Net Income~-Total Expense,Total Income,Net Operating Income" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollPortfolio", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("VacancyLoss", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("VacancyLoss", 1), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("BalanceSheetComp", 0), new String[]
-            { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
-                "Current Liabilities=Total Current Liabilities", "Liability=Total Liability",
-                "Liabilities And Equity=Total Liabilities And Equity", "Long Term Liability=Total Long Term Liability",
-                "Equity=Total Equity", "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities",
-                "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets"
-            });
-            formulaGenerationArguments.Add(new Worksheet("ChargesCreditsReport", 0), new String[] 
-            { "Total: \\$(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" });
-            formulaGenerationArguments.Add(new Worksheet("SubsidyRentRollReport", 0), new String[] {
-                "Current Tenant \\sPortion of the Rent,Current  Subsidy Portion of the Rent=>Current Monthly \\sContract Rent" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityCompSummary", 0), new String[] {
-                "-Opening A/R,Closing A/R=>A/R [+][(]-[)]" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollHistory", 1), new String[] 
-                { "Residential: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", "Total: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d" });
-            formulaGenerationArguments.Add(new Worksheet("JournalLedger", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized_New", 0), new String[] { "1r=(\\d{4})|([A-Z]\\d\\d)", "1Beg\\s+Balance", "1Charges", "1Adjustments", "1Payments", "1End Balance", "1Change", "2Total:" });
-            formulaGenerationArguments.Add(new Worksheet("ReportAccountBalances", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("BalanceSheetPropBreakdown", 0), new String[] 
-                { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", "Other Asset=Total Other Asset",
-                 "Current Liabilities=Total Current Liabilities", "Long Term Liability=Total Long Term Liability", 
-                    "Equity=Total Equity", "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets",
-                  "Total Liabilities~Total Current Liabilities,Total Long Term Liability", 
-                "Total Liabilities And Equity~Total Equity,Total Liabilities"});
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 0), new String[] { "Amount Owed", "Amount Paid", "Balance" });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 1), new String[] { "Amount Owed", "Amount Paid", "Balance" });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 2), new String[] { "Amount Owed", "Amount Paid", "Balance" });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 3), new String[] { "Amount Owed", "Amount Paid", "Balance" });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 4), new String[] { "Amount Owed", "Amount Paid", "Balance" });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReportWithJournalAccounts", 5), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("ReportCashReceipts", 0), new String[] { "r=[A-Z]\\d{4}", "Charge Total", "Amount" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 0), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 1), new String[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:", "3sheet0", "3sheet1" });
-            formulaGenerationArguments.Add(new Worksheet("RentRollAllItemized", 2), new String[] { "1Total:", "2Subtotals=Total:" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 0), new String[] {
-                "Expense=Total Expense", "Income=Total Income", "Net Operating Income~-Total Expense,Total Income",
-                "Net Income~Net Operating Income,-Total Expense" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementDrillThrough", 1), new String[] {
-                "Expense=Total Expense", "Income=Total Income", "Net Operating Income~-Total Expense,Total Income",
-                "Net Income~Net Operating Income,-Total Expense" });
-            formulaGenerationArguments.Add(new Worksheet("PayablesAccountReport", 0), new String[] {
-                "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", "Garage=Total Garage",
-                "Elevators=Total Elevators", "Clubhouse=Total Clubhouse",
-                "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse",
-                "Total~Total Common Area CapEx", "Total:~Total Common Area CapEx" });
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 0), new String[] 
-            { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" });
-            formulaGenerationArguments.Add(new Worksheet("ReportOutstandingBalance", 1), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("CollectionsAnalysis", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("InvoiceRecurringReport", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("VendorInvoiceReport", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("ReportPayablesRegister", 0), new String[] { "Total" });
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossStatementByJob", 0), new String[] 
-            { "Income=Total Income", "Expense=Total Expense", "Net Income~Total Income,-Total Expense" });
-            formulaGenerationArguments.Add(new Worksheet("UnitInvoiceReport", 0), new String[] { "Total:" });
-            formulaGenerationArguments.Add(new Worksheet("TrialBalanceVariance", 0), new String[] { "Asset=Total Asset",
-                "Liability=Total Liability", "Equity=Total Equity", "Income=Total Income", "Expense=Total Expense",
-                "Total:~Total Expense,Total Income,Total Equity,Total Liability,Total Asset" });
-
-
-
-
-
-
-            //reports that mostly work but have small issues
-            formulaGenerationArguments.Add(new Worksheet("ProfitAndLossExtendedVariance", 0), new String[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense" });//mostly working
-            formulaGenerationArguments.Add(new Worksheet("AgedAccountsReceivable", 0), new String[] { "Total" });//works, but the original has incorrect totals
-
-
-
-
-            //reports I have questions about
-            formulaGenerationArguments.Add(new Worksheet("Budget", 0), new String[] { }); //issue with dollar signs
-            formulaGenerationArguments.Add(new Worksheet("RentRollCommercialItemized", 0), new String[] { });//minor totals don't add up
-            formulaGenerationArguments.Add(new Worksheet("LedgerReport", 0), new String[] { "Total \\d+ - Prepaid Contracts" }); //totals dont add up
-
-
-
-            //Reports I dont have
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityTotals", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("ReportEscalateCharges", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivityItemized", 0), new String[] { });
-            formulaGenerationArguments.Add(new Worksheet("RentRollActivity", 0), new String[] { });
-
-
-
-
-
-
-            //this report is missing the necessary columns to be able to correctly calculate the formuls
-            //untill that changes, this report will not be given formulas
-            formulaGenerationArguments.Add(new Worksheet("PaymentsHistory", 0), new String[] { });
-
-        }
 
 
 
@@ -487,22 +331,281 @@ namespace CompatableExcelCleaner
         /// </returns>
         internal static string[] GetFormulaGenerationArguments(string reportName, int worksheetNum)
         {
-            return formulaGenerationArguments[  new Worksheet(reportName, worksheetNum)  ];
-        }
+            switch (reportName)
+            {
+
+
+                case "ProfitAndLossStatementByPeriod":
+                    return new string[] { "Total Income", "Total Expense", "Net Operating Income~-Total Expense,Total Income",
+                        "Net Income~Net Operating Income,-Total Expense" };
 
 
 
-        /// <summary>
-        /// Checks if the specified worksheet in the specified report requires formulas
-        /// </summary>
-        /// <param name="reportName">the name of the report</param>
-        /// <param name="worksheetNumber">the index of the worksheet</param>
-        /// <returns>true if the worksheet specified needs formulas and false otherwise</returns>
-        internal static bool RequiresFormulas(string reportName, int worksheetNumber)
-        {
-            string[] ignoredResult = new string[0];
 
-            return formulaGenerationArguments.TryGetValue(new Worksheet(reportName, worksheetNumber), out ignoredResult);
+                case "BalanceSheetDrillthrough":
+                    return new string[] { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset", 
+                        "Other Asset=Total Other Asset", "Current Liabilities=Total Current Liabilities",
+                        "Liability=Total Liability", "Long Term Liability=Total Long Term Liability", 
+                        "Equity=Total Equity", "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities",
+                        "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets", 
+                        "Total Liabilities And Equity~Total Equity,Total Liabilities" };
+
+
+
+
+                case "ProfitAndLossComp":
+                    return new string[] { "INCOME=Total Income", "EXPENSE=Total Expense", 
+                        "Net Operating Income~Total Income,-Total Expense", "Net Income~Net Operating Income,-Total Expense" };
+
+
+
+                case "RentRollActivity_New":
+                    switch (worksheetNum)
+                    {
+                        case 0:
+                            return new string[] { "Total:" };
+
+                        case 1:
+                            return new string[] { "Total For ([A-Z][a-z]+)( [A-Z][a-z]+)*:" };
+
+                        default:
+                            return new string[0];
+                    }
+
+
+
+
+                case "ReportCashReceiptsSummary":
+                    switch (worksheetNum)
+                    {
+                        case 0:
+                            return new string[] { "Total Tenant Receivables:", "Total Other Receivables:", 
+                                "Total For (January|February|March|April|May|June|July|August|September|October|November|December) [12]\\d\\d\\d:~Total Tenant Receivables:,Total Other Receivables:",
+                                "Total For Commons at White Marsh:~Total For (January|February|March|April|May|June|July|August|September|October|November|December) [12]\\d\\d\\d:" };
+
+                        default:
+                            return new string[0];
+                    }
+
+
+
+
+                case "ReportTenantBal":
+                    return new string[] { "Total Open Charges:", 
+                        "Balance:~Total Open Charges:,Total Future Charges:,Total Unallocated Payments:" };
+
+
+
+
+                case "ProfitAndLossBudget":
+                    return new string[] { "INCOME=Total Income", "EXPENSE=Total Expense", 
+                        "Net Operating Income~Total Income,-Total Expense", 
+                        "Net Income~-Total Expense,Total Income,Net Operating Income" };
+
+
+
+
+                case "BalanceSheetComp":
+                    return new string[] { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset",
+                        "Other Asset=Total Other Asset", "Current Liabilities=Total Current Liabilities",
+                        "Liability=Total Liability", "Liabilities And Equity=Total Liabilities And Equity",
+                        "Long Term Liability=Total Long Term Liability", "Equity=Total Equity", 
+                        "Total Liabilities~Total Long Term Liability,Total Liability,Total Current Liabilities",
+                        "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets" };
+
+
+
+
+                case "ChargesCreditsReport":
+                    return new string[] { "Total: \\$(\\d\\d\\d,)*\\d?\\d?\\d[.]\\d\\d" };
+
+
+
+
+                case "SubsidyRentRollReport":
+                    return new string[] { 
+                        "Current Tenant \\sPortion of the Rent,Current  Subsidy Portion of the Rent=>Current Monthly \\sContract Rent" };
+
+
+
+
+                case "RentRollActivityCompSummary":
+                    return new string[] { "-Opening A/R,Closing A/R=>A/R [+][(]-[)]" };
+
+
+
+
+                case "RentRollHistory":
+                    switch (worksheetNum)
+                    {
+                        case 1:
+                            return new string[] { "Residential: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", "Total: \\$\\d+(,\\d\\d\\d)*[.]\\d\\d", };
+
+                        default:
+                            return new string[0];
+                    }
+
+
+
+
+
+
+                case "RentRollActivityItemized_New":
+                    return new string[] { "1r=(\\d{4})|([A-Z]\\d\\d)", "1Beg\\s+Balance", "1Charges", "1Adjustments",
+                        "1Payments", "1End Balance", "1Change", "2Total:" };
+
+
+
+
+                case "BalanceSheetPropBreakdown":
+                    return new string[] { "Current Assets=Total Current Assets", "Fixed Asset=Total Fixed Asset",
+                        "Other Asset=Total Other Asset", "Current Liabilities=Total Current Liabilities", 
+                        "Long Term Liability=Total Long Term Liability", "Equity=Total Equity", 
+                        "Total Assets~Total Other Asset,Total Fixed Asset,Total Current Assets", 
+                        "Total Liabilities~Total Current Liabilities,Total Long Term Liability", 
+                        "Total Liabilities And Equity~Total Equity,Total Liabilities" };
+
+
+
+
+                case "VendorInvoiceReportWithJournalAccounts":
+                    switch (worksheetNum)
+                    {
+                        case 5:
+                            return new string[] { "Total:" };
+
+                        default:
+                            return new string[] { "Amount Owed", "Amount Paid", "Balance" };
+                    }
+
+
+
+
+                case "ReportCashReceipts":
+                    return new string[] { "r=[A-Z]\\d{4}", "Charge Total", "Amount" };
+
+
+
+
+                case "RentRollAllItemized":
+                    switch (worksheetNum)
+                    {
+
+                        case 0:
+                            return new string[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:" };
+
+                        case 1:
+                            return new string[] { "1r=[A-Z]-\\d\\d", "1Monthly Charge", "1Annual Charge", "2Total:", "3sheet0", "3sheet1" };
+
+                        case 2:
+                            return new string[] { "1Total:", "2Subtotals=Total:" };
+
+                        default:
+                            return new string[0];
+                    }
+
+
+
+
+                case "ProfitAndLossStatementDrillThrough":
+                    return new string[] { "Expense=Total Expense", "Income=Total Income", 
+                        "Net Operating Income~-Total Expense,Total Income", "Net Income~Net Operating Income,-Total Expense" };
+
+
+
+
+                case "PayablesAccountReport":
+                    return new string[] { "Pool Furniture=Total Pool Furniture", "Hallways=Total Hallways", 
+                        "Garage=Total Garage", "Elevators=Total Elevators", "Clubhouse=Total Clubhouse", 
+                        "Total Common Area CapEx~Total Pool Furniture,Total Hallways,Total Garage,Total Elevators,Total Clubhouse", "Total~Total Common Area CapEx", 
+                        "Total:~Total Common Area CapEx" };
+
+
+
+
+                case "ReportOutstandingBalance":
+                    switch (worksheetNum)
+                    {
+                        case 0:
+                            return new string[] { "1r=[A-Z0-9]+", "1Balance", "2Total For Commons at( [A-Z][a-z]+)+:" };
+
+                        default:
+                            return new string[] { "Total" };
+                    }
+
+
+
+
+                case "CollectionsAnalysis":
+                case "ReportPayablesRegister":
+                case "AgedAccountsReceivable":
+                case "ReportAccountBalances":
+                case "JournalLedger":
+                case "CollectionsAnalysisSummary":
+                case "AgedPayables":
+                case "AgedReceivables":
+                    return new string[] { "Total" };
+
+
+
+
+                case "VacancyLoss":
+                case "VendorInvoiceReport":
+                case "InvoiceRecurringReport":
+                case "UnitInvoiceReport":
+                case "RentRollPortfolio":
+                case "TrialBalance":
+                case "RentRollAll":
+                    return new string[] { "Total:" };
+
+
+
+
+                case "ProfitAndLossStatementByJob":
+                    return new string[] { "Income=Total Income", "Expense=Total Expense", 
+                        "Net Income~Total Income,-Total Expense" };
+
+
+
+                case "TrialBalanceVariance":
+                    return new string[] { "Asset=Total Asset", "Liability=Total Liability", "Equity=Total Equity", 
+                        "Income=Total Income", "Expense=Total Expense", "Total:~Total Expense,Total Income,Total Equity,Total Liability,Total Asset" };
+
+
+
+                case "ProfitAndLossExtendedVariance":
+                    return new string[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense" };
+
+
+
+                case "LedgerReport":
+                    return new string[] { "Total \\d+ - Prepaid Contracts" };
+
+
+
+
+                //these reports I'm still working on
+                case "Budget":
+                case "RentRollCommercialItemized":
+
+
+                // these reports I dont have
+                case "RentRollActivityTotals":
+                case "ReportEscalateCharges":
+                case "RentRollActivityItemized":
+                case "RentRollActivity":
+
+
+
+                // this report does not have the necessary columns/data to get a formula
+                // for the time being this report gets no formulas
+                case "PaymentsHistory": 
+
+
+
+                default:
+                    return new string[0];
+            }
         }
     }
 }
