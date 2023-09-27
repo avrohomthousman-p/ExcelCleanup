@@ -17,7 +17,7 @@ namespace ExcelDataCleanup
     internal class BackupMergeCleaner : AbstractMergeCleaner
     {
 
-        private int topTableRow;
+        protected int topTableRow;
 
 
         //Some data that is needed for font size conversions:

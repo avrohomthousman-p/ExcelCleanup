@@ -12,8 +12,8 @@ namespace CompatableExcelCleaner.FormulaGeneration.ReportSpecificGenerators
 
 
     /// <summary>
-    /// Implementation of IFormulaGenerator that gives formulas to a column that is the sum of all
-    /// columns to its left. This is similar to the SummaryColumn Formula generator, except that it adds
+    /// Implementation of IFormulaGenerator that gives formulas to a column that is the sum of all data
+    /// columns to its left. This is similar to the SummaryColumnGenerator, except that it adds
     /// all columns to the left, instead of just adding specific columns. Also, columns cannot be made negetive.
     /// </summary>
     internal class FullTableSummaryColumn : IFormulaGenerator

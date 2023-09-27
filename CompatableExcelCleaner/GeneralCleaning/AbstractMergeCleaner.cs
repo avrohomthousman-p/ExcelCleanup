@@ -62,7 +62,7 @@ namespace ExcelDataCleanup
 
 
         /// <summary>
-        /// Does all aditional cleanup that is needed for the specified report
+        /// Does all additional cleanup that is needed for the specified report
         /// </summary>
         /// <param name="worksheet">the worksheet being cleaned</param>
         /// <param name="reportName">the report being cleaned</param>

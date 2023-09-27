@@ -35,7 +35,7 @@ namespace CompatableExcelCleaner.GeneralCleaning
 
 
 
-
+        /// <inheritdoc/>
         protected override void AdditionalCleanup(ExcelWorksheet worksheet)
         {
             base.AdditionalCleanup(worksheet);

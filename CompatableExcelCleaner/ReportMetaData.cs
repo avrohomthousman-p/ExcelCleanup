@@ -5,6 +5,7 @@ using ExcelDataCleanup;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.Xml;
 using System.Text.RegularExpressions;
 
 namespace CompatableExcelCleaner
@@ -43,8 +44,12 @@ namespace CompatableExcelCleaner
                 case "ReportTenantSummary":
                 case "UnitInfoReport":
                 case "ReportCashReceiptsSummary":
-                case "ProfitAndLossExtendedVariance":
                     return new BackupMergeCleaner();
+
+
+
+                case "ProfitAndLossExtendedVariance":
+                    return new ExtendedVarianceCleaner();
 
 
 
@@ -310,6 +315,7 @@ namespace CompatableExcelCleaner
 
                 //Reports Im working on
                 case "Budget":
+                    return new MultiFormulaGenerator(new FullTableSummaryColumn(), new RowSegmentFormulaGenerator());
                 case "RentRollCommercialItemized":
 
 
@@ -591,7 +597,9 @@ namespace CompatableExcelCleaner
 
 
                 case "ProfitAndLossExtendedVariance":
-                    return new string[] { "INCOME=Total Income", "EXPENSE=Total Expense", "Net Operating Income~Total Income,-Total Expense" };
+                    return new string[] { "INCOME=Total Income", "EXPENSE=Total Expense",
+                        "Net Operating Income~Total Income,-Total Expense", 
+                        "Net Income~Net Operating Income,Total Income,-Total Expense" };
 
 
 
@@ -600,10 +608,20 @@ namespace CompatableExcelCleaner
 
 
 
+                //Reports with minor issues:
+                //ProfitAndLossExtendedVariance
+                //AgedAccountsReceivable
+                //RentRollCommercialItemized
+                //LedgerReport
+
+
+
 
                 //these reports I'm still working on
                 case "Budget":
-                case "RentRollCommercialItemized":
+                    return new string[] { "1Total", "2INCOME=TOTAL INCOME", "2EXPENSE=TOTAL EXPENSE" };
+                    //FIXME: I am not sure what rows need formulas
+                case "RentRollCommercialItemized": //not sure what Im supposed to be adding here
 
 
                 // these reports I dont have
