@@ -308,6 +308,15 @@ namespace CompatableExcelCleaner
 
 
 
+                case "RentRollActivityTotals":
+                    FullTableFormulaGenerator g = new FullTableFormulaGenerator();
+                    g.SetDataCellDefenition(
+                        cell => FormulaManager.IsDollarValue(cell) || FormulaManager.IsIntegerValue(cell));
+
+                    return g;
+
+
+
 
                 //These reports dont fit into any existing system
                 //AgedAccountsReceivable (its original totals are incorrect)
@@ -321,11 +330,8 @@ namespace CompatableExcelCleaner
                 case "RentRollCommercialItemized":
 
 
-
-                //Reports I dont have
-                case "RentRollActivityTotals":
+                //problem: not sure what to add up here
                 case "ReportEscalateCharges":
-                
 
 
 
@@ -609,6 +615,10 @@ namespace CompatableExcelCleaner
                     return new string[] { "Total \\d+ - Prepaid Contracts" };
 
 
+                case "RentRollActivityTotals":
+                    return new string[] { "Totals For All Buildings" };
+
+
 
                 //Reports with minor issues:
                 //ProfitAndLossExtendedVariance
@@ -624,11 +634,7 @@ namespace CompatableExcelCleaner
                     return new string[] { "1Total", "2INCOME=TOTAL INCOME", "2EXPENSE=TOTAL EXPENSE" };
                     //FIXME: I am not sure what rows need formulas
                 case "RentRollCommercialItemized": //not sure what Im supposed to be adding here
-
-
-                // these reports I dont have
-                case "RentRollActivityTotals":
-                case "ReportEscalateCharges":
+                case "ReportEscalateCharges": //problem: not sure what to add up
 
 
 
