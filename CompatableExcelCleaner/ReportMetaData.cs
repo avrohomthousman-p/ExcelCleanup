@@ -163,6 +163,7 @@ namespace CompatableExcelCleaner
 
 
 
+                case "RentRollActivityItemized":
                 case "RentRollActivityItemized_New":
                     PeriodicFormulaGenerator mainFormulas = new PeriodicFormulaGenerator();
                     mainFormulas.SetDataCellDefenition(cell => FormulaManager.IsEmptyCell(cell) || FormulaManager.IsDollarValue(cell));
@@ -294,6 +295,7 @@ namespace CompatableExcelCleaner
                 case "LedgerReport":
                 case "RentRollAll": 
                 case "RentRollActivity_New":
+                case "RentRollActivity":
                 case "TrialBalance":
                 case "ReportCashReceiptsSummary":
                 case "JournalLedger":
@@ -323,8 +325,6 @@ namespace CompatableExcelCleaner
                 //Reports I dont have
                 case "RentRollActivityTotals":
                 case "ReportEscalateCharges":
-                case "RentRollActivityItemized":
-                case "RentRollActivity":
                 
 
 
@@ -382,6 +382,7 @@ namespace CompatableExcelCleaner
 
 
 
+                case "RentRollActivity":
                 case "RentRollActivity_New":
                     switch (worksheetNum)
                     {
@@ -473,6 +474,7 @@ namespace CompatableExcelCleaner
 
 
 
+                case "RentRollActivityItemized":
                 case "RentRollActivityItemized_New":
                     return new string[] { "1r=(\\d{4})|([A-Z]\\d\\d)", "1Beg\\s+Balance", "1Charges", "1Adjustments",
                         "1Payments", "1End Balance", "1Change", "2Total:" };
@@ -627,8 +629,7 @@ namespace CompatableExcelCleaner
                 // these reports I dont have
                 case "RentRollActivityTotals":
                 case "ReportEscalateCharges":
-                case "RentRollActivityItemized":
-                case "RentRollActivity":
+
 
 
 
